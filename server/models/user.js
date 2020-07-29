@@ -22,10 +22,11 @@ const UserSchema = new Schema({
   discord: { type: String },
   phone: { type: String, minlength: 10, maxlength: 14 },
   password: { type: String, required: true },
-  achivementes: [{ type: Schema.Types.ObjectId, ref: "Achievement" }],
+  achievements: [{ type: Schema.Types.ObjectId, ref: "Achievement" }],
   roles: [{ type: String, enum: ["Player", "Control", "Admin"] }],
   birthday: { type: Date },
   serviceRecord: [{ type: Schema.Types.ObjectId, ref: "Log" }],
+  gameState: [],
 });
 
 let User = mongoose.model("User", UserSchema);
