@@ -1,4 +1,4 @@
-const { logger } = require("../log/logging"); // Import of winston for error logging
+const { logger } = require("../log/winston"); // Import of winston for error logging
 const config = require("config");
 
 module.exports = function () {

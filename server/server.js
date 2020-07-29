@@ -14,8 +14,8 @@ require("./middleware/log/logging")(); // Bootup for error handling
 require("./routes/routes")(app); // Bootup for Express routes
 require("./routes/sockets")(server); // Bootup for websocket server
 require("./middleware/mongoDB/db")(); // Bootup of MongoDB through Mongoose
-// require('./middleware/config/config')(); // Bootup for special configurations
-// require('./middleware/production/prod')(app); // Production compression and middleware
+require('./middleware/config/config')(); // Bootup for special configurations
+require('./middleware/production/prod')(app); // Production compression and middleware
 
 const port = process.env.PORT || 5000; // Server entry point - Node Server
 server.listen(port, () =>
