@@ -7,32 +7,31 @@ const { Info } = require('../../models/log/info');
 const bot = new Discord.Client({disableEveryone: true});
 
 module.exports = function () {
+    const prefix = settings.prefix;
     logger.info('Activating Central Nexus...')
     
-    bot.on('ready', async () => {
+    bot.once('ready', async () => {
         logger.info(`${bot.user.username} online...`)
         bot.user.setActivity('Nexus Development', {type:'WATCHING'});
     })
 
     bot.on('message', async message => {
         logger.info(message);
-        if (message.author.bot || message.channel.type === 'dm') return;
+        if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-        const prefix = settings.prefix;
-        let messageArray = message.content.split(' ');
-        let cmd = messageArray[0];
-        let args = messageArray.slice(1);
+        const args = message.content.slice(prefix.length).trim().split(/ +/);
+        const cmd = args.shift().toLowerCase();
         
-        if (cmd === `${prefix}info`) {
+        if (cmd === `info`) {
             let info = await Info.find()
             return message.channel.send(`Server Info Count: ${info.length}`);
         }
 
-        if (cmd === `${prefix}thanks`) {
+        if (cmd === `thanks`) {
             return message.channel.send(`No problem ${message.author}`);
         }
 
-        if (cmd === `${prefix}shutdown`) {
+        if (cmd === `shutdown`) {
             await message.channel.send(`Understood ${message.author}, shutting down...`);
             process.exit(1);
         }
