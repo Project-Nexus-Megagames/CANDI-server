@@ -35,7 +35,7 @@ const logger = createLogger({
       db: dbURI,
       level: "error",
       metaKey: "meta",
-      collection: "logerrors",
+      collection: "errors",
       options: { useUnifiedTopology: true },
     }),
     // Info / Warnings / Errors combined
@@ -43,7 +43,7 @@ const logger = createLogger({
       db: dbURI,
       level: "info",
       metaKey: "meta",
-      collection: "loginfos",
+      collection: "infos",
       options: { useUnifiedTopology: true },
     }),
   ],
