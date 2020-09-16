@@ -1,5 +1,6 @@
-const socketDebugger = require('debug')('app:sockets');
+const { logger } = require('../middleware/log/winston');
 
-module.exports = function (server) {
-  const io = require('socket.io')(server); // Creation of websocket Server
+module.exports = function(server) {
+	logger.info('Socket.io servers initialized...');
+	const io = require('socket.io')(server); // Creation of websocket Server
 };

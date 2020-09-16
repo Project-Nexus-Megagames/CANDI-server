@@ -1,6 +1,6 @@
-const events = require('events')
+const events = require('events');
 
-console.log('Project Nexus Events initiated...')
+console.log('Project Nexus Events initiated...');
 class NexusEvent extends events {}
 
 module.exports = new NexusEvent();
