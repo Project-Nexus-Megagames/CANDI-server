@@ -2,7 +2,7 @@ const express = require('express'); // Import of EXPRESS to create routing app
 const http = require('http'); // Import of the NODE HTTP module to create the http server
 const { logger } = require('./middleware/log/winston'); // Import of winston for error logging
 
-logger.info('Starting boot-up for Project Nexus Server...');
+logger.info('Booting Project Nexus Server...');
 
 // Boot Processes
 logger.info('Looding start-up processes...');

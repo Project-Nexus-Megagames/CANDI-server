@@ -3,7 +3,7 @@ const { logger } = require('../log/winston'); // Import of winston for error log
 const config = require('config');
 
 // Database Config
-const dbURI = require('../config/keys').mongoURI;
+const dbURI = require('./keys').mongoURI;
 
 const mongo_options = {
 	dbName: config.get('dbName'),

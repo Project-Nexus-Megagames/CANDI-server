@@ -2,7 +2,7 @@ const errorDebugger = require('debug')('app:error');
 const winston = require('winston');
 // may need to comment out line below if we have problems with integration testing
 require('winston-mongodb');
-const dbURI = require('../config/keys').mongoURI;
+const dbURI = require('../mongoDB/keys').mongoURI;
 
 const { createLogger, format, transports } = winston;
 
