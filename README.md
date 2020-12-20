@@ -1,2 +1,2 @@
-# project-nexus
-Central Hub for the West Coast Megagames Project Nexus platform
+# Afterlife
+Server for the Afterlife Game
