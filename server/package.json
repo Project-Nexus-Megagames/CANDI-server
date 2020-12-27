@@ -1,7 +1,7 @@
 {
   "name": "project-nexus",
-  "version": "0.1.0",
-  "description": "A test of the Project Nexus Framework",
+  "version": "0.0.1",
+  "description": "Server to handle actions in Afterlife Megagame ",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,20 +10,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/west-coast-megagames/project-nexus.git"
+    "url": "git+https://github.com/Project-Nexus-Megagames/afterlife-server.git"
   },
   "keywords": [
     "West",
     "Coast",
     "Megagames",
-    "WCM"
+    "WCM",
+    "Afterlife"
   ],
-  "author": "John T. Cleveland",
+  "author": "John T. Cleveland and Scott McMann",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/west-coast-megagames/project-nexus/issues"
+    "url": "https://github.com/Project-Nexus-Megagames/afterlife-server/issues"
   },
-  "homepage": "https://github.com/west-coast-megagames/project-nexus/readme",
+  "homepage": "https://github.com/Project-Nexus-Megagames/afterlife-server/readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
