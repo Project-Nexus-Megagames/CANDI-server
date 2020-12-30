@@ -12,15 +12,16 @@ const ActionSchema = new Schema({
 	approach:  { type: String, default: 'Masks' }, // Update this when docs come
 	traits: [{ type: Schema.Types.Mixed }], // change to trait ID
 	assets: [{ type: Schema.Types.Mixed }], // change to asset ID
+	round: { type: Number },
 	description: { type: String },
 	intent: { type: String },
 	effort: { type: Number, required: true },
 	status: {
-		draft: { type: Boolean, default: false },
+		draft: { type: Boolean, default: true },
 		complete: { type: Boolean, default: false },
 		progress: { type: Number, default: 0 }
 	},
-	dieResult: { type: Number, required: true },
+	dieResult: { type: Number },
 	resolution: { type: String }
 });
 

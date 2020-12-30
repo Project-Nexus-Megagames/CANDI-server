@@ -16,7 +16,6 @@ router.get('/', async function(req, res) {
 	logger.info('GET Route: api/action requested...');
 	try {
 		const agents = await Action.find();
-
 		res.status(200).json(agents);
 	}
 	catch (err) {
@@ -117,6 +116,28 @@ router.patch('/deleteAll', async function(req, res) {
 });
 
 // ~~~Game Routes~~~
+router.post('/newAction', async function(req, res) {
+	logger.info('POST Route: api/action call made...');
 
+	try {
+		let newElement = new Action(req.body);
+		newElement.dieResult = 0;
+
+		//	await newAgent.validateAgent();
+		const docs = await Action.find({ intent: req.body.intent });
+
+		if (docs.length < 1) {
+			newElement = await newElement.save();
+			logger.info(`${newElement.intent} created.`);
+			res.status(200).json(newElement);
+		}
+		else {
+			nexusError(`An action with intent ${newElement.intent} already exists!`, 400);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
 
 module.exports = router;

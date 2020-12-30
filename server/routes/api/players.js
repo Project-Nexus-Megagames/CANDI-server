@@ -8,6 +8,7 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const { Player } = require('../../models/player'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
+const characters = require('../../config/playerList');
 
 // @route   GET api/agents
 // @Desc    Get all agents
@@ -55,15 +56,15 @@ router.post('/', async function(req, res) {
 		let newPlayer = new Player(req.body);
 
 		//	await newAgent.validateAgent();
-		const docs = await Player.find({ name: req.body.name });
+		const docs = await Player.find({ characterName: req.body.characterName });
 
 		if (docs.length < 1) {
 			newPlayer = await newPlayer.save();
-			logger.info(`${newPlayer.name} created.`);
+			logger.info(`${newPlayer.characterName} created.`);
 			res.status(200).json(newPlayer);
 		}
 		else {
-			nexusError(`A player named ${newPlayer.name} already exists!`, 400);
+			nexusError(`A player named ${newPlayer.characterName} already exists!`, 400);
 		}
 	}
 	catch (err) {
@@ -116,5 +117,32 @@ router.patch('/deleteAll', async function(req, res) {
 	}
 	return res.status(200).send(`We wiped out ${airDelCount} Players`);
 });
+
+// game routes
+router.post('/initPlayers', async function(req, res) {
+	logger.info('POST Route: api/player call made...');
+
+	try {
+		for (const char of characters) {
+			let newPlayer = new Player(char);
+
+			//	await newAgent.validateAgent();
+			const docs = await Player.find({ characterName: char.characterName });
+
+			if (docs.length < 1) {
+				newPlayer = await newPlayer.save();
+				logger.info(`${newPlayer.characterName} created.`);
+			}
+			else {
+				console.log(`${newPlayer.characterName} already exists!\n`);
+			}
+		}
+		res.status(200).send('All done');
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
 
 module.exports = router;

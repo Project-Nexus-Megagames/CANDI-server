@@ -9,9 +9,11 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 const PlayerSchema = new Schema({
 	model:  { type: String, default: 'Player' },
 	playerName: { type: String, minlength: 2, maxlength: 50, required: true },
-	email: { type: String },
-	timeZone: { type: String },
+	email: { type: String, required: true },
+	timeZone: { type: String, required: true },
 	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
+	tag: { type: String, enum: ['Former Servants', 'Ferrymen', 'Furies', 'Angels', 'Demons', 'Cold Forges', 'Gehennatown', 'Misfits', 'NPC'], required: true },
+	userName: { type: String, minlength: 2, maxlength: 50, required: true },
 	bio: { type: String },
 	icon: { type: String },
 	objectives:  { type: String },
@@ -20,7 +22,7 @@ const PlayerSchema = new Schema({
 	assets: [{ type: Schema.Types.Mixed }], // change to asset ID
 	lentAssets: [{ type: Schema.Types.Mixed }], // change to asset ID
 	popSupport: { type: Number, default: 0 },
-	wealth: { type: String, enum: ['None', 'Poor', 'Moderate', 'Well-Off', 'Wealth', 'Opulant'] },
+	wealth: { type: String, enum: ['Poor', 'Laborer', 'Comfortable', 'Affluent', 'Luxury'], default: 'Comfortable' },
 	status: {
 		candidate: { type: Boolean, default: false }
 	}
