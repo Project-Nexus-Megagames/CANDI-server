@@ -49,12 +49,11 @@ router.get('/:id', validateObjectId, async (req, res) => {
 // @access  Public
 router.post('/', async function(req, res) {
 	logger.info('POST Route: api/action call made...');
-
+	const { data } = req.body;
 	try {
-		let newElement = new Action(req.body);
-
+		let newElement = new Action(data);
 		//	await newAgent.validateAgent();
-		const docs = await Action.find({ intent: req.body.intent });
+		const docs = await Action.find({ intent: data.intent });
 
 		if (docs.length < 1) {
 			newElement = await newElement.save();
@@ -116,28 +115,69 @@ router.patch('/deleteAll', async function(req, res) {
 });
 
 // ~~~Game Routes~~~
-router.post('/newAction', async function(req, res) {
+router.patch('/editAction', async function(req, res) {
 	logger.info('POST Route: api/action call made...');
-
+	const { id, description, intent, effort, traits, approach, assets } = req.body.data;
 	try {
-		let newElement = new Action(req.body);
-		newElement.dieResult = 0;
-
-		//	await newAgent.validateAgent();
-		const docs = await Action.find({ intent: req.body.intent });
+		const docs = await Action.findById(id);
 
 		if (docs.length < 1) {
-			newElement = await newElement.save();
-			logger.info(`${newElement.intent} created.`);
-			res.status(200).json(newElement);
+			nexusError('Could not find the action desired, please contact Tech Control', 400);
 		}
 		else {
-			nexusError(`An action with intent ${newElement.intent} already exists!`, 400);
+			docs.description = description;
+			docs.intent = intent;
+			docs.effort = effort;
+			docs.traits = traits;
+			docs.approach = approach;
+			docs.assets = assets;
+			await docs.save();
+			res.status(200).json(docs);
 		}
 	}
 	catch (err) {
 		httpErrorHandler(res, err);
 	}
 });
+
+router.patch('/editResult', async function(req, res) {
+	logger.info('POST Route: api/action/editResult call made...');
+	const { id, result, status } = req.body.data;
+	try {
+		const docs = await Action.findById(id);
+
+		if (docs.length < 1) {
+			nexusError('Could not find the action desired, please contact Tech Control', 400);
+		}
+		else {
+			docs.result = result;
+			if (status) {
+				docs.status.draft = false;
+				docs.status.ready = false;
+				docs.status.published = false;
+				switch (status) {
+				case 'draft':
+					docs.status.draft = true;
+					break;
+				case 'ready':
+					docs.status.ready = true;
+					break;
+				case 'published':
+					docs.status.published = true;
+					break;
+				default:
+					break;
+				}
+			}
+
+			await docs.save();
+			res.status(200).json(docs);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
 
 module.exports = router;

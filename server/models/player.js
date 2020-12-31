@@ -10,13 +10,15 @@ const PlayerSchema = new Schema({
 	model:  { type: String, default: 'Player' },
 	playerName: { type: String, minlength: 2, maxlength: 50, required: true },
 	email: { type: String, required: true },
+	worldAnvil: { type: String, required: true },
 	timeZone: { type: String, required: true },
 	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
 	tag: { type: String, enum: ['Former Servants', 'Ferrymen', 'Furies', 'Angels', 'Demons', 'Cold Forges', 'Gehennatown', 'Misfits', 'NPC'], required: true },
 	userName: { type: String, minlength: 2, maxlength: 50, required: true },
 	bio: { type: String },
 	icon: { type: String },
-	objectives:  { type: String },
+	objectives: { type: String },
+	standingOrders: { type: String },
 	gameRecord: [{ type: ObjectId, ref: 'Log' }],
 	traits: [{ type: Schema.Types.Mixed }], // change to trait ID
 	assets: [{ type: Schema.Types.Mixed }], // change to asset ID

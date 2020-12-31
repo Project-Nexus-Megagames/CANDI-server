@@ -13,16 +13,17 @@ const ActionSchema = new Schema({
 	traits: [{ type: Schema.Types.Mixed }], // change to trait ID
 	assets: [{ type: Schema.Types.Mixed }], // change to asset ID
 	round: { type: Number },
-	description: { type: String },
-	intent: { type: String },
+	description: { type: String, required: true },
+	intent: { type: String, required: true },
 	effort: { type: Number, required: true },
 	status: {
 		draft: { type: Boolean, default: true },
-		complete: { type: Boolean, default: false },
+		ready: { type: Boolean, default: false },
+		published: { type: Boolean, default: false },
 		progress: { type: Number, default: 0 }
 	},
-	dieResult: { type: Number },
-	resolution: { type: String }
+	dieResult: { type: Number, default: 0 },
+	result: { type: String }
 });
 
 const Action = mongoose.model('Action', ActionSchema);

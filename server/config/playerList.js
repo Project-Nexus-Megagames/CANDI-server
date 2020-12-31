@@ -105,6 +105,46 @@ const characters = [
 		bio: 'Chhaarrmedd charmed charmed',
 		userName: 'Nunyabuisness',
 		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg'
+	},
+	{
+		playerName: 'Dave',
+		characterName: 'The Duke 2',
+		tag: 'Ferrymen',
+		email: 'example@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Chhaarrmedd charmed charmed',
+		userName: 'Nunyabuisness',
+		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg'
+	},
+	{
+		playerName: 'Gary',
+		characterName: 'The Snail',
+		tag: 'Angels',
+		email: 'example@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Chhaarrmedd charmed charmed',
+		userName: 'Nunyabuisness',
+		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg'
+	},
+	{
+		playerName: 'Garrry',
+		characterName: 'The Slug',
+		tag: 'Ferrymen',
+		email: 'example@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Chhaarrmedd charmed charmed',
+		userName: 'Nunyabuisness',
+		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg'
+	},
+	{
+		playerName: 'Davinci',
+		characterName: 'The Artist',
+		tag: 'Demons',
+		email: 'example@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Chhaarrmedd charmed charmed',
+		userName: 'Nunyabuisness',
+		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg'
 	}
 ];
 
