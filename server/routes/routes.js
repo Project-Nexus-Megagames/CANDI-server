@@ -10,6 +10,7 @@ const home = require('../routes/public/home');
 const character = require('./api/characters');
 const action = require('./api/actions');
 const user = require('./api/users');
+const auth = require('./auth');
 
 // Route Function
 module.exports = function(app) {
@@ -21,6 +22,7 @@ module.exports = function(app) {
 	app.use('/api/characters', character);
 	app.use('/api/actions', action);
 	app.use('/api/users', user);
+	app.use('/auth', auth);
 
 	app.use('/', home);
 };
