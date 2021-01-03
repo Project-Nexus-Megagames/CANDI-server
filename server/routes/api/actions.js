@@ -132,7 +132,7 @@ router.patch('/editAction', async function(req, res) {
 			docs.approach = approach;
 			docs.assets = assets;
 			await docs.save();
-			res.status(200).json(docs);
+			res.status(200).send('Action successfully edited');
 		}
 	}
 	catch (err) {
@@ -171,7 +171,7 @@ router.patch('/editResult', async function(req, res) {
 			}
 
 			await docs.save();
-			res.status(200).json(docs);
+			res.status(200).send('Action result successfully edited');
 		}
 	}
 	catch (err) {
