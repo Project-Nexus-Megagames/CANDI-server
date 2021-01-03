@@ -8,6 +8,7 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const { Asset } = require('../../models/asset'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
+const { Character } = require('../../models/character');
 
 // @route   GET api/assets
 // @Desc    Get all assets
@@ -114,6 +115,39 @@ router.patch('/deleteAll', async function(req, res) {
 		}
 	}
 	return res.status(200).send(`We wiped out ${delCount} Assets`);
+});
+
+// game routes
+
+router.post('/add', async function(req, res) {
+	logger.info('POST Route: api/asset call made...');
+	const { character } = req.body;
+	try {
+		let newElement = new Asset(req.body);
+		//	await newAgent.validateAgent();
+		const docs = await Asset.find({ name: req.body.name });
+
+		if (docs.length < 1) {
+			let char = await Character.findById(character);
+			if (!char || char.length < 1) {
+				nexusError(`Could not find character with id "${character}"`, 400);
+			}
+			else {
+				newElement.model === 'Asset' ? char.assets.push(newElement) : char.traits.push(newElement);
+				char = await char.save();
+				newElement = await newElement.save();
+				logger.info(`${newElement.name} created.`);
+				res.status(200).json(newElement);
+			}
+
+		}
+		else {
+			nexusError(`An Asset with name ${newElement.name} already exists!`, 400);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
 });
 
 module.exports = router;

@@ -19,8 +19,8 @@ const CharacterSchema = new Schema({
 	icon: { type: String },
 	objectives: { type: String },
 	standingOrders: { type: String },
-	traits: [{ type: Schema.Types.Mixed }], // change to trait ID
-	assets: [{ type: Schema.Types.Mixed }], // change to asset ID
+	traits: [{ type: ObjectId, ref: 'Asset' }], // change to trait ID
+	assets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	lentAssets: [{ type: Schema.Types.Mixed }], // change to asset ID
 	popSupport: { type: Number, default: 0 },
 	wealth: { type: String, enum: ['Poor', 'Laborer', 'Comfortable', 'Affluent', 'Luxury'], default: 'Comfortable' },
