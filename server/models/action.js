@@ -9,9 +9,9 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 const ActionSchema = new Schema({
 	model:  { type: String, default: 'Action' },
 	players: [{ type: ObjectId, ref: 'Player' }],
-	approach:  { type: String, default: 'Masks' }, // Update this when docs come
-	traits: [{ type: Schema.Types.Mixed }], // change to trait ID
-	assets: [{ type: Schema.Types.Mixed }], // change to asset ID
+	asset1: { type: String },
+	asset2: { type: String },
+	asset3: { type: String },
 	round: { type: Number },
 	description: { type: String, required: true },
 	intent: { type: String, required: true },

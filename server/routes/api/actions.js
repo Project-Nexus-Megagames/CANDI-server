@@ -1,5 +1,6 @@
 const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
+const nexusEvent = require('../../middleware/events/events'); // Local event triggers
 
 const validateObjectId = require('../../middleware/util/validateObjectId');
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
@@ -52,12 +53,12 @@ router.post('/', async function(req, res) {
 	const { data } = req.body;
 	try {
 		let newElement = new Action(data);
-		//	await newAgent.validateAgent();
 		const docs = await Action.find({ intent: data.intent });
 
 		if (docs.length < 1) {
 			newElement = await newElement.save();
 			logger.info(`${newElement.intent} created.`);
+			nexusEvent.emit('updateActions');
 			res.status(200).json(newElement);
 		}
 		else {
@@ -80,6 +81,7 @@ router.delete('/:id', async function(req, res) {
 		if (element != null) {
 			element = await Action.findByIdAndDelete(id);
 			logger.info(`Action with the id ${id} was deleted!`);
+			nexusEvent.emit('updateActions');
 			res.status(200).send(`Action with the id ${id} was deleted!`);
 		}
 		else {
@@ -111,6 +113,7 @@ router.patch('/deleteAll', async function(req, res) {
 			nexusError(`${err.message}`, 500);
 		}
 	}
+	nexusEvent.emit('updateActions');
 	return res.status(200).send(`We wiped out ${delCount} Actions`);
 });
 
@@ -121,7 +124,7 @@ router.patch('/editAction', async function(req, res) {
 	try {
 		const docs = await Action.findById(id);
 
-		if (docs.length < 1) {
+		if (docs === null) {
 			nexusError('Could not find the action desired, please contact Tech Control', 400);
 		}
 		else {
@@ -132,6 +135,7 @@ router.patch('/editAction', async function(req, res) {
 			docs.approach = approach;
 			docs.assets = assets;
 			await docs.save();
+			nexusEvent.emit('updateActions');
 			res.status(200).send('Action successfully edited');
 		}
 	}
@@ -142,15 +146,16 @@ router.patch('/editAction', async function(req, res) {
 
 router.patch('/editResult', async function(req, res) {
 	logger.info('POST Route: api/action/editResult call made...');
-	const { id, result, status } = req.body.data;
+	const { id, result, status, dieResult } = req.body.data;
 	try {
 		const docs = await Action.findById(id);
 
-		if (docs.length < 1) {
+		if (docs === null) {
 			nexusError('Could not find the action desired, please contact Tech Control', 400);
 		}
 		else {
 			docs.result = result;
+			docs.dieResult = dieResult;
 			if (status) {
 				docs.status.draft = false;
 				docs.status.ready = false;
@@ -171,6 +176,7 @@ router.patch('/editResult', async function(req, res) {
 			}
 
 			await docs.save();
+			nexusEvent.emit('updateActions');
 			res.status(200).send('Action result successfully edited');
 		}
 	}

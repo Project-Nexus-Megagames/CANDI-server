@@ -1,6 +1,8 @@
 const { logger } = require('../middleware/log/winston');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const SocketServer = require('../scripts/socketServer'); // Client Tracking Object
+const { Character } = require('../models/character');
+const { Action } = require('../models/action');
 
 module.exports = function(server) {
 	const Clients = new SocketServer();
@@ -22,5 +24,16 @@ module.exports = function(server) {
 			Clients.delClient(client);
 			console.log(`${Clients.connections.length} clients connected`);
 		});
+
+		nexusEvent.on('updateCharacters', async () => {
+			const characters = await Character.find();
+			client.emit('updateCharacters', characters);
+		});
+
+		nexusEvent.on('updateActions', async () => {
+			const actions = await Action.find();
+			client.emit('updateActions', actions);
+		});
+
 	});
 };

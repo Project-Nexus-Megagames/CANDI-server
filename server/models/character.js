@@ -23,7 +23,10 @@ const CharacterSchema = new Schema({
 	assets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	lentAssets: [{ type: Schema.Types.Mixed }], // change to asset ID
 	popSupport: { type: Number, default: 0 },
-	wealth: { type: String, enum: ['Poor', 'Laborer', 'Comfortable', 'Affluent', 'Luxury'], default: 'Comfortable' },
+	wealth: {
+		level: { type: String, enum: ['Poor', 'Laborer', 'Comfortable', 'Affluent', 'Luxury'], default: 'Comfortable' },
+		lent: { type: Boolean, default: false }
+	},
 	status: {
 		candidate: { type: Boolean, default: false }
 	}

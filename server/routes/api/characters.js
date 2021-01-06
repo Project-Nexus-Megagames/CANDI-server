@@ -1,5 +1,6 @@
 const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
+const nexusEvent = require('../../middleware/events/events'); // Local event triggers
 
 const validateObjectId = require('../../middleware/util/validateObjectId');
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
@@ -9,6 +10,7 @@ const { Character } = require('../../models/character'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const characters = require('../../config/characterList');
+const { Asset } = require('../../models/asset');
 
 // @route   GET api/characters
 // @Desc    Get all characters
@@ -16,7 +18,7 @@ const characters = require('../../config/characterList');
 router.get('/', async function(req, res) {
 	logger.info('GET Route: api/character requested...');
 	try {
-		const char = await Character.find();
+		const char = await Character.find().populate('assets').populate('traits');
 
 		res.status(200).json(char);
 	}
@@ -61,6 +63,7 @@ router.post('/', async function(req, res) {
 		if (docs.length < 1) {
 			newCharacter = await newCharacter.save();
 			logger.info(`${newCharacter.characterName} created.`);
+			nexusEvent.emit('updateCharacters');
 			res.status(200).json(newCharacter);
 		}
 		else {
@@ -84,6 +87,7 @@ router.delete('/:id', async function(req, res) {
 			// await character.stripUpgrades();
 			character = await Character.findByIdAndDelete(id);
 			logger.info(`${character.name} with the id ${id} was deleted!`);
+			nexusEvent.emit('updateCharacters');
 			res.status(200).send(`${character.name} with the id ${id} was deleted!`);
 		}
 		else {
@@ -115,6 +119,7 @@ router.patch('/deleteAll', async function(req, res) {
 			nexusError(`${err.message}`, 500);
 		}
 	}
+	nexusEvent.emit('updateCharacters');
 	return res.status(200).send(`We wiped out ${airDelCount} Characters`);
 });
 
@@ -137,6 +142,7 @@ router.post('/initCharacters', async function(req, res) {
 				console.log(`${newCharacter.characterName} already exists!\n`);
 			}
 		}
+		nexusEvent.emit('updateCharacters');
 		res.status(200).send('All done');
 	}
 	catch (err) {
@@ -144,5 +150,88 @@ router.post('/initCharacters', async function(req, res) {
 	}
 });
 
+// @route   GET api/character/:id
+// @Desc    Get a single Character by ID
+// @access  Public
+router.patch('/byUsername', async (req, res) => {
+	logger.info('GET Route: api/aircraft/:id requested...');
+	const { username } = req.body;
+	try {
+		const data = await Character.findOne({ username }).populate('assets').populate('traits');
+		if (data === null || data.length < 1) {
+			nexusError(`Could not find a character for username "${username}"`, 404);
+		}
+		else if (data.length > 1) {
+			nexusError(`Found multiple characters for username ${username}`, 404);
+		}
+		else {
+			res.status(200).json(data);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
 
+router.patch('/modify', async (req, res) => {
+	logger.info('GET Route: api/characters/modify requested...');
+	const { id, email, worldAnvil, tag, timeZone, wealth, icon, popsupport, bio } = req.body.data;
+	try {
+		let data = await Character.findById(id);
+		if (data === null) {
+			nexusError(`Could not find a character for id "${id}"`, 404);
+		}
+		else if (data.length > 1) {
+			nexusError(`Found multiple characters for id ${id}`, 404);
+		}
+		else {
+			data.email = email;
+			data.worldAnvil = worldAnvil;
+			data.tag = tag;
+			data.timeZone = timeZone;
+			data.wealth.level = wealth;
+			data.icon = icon;
+			data.popsupport = popsupport;
+			data.bio = bio;
+
+			data = await data.save();
+			nexusEvent.emit('updateCharacters');
+			res.status(200).json(data);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
+router.patch('/newAsset', async (req, res) => {
+	logger.info('GET Route: api/characters/modify requested...');
+	const { id, asset } = req.body.data;
+	try {
+		let data = await Character.findById(id);
+		if (data === null) {
+			nexusError(`Could not find a character for id "${id}"`, 404);
+		}
+		else if (data.length > 1) {
+			nexusError(`Found multiple characters for id ${id}`, 404);
+		}
+		else {
+			let newAsset = new Asset(asset);
+
+			if (newAsset.model === 'Trait') {
+				data.traits.push(newAsset);
+			}
+			else {
+				data.assets.push(newAsset);
+			}
+			newAsset = await newAsset.save();
+			data = await data.save();
+			nexusEvent.emit('updateCharacters');
+			res.status(200).json(data);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
 module.exports = router;

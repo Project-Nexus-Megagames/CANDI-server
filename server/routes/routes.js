@@ -10,6 +10,8 @@ const home = require('../routes/public/home');
 const character = require('./api/characters');
 const action = require('./api/actions');
 const user = require('./api/users');
+const asset = require('./api/assets');
+const gamestate = require('./api/gamestate');
 const auth = require('./auth');
 
 // Route Function
@@ -22,6 +24,8 @@ module.exports = function(app) {
 	app.use('/api/characters', character);
 	app.use('/api/actions', action);
 	app.use('/api/users', user);
+	app.use('/api/assets', asset);
+	app.use('/api/gamestate', gamestate);
 	app.use('/auth', auth);
 
 	app.use('/', home);
