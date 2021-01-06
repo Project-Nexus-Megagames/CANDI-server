@@ -9,7 +9,21 @@ const characters = [
 		bio: 'Some say Mr. Bones is a god who founded this world, others say he\'s a fast talking pile o bones who needs to sleep more...',
 		username: 'FroBoyX',
 		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg',
-		control: 'Alpha'
+		control: 'Alpha', 
+		memories: {
+			first: {
+				trigger: 'Eat a Banana',
+				recall: '',
+			},
+			second: {
+				trigger: 'Eat an Orange',
+				recall: '',
+			},
+			third: {
+				trigger: 'Eat an Apple',
+				recall: '',
+			},
+		},
 	},
 	{
 		playerName: 'Roger',

@@ -27,6 +27,23 @@ const CharacterSchema = new Schema({
 		level: { type: String, enum: ['Poor', 'Laborer', 'Comfortable', 'Affluent', 'Luxury'], default: 'Comfortable' },
 		lent: { type: Boolean, default: false }
 	},
+	memories: {
+		first: {
+			trigger: { type: String },
+			recall: { type: String },
+			revealed: { type: Boolean, default: false }
+		},
+		second: {
+			trigger: { type: String },
+			recall: { type: String },
+			revealed: { type: Boolean, default: false }
+		},
+		third: {
+			trigger: { type: String },
+			recall: { type: String },
+			revealed: { type: Boolean, default: false }
+		},
+	},
 	status: {
 		candidate: { type: Boolean, default: false }
 	}
