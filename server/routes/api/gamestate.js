@@ -8,6 +8,9 @@ const nexusError = require('../../middleware/util/throwError'); // Project Nexus
 
 // Mongoose Model Import
 const { GameState } = require('../../models/gamestate');
+const { Asset } = require('../../models/asset'); // Agent Model
+const { Action } = require('../../models/action'); // Agent Model
+const { Character } = require('../../models/character');
 
 // @route   GET /gamestate
 // @Desc    Get all GameStates
@@ -105,6 +108,33 @@ router.patch('/deleteAll', async function(req, res) {
 	const data = await GameState.deleteMany();
 	console.log(data);
 	return res.status(200).send(`We wiped out ${data.deletedCount} GameStates!`);
+});
+
+// game routes
+
+router.patch('/closeRound', async function(req, res) {
+	const data = await GameState.findOne();
+	console.log(data);
+
+});
+
+router.patch('/nextRound', async function(req, res) {
+	const data = await GameState.findOne();
+	console.log(data);
+
+	for (const asset of await Asset.find({ 'status.lent': true })) {
+		asset.status.lent = false;
+		asset.currentHolder = null;
+		console.log(`Unlending ${asset.name}`);
+		asset.save();
+	}
+
+	for (const character of await Character.find()) {
+		character.lentAssets = [];
+		character.save();
+	}
+
+	return res.status(200).send(`Gamestate pushed!`);
 });
 
 module.exports = router;

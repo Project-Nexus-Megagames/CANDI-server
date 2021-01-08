@@ -1,5 +1,6 @@
 const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
+const nexusEvent = require('../../middleware/events/events'); // Local event triggers
 
 const validateObjectId = require('../../middleware/util/validateObjectId');
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
@@ -30,7 +31,7 @@ router.get('/', async function(req, res) {
 // @Desc    Get a single asset by ID
 // @access  Public
 router.get('/:id', validateObjectId, async (req, res) => {
-	logger.info('GET Route: api/aircraft/:id requested...');
+	logger.info('GET Route: api/asset/:id requested...');
 	const id = req.params.id;
 	try {
 		const asset = await Asset.findById(id);
@@ -114,13 +115,14 @@ router.patch('/deleteAll', async function(req, res) {
 			nexusError(`${err.message}`, 500);
 		}
 	}
+	nexusEvent.emit('updateCharacters');
 	return res.status(200).send(`We wiped out ${delCount} Assets`);
 });
 
 // game routes
 
 router.post('/add', async function(req, res) {
-	logger.info('POST Route: api/asset call made...');
+	logger.info('POST Route: api/asset/add call made...');
 	const { character } = req.body;
 	try {
 		let newElement = new Asset(req.body);
@@ -137,6 +139,7 @@ router.post('/add', async function(req, res) {
 				char = await char.save();
 				newElement = await newElement.save();
 				logger.info(`${newElement.name} created.`);
+				nexusEvent.emit('updateCharacters');
 				res.status(200).json(newElement);
 			}
 
@@ -146,8 +149,48 @@ router.post('/add', async function(req, res) {
 		}
 	}
 	catch (err) {
-		httpErrorHandler(res, err);
+		nexusError(`${err.message}`, 500);
 	}
 });
+
+router.post('/lend', async function(req, res) {
+	logger.info('POST Route: api/asset/lend call made...');
+	const { asset, target, lendingBoolean } = req.body.data;
+	try {
+		let docs = await Asset.findById(asset);
+
+		if (docs === null) {
+			nexusError(`Could not find asset with id "${asset}"`, 400);
+		}
+		else {
+
+			if (lendingBoolean === docs.status.lent) { // this is a check to see if someone is trying to relend a previously lent asset
+				nexusError(`Detected an attempt to lend a lent asset "${docs.name}"`, 400);
+			}
+
+			let char = await Character.findById(target);
+			if (char === null) {
+				nexusError(`Could not find character with id "${target}"`, 400);
+			}
+			else {
+				const index = char.lentAssets.indexOf(docs);
+				lendingBoolean === true ? char.lentAssets.push(docs) : char.lentAssets.splice(index, 1);
+				docs.status.lent = lendingBoolean;
+				lendingBoolean === true ? docs.currentHolder = char : docs.currentHolder = null;
+
+				char = await char.save();
+				docs = await docs.save();
+				logger.info(`${docs.name} Lent to ${char.characterName}.`);
+				nexusEvent.emit('updateCharacters');
+				res.status(200).json(docs);
+			}
+		}
+
+	}
+	catch (err) {
+		nexusError(`${err.message}`, 500);
+	}
+});
+
 
 module.exports = router;

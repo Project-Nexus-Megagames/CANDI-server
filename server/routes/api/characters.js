@@ -18,7 +18,7 @@ const { Asset } = require('../../models/asset');
 router.get('/', async function(req, res) {
 	logger.info('GET Route: api/character requested...');
 	try {
-		const char = await Character.find().populate('assets').populate('traits');
+		const char = await Character.find().populate('assets').populate('traits').populate('lentAssets');
 
 		res.status(200).json(char);
 	}
@@ -32,7 +32,7 @@ router.get('/', async function(req, res) {
 // @Desc    Get a single Character by ID
 // @access  Public
 router.get('/:id', validateObjectId, async (req, res) => {
-	logger.info('GET Route: api/aircraft/:id requested...');
+	logger.info('GET Route: api/character/:id requested...');
 	const id = req.params.id;
 	try {
 		const character = await Character.findById(id);
@@ -154,10 +154,10 @@ router.post('/initCharacters', async function(req, res) {
 // @Desc    Get a single Character by ID
 // @access  Public
 router.patch('/byUsername', async (req, res) => {
-	logger.info('GET Route: api/aircraft/:id requested...');
+	logger.info('GET Route: api/characters/byUsername requested...');
 	const { username } = req.body;
 	try {
-		const data = await Character.findOne({ username }).populate('assets').populate('traits');
+		const data = await Character.findOne({ username }).populate('assets').populate('traits').populate('lentAssets');
 		if (data === null || data.length < 1) {
 			nexusError(`Could not find a character for username "${username}"`, 404);
 		}
@@ -204,6 +204,30 @@ router.patch('/modify', async (req, res) => {
 	}
 });
 
+router.patch('/memory', async (req, res) => {
+	logger.info('GET Route: api/characters/modify requested...');
+	const { id, memories } = req.body.data;
+	try {
+		let data = await Character.findById(id);
+		if (data === null) {
+			nexusError(`Could not find a character for id "${id}"`, 404);
+		}
+		else if (data.length > 1) {
+			nexusError(`Found multiple characters for id ${id}`, 404);
+		}
+		else {
+			data.memories = memories;
+
+			data = await data.save();
+			nexusEvent.emit('updateCharacters');
+			res.status(200).json(data);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
 router.patch('/newAsset', async (req, res) => {
 	logger.info('GET Route: api/characters/modify requested...');
 	const { id, asset } = req.body.data;
@@ -234,4 +258,5 @@ router.patch('/newAsset', async (req, res) => {
 		httpErrorHandler(res, err);
 	}
 });
+
 module.exports = router;

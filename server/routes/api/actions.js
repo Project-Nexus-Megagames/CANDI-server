@@ -29,7 +29,7 @@ router.get('/', async function(req, res) {
 // @Desc    Get a single Action by ID
 // @access  Public
 router.get('/:id', validateObjectId, async (req, res) => {
-	logger.info('GET Route: api/aircraft/:id requested...');
+	logger.info('GET Route: api/action/:id requested...');
 	const id = req.params.id;
 	try {
 		const action = await Action.findById(id);
@@ -120,7 +120,7 @@ router.patch('/deleteAll', async function(req, res) {
 // ~~~Game Routes~~~
 router.patch('/editAction', async function(req, res) {
 	logger.info('POST Route: api/action call made...');
-	const { id, description, intent, effort, traits, approach, assets } = req.body.data;
+	const { id, description, intent, effort, traits, asset1, asset2, asset3 } = req.body.data;
 	try {
 		const docs = await Action.findById(id);
 
@@ -132,8 +132,9 @@ router.patch('/editAction', async function(req, res) {
 			docs.intent = intent;
 			docs.effort = effort;
 			docs.traits = traits;
-			docs.approach = approach;
-			docs.assets = assets;
+			asset1 === undefined ? docs.asset1 = '' : docs.asset1 = asset1;
+			asset2 === undefined ? docs.asset2 = '' : docs.asset2 = asset2;
+			asset3 === undefined ? docs.asset3 = '' : docs.asset3 = asset3;
 			await docs.save();
 			nexusEvent.emit('updateActions');
 			res.status(200).send('Action successfully edited');

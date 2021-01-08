@@ -21,7 +21,7 @@ const CharacterSchema = new Schema({
 	standingOrders: { type: String },
 	traits: [{ type: ObjectId, ref: 'Asset' }], // change to trait ID
 	assets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
-	lentAssets: [{ type: Schema.Types.Mixed }], // change to asset ID
+	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	popSupport: { type: Number, default: 0 },
 	wealth: {
 		level: { type: String, enum: ['Poor', 'Laborer', 'Comfortable', 'Affluent', 'Luxury'], default: 'Comfortable' },
@@ -42,11 +42,12 @@ const CharacterSchema = new Schema({
 			trigger: { type: String },
 			recall: { type: String },
 			revealed: { type: Boolean, default: false }
-		},
+		}
 	},
 	status: {
 		candidate: { type: Boolean, default: false }
-	}
+	},
+	effort: { type: Number, default: 3, min: 0, max: 3 }
 });
 
 const Character = mongoose.model('Character', CharacterSchema);
