@@ -23,10 +23,7 @@ const CharacterSchema = new Schema({
 	assets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	popSupport: { type: Number, default: 0 },
-	wealth: {
-		level: { type: String, enum: ['Poor', 'Laborer', 'Comfortable', 'Affluent', 'Luxury'], default: 'Comfortable' },
-		lent: { type: Boolean, default: false }
-	},
+	wealth: { type: ObjectId, ref: 'Asset', required: true },
 	memories: {
 		first: {
 			trigger: { type: String },

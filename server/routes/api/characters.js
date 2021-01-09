@@ -18,7 +18,7 @@ const { Asset } = require('../../models/asset');
 router.get('/', async function(req, res) {
 	logger.info('GET Route: api/character requested...');
 	try {
-		const char = await Character.find().populate('assets').populate('traits').populate('lentAssets');
+		const char = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');
 
 		res.status(200).json(char);
 	}
@@ -130,7 +130,14 @@ router.post('/initCharacters', async function(req, res) {
 	try {
 		for (const char of characters) {
 			let newCharacter = new Character(char);
-
+			const wealth = {
+				name: 'Wealth',
+				description: 'Comfortable',
+				model: 'Wealth'
+			};
+			const asset = new Asset(wealth);
+			newCharacter.wealth = asset;
+			asset.save();
 			//	await newAgent.validateAgent();
 			const docs = await Character.find({ characterName: char.characterName });
 
@@ -157,7 +164,7 @@ router.patch('/byUsername', async (req, res) => {
 	logger.info('GET Route: api/characters/byUsername requested...');
 	const { username } = req.body;
 	try {
-		const data = await Character.findOne({ username }).populate('assets').populate('traits').populate('lentAssets');
+		const data = await Character.findOne({ username }).populate('assets').populate('traits').populate('lentAssets').populate('wealth');
 		if (data === null || data.length < 1) {
 			nexusError(`Could not find a character for username "${username}"`, 404);
 		}

@@ -7,14 +7,14 @@ const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const AssetSchema = new Schema({
-	model:  { type: String, default: 'Asset', enum: ['Asset', 'Trait'] },
+	model:  { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth'] },
 	name: { type: String, required: true },
 	description: { type: String, required: true },
 	status: {
 		lent: { type: Boolean, default: false },
 		destroyed: { type: Boolean, default: false }
 	},
-	currentHolder: { type: ObjectId, ref: 'Character' },
+	currentHolder: { type: String },
 	uses: { type: Number, default: 0 }
 });
 
