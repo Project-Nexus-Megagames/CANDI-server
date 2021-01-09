@@ -16,7 +16,7 @@ const nexusError = require('../../middleware/util/throwError');
 router.get('/', async function(req, res) {
 	logger.info('GET Route: api/action requested...');
 	try {
-		const agents = await Action.find();
+		const agents = await Action.find().populate('creator');
 		res.status(200).json(agents);
 	}
 	catch (err) {

@@ -115,6 +115,12 @@ router.patch('/deleteAll', async function(req, res) {
 			nexusError(`${err.message}`, 500);
 		}
 	}
+
+	for await (const character of Character.find()) {
+		character.assets = [];
+		character.traits = [];
+		character.lentAssets = [];
+	}
 	nexusEvent.emit('updateCharacters');
 	return res.status(200).send(`We wiped out ${delCount} Assets`);
 });
@@ -169,6 +175,9 @@ router.post('/lend', async function(req, res) {
 			}
 
 			let char = await Character.findById(target);
+			if (char === null || !char) {
+				char = await Character.findBy({ characterName: target });
+			}
 			if (char === null) {
 				nexusError(`Could not find character with id "${target}"`, 400);
 			}
@@ -176,7 +185,7 @@ router.post('/lend', async function(req, res) {
 				const index = char.lentAssets.indexOf(docs);
 				lendingBoolean === true ? char.lentAssets.push(docs) : char.lentAssets.splice(index, 1);
 				docs.status.lent = lendingBoolean;
-				lendingBoolean === true ? docs.currentHolder = char : docs.currentHolder = null;
+				lendingBoolean === true ? docs.currentHolder = char.characterName : docs.currentHolder = null;
 
 				char = await char.save();
 				docs = await docs.save();
@@ -191,6 +200,5 @@ router.post('/lend', async function(req, res) {
 		nexusError(`${err.message}`, 500);
 	}
 });
-
 
 module.exports = router;
