@@ -44,6 +44,7 @@ const CharacterSchema = new Schema({
 	status: {
 		candidate: { type: Boolean, default: false }
 	},
+	supporters: [{ type: String }],
 	effort: { type: Number, default: 3, min: 0, max: 3 }
 });
 

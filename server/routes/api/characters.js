@@ -217,6 +217,35 @@ router.patch('/modify', async (req, res) => {
 	}
 });
 
+router.patch('/support', async (req, res) => {
+	logger.info('GET Route: api/characters/modify requested...');
+	const { id, supporter } = req.body;
+	try {
+		let data = await Character.findById(id).populate('wealth');
+		if (data === null) {
+			nexusError(`Could not find a character for id "${id}"`, 404);
+		}
+		else if (data.length > 1) {
+			nexusError(`Found multiple characters for id ${id}`, 404);
+		}
+		else {
+			if (data.supporters.some(el => el === supporter)) {
+				const index = data.supporters.indexOf(supporter);
+				data.supporters.splice(index, 1);
+			}
+			else {
+				data.supporters.push(supporter);
+			}
+			data = await data.save();
+			nexusEvent.emit('updateCharacters');
+			res.status(200).json(data);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
 router.patch('/memory', async (req, res) => {
 	logger.info('GET Route: api/characters/modify requested...');
 	const { id, memories } = req.body.data;
