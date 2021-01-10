@@ -3,6 +3,7 @@ const nexusEvent = require('../middleware/events/events'); // Local event trigge
 const SocketServer = require('../scripts/socketServer'); // Client Tracking Object
 const { Character } = require('../models/character');
 const { Action } = require('../models/action');
+const { GameState } = require('../models/gamestate');
 
 module.exports = function(server) {
 	const Clients = new SocketServer();
@@ -33,6 +34,11 @@ module.exports = function(server) {
 		nexusEvent.on('updateActions', async () => {
 			const actions = await Action.find();
 			client.emit('updateActions', actions);
+		});
+
+		nexusEvent.on('updateGamestate', async () => {
+			const gamestate = await GameState.findOne();
+			client.emit('updateGamestate', gamestate);
 		});
 
 	});
