@@ -182,9 +182,10 @@ router.patch('/byUsername', async (req, res) => {
 
 router.patch('/modify', async (req, res) => {
 	logger.info('GET Route: api/characters/modify requested...');
-	const { id, email, worldAnvil, tag, timeZone, wealth, icon, popsupport, bio } = req.body.data;
+	const { id, email, worldAnvil, tag, timeZone, wealth, icon, popsupport, bio, characterName } = req.body.data;
 	try {
-		let data = await Character.findById(id);
+		let data = await Character.findById(id).populate('wealth');
+		let wealthAss = await Asset.findById(data.wealth._id);
 		if (data === null) {
 			nexusError(`Could not find a character for id "${id}"`, 404);
 		}
@@ -193,16 +194,21 @@ router.patch('/modify', async (req, res) => {
 		}
 		else {
 			data.email = email;
+			data.characterName = characterName;
 			data.worldAnvil = worldAnvil;
 			data.tag = tag;
 			data.timeZone = timeZone;
-			data.wealth.level = wealth;
+
+			wealthAss.description = wealth;
+
 			data.icon = icon;
 			data.popsupport = popsupport;
 			data.bio = bio;
 
+			wealthAss = wealthAss.save();
 			data = await data.save();
 			nexusEvent.emit('updateCharacters');
+			nexusEvent.emit('updateAssets');
 			res.status(200).json(data);
 		}
 	}

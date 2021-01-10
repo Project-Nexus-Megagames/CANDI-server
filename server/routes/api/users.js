@@ -131,26 +131,24 @@ router.patch('/deleteAll', async function(req, res) {
 // @route   GET /user
 // @Desc    Get all Users
 // @access  Public
-router.patch('/login', async function(req, res) {
+router.patch('/promote', async function(req, res) {
 	logger.info('GET Route: api/user/login requested...');
-	const { email, username, password } = req.body;
+	const { username } = req.body;
 	try {
-		const docs = await User.findOne({ email }).lean();
+		const docs = await User.findOne({ username });
 		if (docs != null) {
-			logger.info(`Logging in ${docs.username}`);
-			const data = await Character.findOne({ username: docs.username });
-			if (data === null || data.length < 1) {
-				nexusError(`Could not find a character for user "${docs.username}"`, 404);
-			}
-			else if (data.length > 1) {
-				nexusError(`Found multiple characters for user ${docs.username}`, 404);
+			if (!docs.roles.some(el => el === 'Control')) {
+				docs.roles.push('Control');
+				await docs.save();
+				return res.status(200).json(docs);
 			}
 			else {
-				res.status(200).json(data);
+				return res.status(500).json(`${username} already has the role of Control!`);
 			}
+
 		}
 		else {
-			nexusError(`The user with the email "${email}" was not found!`, 404);
+			nexusError(`The user with the username "${username}" was not found!`, 404);
 		}
 	}
 	catch (err) {
