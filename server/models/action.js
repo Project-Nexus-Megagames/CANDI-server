@@ -24,7 +24,7 @@ const ActionSchema = new Schema({
 		progress: { type: Number, default: 0 }
 	},
 	dieResult: { type: Number, default: 0 },
-	result: { type: String }
+	result: { type: String, default: 'No Result Recorded Yet...' }
 });
 
 const Action = mongoose.model('Action', ActionSchema);

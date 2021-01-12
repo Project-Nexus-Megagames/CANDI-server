@@ -12,7 +12,7 @@ const AssetSchema = new Schema({
 	description: { type: String, required: true },
 	status: {
 		lent: { type: Boolean, default: false },
-		destroyed: { type: Boolean, default: false }
+		used: { type: Boolean, default: false }
 	},
 	currentHolder: { type: String },
 	uses: { type: Number, default: 0 }

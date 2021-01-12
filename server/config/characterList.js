@@ -1,390 +1,699 @@
 const characters = [
 	{
-		playerName: 'John',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'Mr. Bones',
-		tag: 'Former Servants',
-		email: 'JayTQuick@gmail.com',
-		timeZone: 'Pacific',
-		bio: 'Some say Mr. Bones is a god who founded this world, others say he\'s a fast talking pile o bones who needs to sleep more...',
+		playerName: 'Shona',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-aviator---pc—person',
+		characterName: 'The Aviator',
+		tag: 'Ferrymen',
+		email: 'shonajemphreymegagame@gmail.com',
+		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'A Ferryman by trade, but an explorer by calling.',
 		username: 'FroBoyX',
-		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg',
-		control: 'Alpha',
+		icon: '',
+		control: 'Delta',
 		memories: {
 			first: {
-				trigger: 'Eat a Banana',
+				trigger: 'Break a shade\'s chains',
 				recall: ''
 			},
 			second: {
-				trigger: 'Eat an Orange',
+				trigger: 'Discover the secrets of the River',
 				recall: ''
 			},
 			third: {
-				trigger: 'Eat an Apple',
+				trigger: 'Go beyond the horizon',
 				recall: ''
 			}
-		}
+		},
+		wealthLevel: 'Comfortable'
 	},
 	{
-		playerName: 'Scott',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'Charity',
-		tag: 'Ferrymen',
-		email: 'example@gmail.com',
-		timeZone: 'PST',
-		bio: 'Watch out he tickles ya',
-		username: 'BobtheNinjaMan',
-		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg',
-		control: 'Alpha',
+		playerName: 'LJ',
+	 pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-claviger---pc-person',
+		characterName: 'The Aviator',
+		tag: 'Former Servants',
+		email: 'theclaviger@gmail.com',
+		controlEmail: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'EST',
+		bio: 'A quiet and mysterious servant of the Silent King, the keeper of the keys had access to almost everywhere in the city, sealing and unsealing at the King\'s decree. Her motives are currently inscrutable.',
+		username: 'temp',
+		icon: '',
+		control: 'Beta',
 		memories: {
 			first: {
-				trigger: 'Eat a Banana',
+				trigger: 'Topple a petty tyrant',
 				recall: ''
 			},
 			second: {
-				trigger: 'Eat an Orange',
+				trigger: 'Expose the secrets of the King and his stooges',
 				recall: ''
 			},
 			third: {
-				trigger: 'Eat an Apple',
+				trigger: 'Save or protect another shade from terrible harm',
 				recall: ''
 			}
-		}
+		},
+		wealthLevel: 'Comfortable'
 	},
 	{
-		playerName: 'Billy',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'Mrs. Bones',
-		tag: 'Furies',
-		email: 'example@gmail.com',
-		timeZone: 'Pacific',
-		bio: 'Happily married to Mr. Bones',
-		username: 'Nunyabuisness',
-		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg',
-		control: 'Alpha',
-		memories: {
-			first: {
-				trigger: 'Eat a Banana',
-				recall: ''
-			},
-			second: {
-				trigger: 'Eat an Orange',
-				recall: ''
-			},
-			third: {
-				trigger: 'Eat an Apple',
-				recall: ''
-			}
-		}
-	},
-	{
-		playerName: 'Bob',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'Angry Skeltor Man',
-		tag: 'Misfits',
-		email: 'example@gmail.com',
-		timeZone: 'Atlantic',
-		bio: 'NYYAAHHHHH',
-		username: 'Nunyabuisness',
-		icon: 'https://preview.redd.it/rgtrs9tube361.jpg?width=513&auto=webp&s=4c0d6ba5218ce19f7b4918e2ec27aa04ab26a3d1',
-		control: 'Alpha',
-		memories: {
-			first: {
-				trigger: 'Eat a Banana',
-				recall: ''
-			},
-			second: {
-				trigger: 'Eat an Orange',
-				recall: ''
-			},
-			third: {
-				trigger: 'Eat an Apple',
-				recall: ''
-			}
-		}
-	},
-	{
-		playerName: 'Larry',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'Throgg the Barbarian',
-		tag: 'Furies',
-		email: 'example@gmail.com',
-		timeZone: 'Pacific',
-		bio: 'Vote for Throgg, he\'ll smash corruption',
-		username: 'Nunyabuisness',
-		icon: 'https://i.pinimg.com/236x/f9/fe/c8/f9fec8df840adde275c1f2337b1a239e--barbarian-king-fantasy-characters.jpg',
-		control: 'Alpha',
-		memories: {
-			first: {
-				trigger: 'Eat a Banana',
-				recall: ''
-			},
-			second: {
-				trigger: 'Eat an Orange',
-				recall: ''
-			},
-			third: {
-				trigger: 'Eat an Apple',
-				recall: ''
-			}
-		}
-	},
-	{
-		playerName: 'Dany',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'Tim the Enchanter',
-		tag: 'NPC',
-		email: 'example@gmail.com',
+		playerName: 'Matthew B',
+	 pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-foreman---pc—person',
+		characterName: 'The Foreman', 
+		tag: 'Former Servants',
+		email: 'theforeman.afterlife@gmail.com',
+		controlEmail: 'AfterLifeEpsilon@gmail.com afterlifecontrol@gmail.com',
 		timeZone: 'GMT',
-		bio: 'Some call him.... Tim?',
-		username: 'Nunyabuisness',
-		icon: 'https://www.ancient-origins.net/sites/default/files/field/image/ancient-wizard.jpg',
-		control: 'Alpha',
+		bio: 'The Foreman was a cog in the Silent King\'s machine, operating the Expanse, one of the largest workhouses. She seems deeply concerned about the Necropolitan economy.',
+		username: 'temp',
+		icon: '',
+		control: 'Beta',
 		memories: {
 			first: {
-				trigger: 'Eat a Banana',
+				trigger: 'Stave off economic disaster',
 				recall: ''
 			},
 			second: {
-				trigger: 'Eat an Orange',
+				trigger: 'Find a different way to make the wheels of commerce spin',
 				recall: ''
 			},
 			third: {
-				trigger: 'Eat an Apple',
+				trigger: 'Help a shade or shades to help themselves',
 				recall: ''
 			}
-		}
+		},
+		wealthLevel: 'Affluent'
 	},
 	{
-		playerName: 'Mac',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'A Frog',
-		tag: 'Angels',
-		email: 'example@gmail.com',
-		timeZone: 'Pacific',
-		bio: 'Ribbit',
-		username: 'Nunyabuisness',
-		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg',
-		control: 'Alpha',
+		playerName: 'Destin',
+	 pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/trouble2C-the-avenging-fury---pc-person',
+		characterName: 'The Avenging Fury',
+		tag: 'Former Servants',
+		email: 'mastermoon0502@gmail.com',
+		controlEmail: 'AfterLifeEpsilon@gmail.com, afterlifecontrol@gmail.com',
+		timeZone: 'EST',
+		bio: 'One of the Silent King\'s Furies. Formerly his most dreaded enforcers and hunters, what will they become without him?',
+		username: 'temp',
+		icon: '',
+		control: 'Epsilon',
 		memories: {
 			first: {
-				trigger: 'Eat a Banana',
+				trigger: 'Punish the wicked',
 				recall: ''
 			},
 			second: {
-				trigger: 'Eat an Orange',
+				trigger: 'Slay a monster',
 				recall: ''
 			},
 			third: {
-				trigger: 'Eat an Apple',
+				trigger: 'Ensure the new regime, whatever shape it takes, has a place for you to hunt down wrongdoers',
 				recall: ''
 			}
-		}
+		},
+		wealthLevel: 'Comfortable'
 	},
 	{
-		playerName: 'Dannis',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'A log',
+		playerName: 'Celeste',
+	 pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/trouble2C-the-implacable-fury---pc-person',
+		characterName: 'The Implacable Fury',
+		tag: 'Former Servants',
+		email: 'celestialdestiny2022@gmail.com',
+		controlEmail: 'AfterLifeEpsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'EST',
+		bio: 'One of the Silent King\'s Furies. Formerly his most dreaded enforcers and hunters, what will they become without him?',
+		username: 'temp',
+		icon: '',
+		control: 'Epsilon',
+		memories: {
+			first: {
+				trigger: 'Absolve the deserving',
+				recall: ''
+			},
+			second: {
+				trigger: 'Protect the innocent',
+				recall: ''
+			},
+			third: {
+				trigger: 'Find a role for yourself beyond, or in addition to, what the King made you into',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Comfortable'
+	},
+	{
+		playerName: 'Alex M',
+	 pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/atlas-kite2C-the-gnostic--pc-person',
+		characterName: 'The Gnostic',
 		tag: 'Gehennatown',
-		email: 'example@gmail.com',
-		timeZone: 'Atlantic',
-		bio: '....',
-		username: 'Nunyabuisness',
-		icon: 'data:image/jpeg;base64,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',
-		control: 'Alpha',
+		email: 'almason234@gmail.com',
+		controlEmail: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Is this all there is? Is this what we were promised? Is this what we deserve? These are common questions among shades, quickly silenced in the previous regime, but now they\'re being asked, and asked loudly, by a shade in Gehennatown looking for higher truths.',
+		username: 'temp',
+		icon: '',
+		control: 'Gamma',
 		memories: {
 			first: {
-				trigger: 'Eat a Banana',
+				trigger: 'Discover the secrets of the angelic and demonic',
 				recall: ''
 			},
 			second: {
-				trigger: 'Eat an Orange',
+				trigger: 'Force someone or something to confront their sins',
 				recall: ''
 			},
 			third: {
-				trigger: 'Eat an Apple',
+				trigger: 'Question a Chthonian',
 				recall: ''
 			}
-		}
-	},	{
-		playerName: 'Charlie',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'A Bog',
+		},
+		wealthLevel: 'Poor'
+	},
+	{
+		playerName: 'Ben S',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/hound2C-the-gossip---pc-person',
+		characterName: 'The Gossip',
+		tag: 'Misfits',
+		email: 'TheGossipHound@gmail.com',
+		controlEmail: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'EST',
+		bio: 'In the world of the Silent King, those without a role in his system tended to be broken by it. This shade was able to create their own role, one that has never been more relevant. They are an information broker, trading in secrets. Once little better than a spy for the King, now… they\'re freelance.',
+		username: 'temp',
+		icon: '',
+		control: 'Beta',
+		memories: {
+			first: {
+				trigger: 'Spin a web with yourself at the centre',
+				recall: ''
+			},
+			second: {
+				trigger: 'Be the subject of a scandalous rumour',
+				recall: ''
+			},
+			third: {
+				trigger: 'Make or break someone\'s reputation',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Comfortable'
+	},
+	{
+		playerName: 'Dan C',
+	 pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-house----pc-person',
+		characterName: 'The House',
+		tag: 'Elysian Fields',
+		email: 'house.shade@yahoo.com',
+		controlEmail: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'The House runs a casino where memories and pieces of the self are stakes. The House has left many a soul a broken thing, but a rare few souls have been catapulted into wealth and power. The stakes aren\'t just memories; the down-on-their luck gamblers of the Necropolis have been known to stake their skills and some people leave the casino with entirely new capabilities. By all accounts, the House (who, of course, always wins), is one of - if not the - wealthiest shades in the Necropolis.',
+		username: 'temp',
+		icon: '',
+		control: 'Gamma',
+		memories: {
+			first: {
+				trigger: 'Acquire a priceless treasure',
+				recall: ''
+			},
+			second: {
+				trigger: 'Buy your way into politics',
+				recall: ''
+			},
+			third: {
+				trigger: 'Go all in on a risky gamble',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Luxury'
+	},
+	{
+		playerName: 'Kyle',
+	 pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/arte2C-the-jester---pc-person',
+		characterName: 'The Jester',
+		tag: 'Former Servants',
+		email: 'nomansfool.afterlife@gmail.com',
+		controlEmail: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT+8',
+		bio: 'Life was a joke and so is the afterlife. They held an odd role in the court of the Silent King, their humour mostly just another tool of cruelty (though the Arte was the only person who could ever insult the Silent King and get away with it)… but now they\'re free to become their own comedian. The Jester wears a variety of costumes - changing their face, body and mannerisms to match - for different roles. Their red eye paint reveals the Jester\'s identity.',
+		username: 'temp',
+		icon: '',
+		control: 'Gamma',
+		memories: {
+			first: {
+				trigger: 'Point out that the Emperor has no clothes',
+				recall: ''
+			},
+			second: {
+				trigger: 'Show the dead that they can dance',
+				recall: ''
+			},
+			third: {
+				trigger: 'The afterlife is a joke; discover the punchline',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Comfortable'
+	},
+	{
+		playerName: 'Joe',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/velmont2C-the-ranger---pc-person',
+		characterName: 'The Ranger',
+		tag: 'Former Servants',
+		email: 'xxhomeontherangerxx@gmail.com',
+		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'A scout and soldier, one of the senior Grey Marchers under the Silent King and Margrave, since the King\'s disappearance he\'s been expressing an interest in exploration and study of the afterlife beyond the Necropolis (something the King forbade).',
+		username: 'temp',
+		icon: '',
+		control: 'Delta',
+		memories: {
+			first: {
+				trigger: 'Mount an expedition',
+				recall: ''
+			},
+			second: {
+				trigger: 'Ensure the new regime values exploration',
+				recall: ''
+			},
+			third: {
+				trigger: 'Share your discoveries with the Necropolis',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Laborer'
+	},
+	{
+		playerName: 'Ben K',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/prophet-of-penance2C-aka-the-penitent---pc-person-1',
+		characterName: 'The Penitent',
+		tag: 'Gehennatown',
+		email: 'Penitent.AL@gmail.com',
+		controlEmail: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'EST',
+		bio: 'A former disciple of the Flagellant, the Penitent is trying to atone for their sins (whatever those are). They parted amicably with the Unforgiven, seeking a different atonement and believing the suffering of the Flagellant to serve no real spiritual purpose. They also find the methods of the Baptist and their cult too extreme to the opposite side of the scale. The Prophet of Penance has established their own cult - Repentants - as another option for those seeking absolution. The Repentants believe that if a shade has truly atoned for their sins on Earth they will find absolution and be able live their afterlife in peace. Word has spread that the Prophet of Penance has begun performing a ritual of confession. The ritual can remove the regret, guilt, and even memory of earthly sins from a shade and have the Prophet of Penance bear that burden in their place.',
+		username: 'temp',
+		icon: '',
+		control: 'Beta',
+		memories: {
+			first: {
+				trigger: 'Earn the forgiveness of those you wronged',
+				recall: ''
+			},
+			second: {
+				trigger: 'Lead other shades to repentance',
+				recall: ''
+			},
+			third: {
+				trigger: 'Sacrifice for the sake of another',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Laborer'
+	},
+	{
+		playerName: 'Alex V',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-gourmand---pc-person',
+		characterName: 'The Gourmand',
+		tag: 'Elysian Fields',
+		email: 'vlexaince@gmail.com',
+		controlEmail: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'The Gourmand was a magnate under the old regime and has only grown more influential as shades awaken. They operate a private club that provides choice foodstuffs (all once burned as offerings to the dead) and other vices. Some disapprove of their businesses and the free will, or lack thereof, of their staff is becoming a more awkward and pressing issue, but by all accounts the Gourmand is remarkably amiable.',
+		username: 'temp',
+		icon: '',
+		control: 'Gamma',
+		memories: {
+			first: {
+				trigger: 'Experience the agony and the ecstasy of second death',
+				recall: ''
+			},
+			second: {
+				trigger: 'Discover, or create, an entirely new experience',
+				recall: ''
+			},
+			third: {
+				trigger: 'Show the Necropolis the power of vice',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Luxury'
+	},
+	{
+		playerName: 'Paul',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-scholar---pc-person',
+		characterName: 'The Scholar',
+		tag: 'Misfits',
+		email: 'thenulledspace@gmail.com',
+		controlEmail: 'AfterLifeEpsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'New to the Necropolis, the Scholar is highly intelligent and intensely curious. They\'re looking to understand the strange world they have found themselves in.',
+		username: 'temp',
+		icon: '',
+		control: 'Epsilon',
+		memories: {
+			first: {
+				trigger: 'Learn the secrets of a Chthonian (or Chthonians)',
+				recall: ''
+			},
+			second: {
+				trigger: 'Discover a terrible secret about a shade or shades',
+				recall: ''
+			},
+			third: {
+				trigger: 'Investigate the motives of the angelic and demonic',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Poor'
+	},
+	{
+		playerName: 'Kieran',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/virgil2C-the-sculptor---pc-person',
+		characterName: 'The Sculptor',
+		tag: 'Cold Forges',
+		email: 'afterlifekieran@gmail.com',
+		controlEmail: 'AfterLifeEpsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'A crafter and genuine innovator in a city where everything that exists is secondhand, something about the Sculptor makes people uncomfortable but their brilliance is undeniable.',
+		username: 'temp',
+		icon: '',
+		control: 'Epsilon',
+		memories: {
+			first: {
+				trigger: 'Create something that has never been seen before',
+				recall: ''
+			},
+			second: {
+				trigger: 'Find another role for yourself beyond/in addition to crafter)',
+				recall: ''
+			},
+			third: {
+				trigger: 'Secure a patron (or patrons)',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Comfortable'
+	},
+	{
+		playerName: 'Christina',
+	 pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-seeker---pc-person',
+		characterName: 'The Seeker',
+		tag: 'Misfits',
+		email: 'Theseekerafterlife@gmail.com',
+		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'An unremarkable soul working on the Shores, the Seeker awakened and has begun looking for something, poking her nose wherever she can. The Seeker is tormented more than most shades by the knowledge that a key piece of her self is missing, something absolutely fundamental. Essential. She will look everywhere for the clue that will spark her memory, working as a private detective of sorts while searching for her personal Maltese Falcon.',
+		username: 'temp',
+		icon: '',
+		control: 'Delta',
+		memories: {
+			first: {
+				trigger: 'Complete an investigation on behalf of another',
+				recall: ''
+			},
+			second: {
+				trigger: 'Complete an investigation for yourself',
+				recall: ''
+			},
+			third: {
+				trigger: 'Your final memory trigger is a secret to you',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Laborer'
+	},
+	{
+		playerName: 'Greg',
+	 pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/k2C-the-seneschal---pc-person',
+		characterName: 'The Seneschal',
+		tag: 'Former Servants',
+		email: 'dgcragg@gmail.com',
+		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PST',
+		bio: 'The Silent King\'s right hand-shade, devastated by his apparent abdication. He\'s one of the only people interested in what happened to the King. K\'s awakening is a painful one as doubt creeps into a soul conditioned for absolute loyalty.',
+		username: 'temp',
+		icon: '',
+		control: 'Delta',
+		memories: {
+			first: {
+				trigger: 'Find a worthy ruler',
+				recall: ''
+			},
+			second: {
+				trigger: 'Discover the fate of the Silent King',
+				recall: ''
+			},
+			third: {
+				trigger: 'Your final memory trigger is a secret to you',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Affluent'
+	},
+	{
+		playerName: 'Alex McK',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/reeve2C-the-steward--pc-person',
+		characterName: 'The Steward',
+		tag: 'Former Servants',
+		email: 'areidgrey@googlemail.com',
+		controlEmail: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'The Steward\'s role seemed pointless, vestigial. The Silent King needed no valet or bodyguard, yet the Steward was always close at hand. Reeve seems to have moved on from the King very quickly and is taking an extremely active interest in the pending election.',
+		username: 'temp',
+		icon: '',
+		control: 'Beta',
+		memories: {
+			first: {
+				trigger: 'Prove your loyalty to a contender for the Throne',
+				recall: ''
+			},
+			second: {
+				trigger: 'Command from the shadows',
+				recall: ''
+			},
+			third: {
+				trigger: 'Serve the new ruler',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Comfortable'
+	},
+	{
+		playerName: 'Andrew E',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-thorn---pc—person',
+		characterName: 'The Thorn',
+		tag: 'Misfits',
+		email: 'andrew.c.enriquez@gmail.com',
+		controlEmail: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'CT',
+		bio: 'The Thorn was a rarity, a thorn in the side of the Silent King who managed to evade capture and punishment. Only they and the Eremite ever managed it for long. They decried his cruel and arbitrary regime. Now is their time; they would like to see every shade in the city awoken, and would see an end to the tragedy that is the fate of the shades who toil at the Shores, forgetting themselves piece by piece until nothing is left.',
+		username: 'temp',
+		icon: '',
+		control: 'Beta',
+		memories: {
+			first: {
+				trigger: 'Help those who cannot help themselves',
+				recall: ''
+			},
+			second: {
+				trigger: 'Dismantle what remains of Silent King\'s state',
+				recall: ''
+			},
+			third: {
+				trigger: 'Absolve someone of their sin',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Poor'
+	},
+	{
+		playerName: 'Simo',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-upstart---pc-person-1',
+		characterName: 'The Upstart',
+		tag: 'Misfits',
+		email: 'simo.santeri@gmail.com',
+		controlEmail: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT+2',
+		bio: 'The Upstart was some newly-dead nobody who awakened in the (now unmoving) queue to see She Who Bears The Scale and absconded into the city. They\'ve quickly started to build a powerbase that has more established shades impressed and intimidated.',
+		username: 'temp',
+		icon: '',
+		control: 'Gamma',
+		memories: {
+			first: {
+				trigger: 'Prove your significance to the Necropolis',
+				recall: ''
+			},
+			second: {
+				trigger: 'Acquire a symbol of your authority',
+				recall: ''
+			},
+			third: {
+				trigger: 'Win an influential shade\'s loyalty,',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Poor'
+	},
+	{
+		playerName: 'Alexey',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-unknown-soldier---pc-person',
+		characterName: 'The Unknown Soldier',
+		tag: 'Misfits',
+		email: 'alexeynikolaev31@gmail.com',
+		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT+3',
+		bio: 'The Unknown Soldier awoke, suddenly, in a prison. The second they recovered their mind they knew that no prison could not hold them. They walked to the River and were ferried across by the Driver. They\'re a former soldier of some sort and seem to be highly intelligent and highly driven.',
+		username: 'temp',
+		icon: '',
+		control: 'Delta',
+		memories: {
+			first: {
+				trigger: 'Conquer the unconquerable, defeat the undefeatable or win the unwinnable',
+				recall: ''
+			},
+			second: {
+				trigger: 'Assemble a legion',
+				recall: ''
+			},
+			third: {
+				trigger: 'Show the underworld your benevolence and wisdom',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Laborer'
+	},
+	{
+		playerName: 'Rob',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-angel-of-judgement---pc—person',
+		characterName: 'The Angel of Judgement',
 		tag: 'Angels',
-		email: 'example@gmail.com',
+		email: 'shard@live.co.uk',
+		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
 		timeZone: 'GMT',
-		bio: 'Blub blub',
-		username: 'Nunyabuisness',
-		icon: 'https://ychef.files.bbci.co.uk/624x351/p04c1c35.jpg',
-		control: 'Alpha',
+		bio: 'One of the angels active in the Necropolis.',
+		username: 'temp',
+		icon: '',
+		control: 'Game Control',
 		memories: {
 			first: {
-				trigger: 'Eat a Banana',
+				trigger: '',
 				recall: ''
 			},
 			second: {
-				trigger: 'Eat an Orange',
+				trigger: '',
 				recall: ''
 			},
 			third: {
-				trigger: 'Eat an Apple',
+				trigger: '',
 				recall: ''
 			}
-		}
-	},	{
-		playerName: 'Dee',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'The Hog',
-		tag: 'Demons',
-		email: 'example@gmail.com',
-		timeZone: 'Pacific',
-		bio: 'Oink',
-		username: 'Nunyabuisness',
-		icon: 'https://pyxis.nymag.com/v1/imgs/e11/2b4/6305f190728ca4438f443142453ec5f267-16-feral-hog.rsquare.w700.jpg',
-		control: 'Alpha',
-		memories: {
-			first: {
-				trigger: 'Eat a Banana',
-				recall: ''
-			},
-			second: {
-				trigger: 'Eat an Orange',
-				recall: ''
-			},
-			third: {
-				trigger: 'Eat an Apple',
-				recall: ''
-			}
-		}
-	},	{
-		playerName: 'Frank',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'The Duke',
-		tag: 'Ferrymen',
-		email: 'example@gmail.com',
-		timeZone: 'GMT',
-		bio: 'Chhaarrmedd charmed charmed',
-		username: 'Nunyabuisness',
-		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg',
-		control: 'Alpha',
-		memories: {
-			first: {
-				trigger: 'Eat a Banana',
-				recall: ''
-			},
-			second: {
-				trigger: 'Eat an Orange',
-				recall: ''
-			},
-			third: {
-				trigger: 'Eat an Apple',
-				recall: ''
-			}
-		}
+		},
+		wealthLevel: 'Poor'
 	},
 	{
-		playerName: 'Dave',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'The Duke 2',
-		tag: 'Ferrymen',
-		email: 'example@gmail.com',
-		timeZone: 'GMT',
-		bio: 'Chhaarrmedd charmed charmed',
-		username: 'Nunyabuisness',
-		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg',
-		control: 'Alpha',
-		memories: {
-			first: {
-				trigger: 'Eat a Banana',
-				recall: ''
-			},
-			second: {
-				trigger: 'Eat an Orange',
-				recall: ''
-			},
-			third: {
-				trigger: 'Eat an Apple',
-				recall: ''
-			}
-		}
-	},
-	{
-		playerName: 'Gary',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'The Snail',
+		playerName: 'Dan V',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-angel-of-dawn---pc-person',
+		characterName: 'The Angel of Dawn',
 		tag: 'Angels',
-		email: 'example@gmail.com',
-		timeZone: 'GMT',
-		bio: 'Chhaarrmedd charmed charmed',
-		username: 'Nunyabuisness',
-		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg',
-		control: 'Alpha',
+		email: 'daniel.vehslage@gmail.com',
+		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'MST',
+		bio: 'One of the angels active in the Necropolis.',
+		username: 'temp',
+		icon: '',
+		control: 'Game Control',
 		memories: {
 			first: {
-				trigger: 'Eat a Banana',
+				trigger: '',
 				recall: ''
 			},
 			second: {
-				trigger: 'Eat an Orange',
+				trigger: '',
 				recall: ''
 			},
 			third: {
-				trigger: 'Eat an Apple',
+				trigger: '',
 				recall: ''
 			}
-		}
+		},
+		wealthLevel: 'Poor'
 	},
 	{
-		playerName: 'Garrry',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'The Slug',
-		tag: 'Ferrymen',
-		email: 'example@gmail.com',
-		timeZone: 'GMT',
-		bio: 'Chhaarrmedd charmed charmed',
-		username: 'Nunyabuisness',
-		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg',
-		control: 'Alpha',
-		memories: {
-			first: {
-				trigger: 'Eat a Banana',
-				recall: ''
-			},
-			second: {
-				trigger: 'Eat an Orange',
-				recall: ''
-			},
-			third: {
-				trigger: 'Eat an Apple',
-				recall: ''
-			}
-		}
-	},
-	{
-		playerName: 'Davinci',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control',
-		characterName: 'The Artist',
+		playerName: 'John K',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-demon-of-mercy---pc-person',
+		characterName: 'The Demon of Mercy',
 		tag: 'Demons',
-		email: 'example@gmail.com',
+		email: 'spa263-mercy@yahoo.com',
+		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
 		timeZone: 'GMT',
-		bio: 'Chhaarrmedd charmed charmed',
-		username: 'Nunyabuisness',
-		icon: 'https://thumbs.dreamstime.com/b/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg',
-		control: 'Alpha',
+		bio: 'One of the demons active in the Necropolis.',
+		username: 'temp',
+		icon: '',
+		control: 'Game Control',
 		memories: {
 			first: {
-				trigger: 'Eat a Banana',
+				trigger: '',
 				recall: ''
 			},
 			second: {
-				trigger: 'Eat an Orange',
+				trigger: '',
 				recall: ''
 			},
 			third: {
-				trigger: 'Eat an Apple',
+				trigger: '',
 				recall: ''
 			}
-		}
+		},
+		wealthLevel: 'Poor'
+	},
+	{
+		playerName: 'Peter',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-demon-of-dusk---pc-person',
+		characterName: 'The Demon of Dusk',
+		tag: 'Demons',
+		email: 'pmsinclair+afterlife@protonmail.com',
+		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PST',
+		bio: 'One of the demons active in the Necropolis.',
+		username: 'temp',
+		icon: '',
+		control: 'Game Control',
+		memories: {
+			first: {
+				trigger: '',
+				recall: ''
+			},
+			second: {
+				trigger: '',
+				recall: ''
+			},
+			third: {
+				trigger: '',
+				recall: ''
+			}
+		},
+		wealthLevel: 'Poor'
 	}
 ];
 

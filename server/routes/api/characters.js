@@ -131,8 +131,8 @@ router.post('/initCharacters', async function(req, res) {
 		for (const char of characters) {
 			let newCharacter = new Character(char);
 			const wealth = {
-				name: 'Wealth',
-				description: 'Comfortable',
+				name: `${newCharacter.characterName}'s Wealth`,
+				description: char.wealthLevel,
 				model: 'Wealth'
 			};
 			const asset = new Asset(wealth);
