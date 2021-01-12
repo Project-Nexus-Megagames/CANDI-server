@@ -9,6 +9,8 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const { Action } = require('../../models/action'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
+const { Asset } = require('../../models/asset');
+const { Character } = require('../../models/character');
 
 // @route   GET api/actions
 // @Desc    Get all actions
@@ -56,8 +58,30 @@ router.post('/', async function(req, res) {
 		const docs = await Action.find({ intent: data.intent });
 
 		if (docs.length < 1) {
+			if (data.asset1) {
+				const ass = await Asset.findOne({ name: data.asset1 });
+				ass.status.used = true;
+				await ass.save();
+			}
+			if (data.asset2) {
+				const ass = await Asset.findOne({ name: data.asset2 });
+				ass.status.used = true;
+				await ass.save();
+			}
+			if (data.asset3) {
+				const ass = await Asset.findOne({ name: data.asset3 });
+				ass.status.used = true;
+				await ass.save();
+			}
+
+			const character = await Character.findById(data.creator);
+			character.effort = character.effort - data.effort;
+			await character.save();
+
 			newElement = await newElement.save();
 			logger.info(`${newElement.intent} created.`);
+			nexusEvent.emit('updateCharacters');
+			nexusEvent.emit('updateAssets');
 			nexusEvent.emit('updateActions');
 			res.status(200).json(newElement);
 		}
@@ -80,8 +104,25 @@ router.delete('/:id', async function(req, res) {
 		let element = await Action.findById(id);
 		if (element != null) {
 			element = await Action.findByIdAndDelete(id);
+			if (element.asset1) {
+				const ass = await Asset.findOne({ name: element.asset1 });
+				ass.status.used = false;
+				await ass.save();
+			}
+			if (element.asset2) {
+				const ass = await Asset.findOne({ name: element.asset2 });
+				ass.status.used = false;
+				await ass.save();
+			}
+			if (element.asset3) {
+				const ass = await Asset.findOne({ name: element.asset3 });
+				ass.status.used = false;
+				await ass.save();
+			}
+
 			logger.info(`Action with the id ${id} was deleted!`);
 			nexusEvent.emit('updateActions');
+			nexusEvent.emit('updateAssets');
 			res.status(200).send(`Action with the id ${id} was deleted!`);
 		}
 		else {
@@ -120,7 +161,7 @@ router.patch('/deleteAll', async function(req, res) {
 // ~~~Game Routes~~~
 router.patch('/editAction', async function(req, res) {
 	logger.info('POST Route: api/action call made...');
-	const { id, description, intent, effort, traits, asset1, asset2, asset3 } = req.body.data;
+	const { id, description, intent, effort, asset1, asset2, asset3 } = req.body.data;
 	try {
 		const docs = await Action.findById(id);
 
@@ -131,10 +172,43 @@ router.patch('/editAction', async function(req, res) {
 			docs.description = description;
 			docs.intent = intent;
 			docs.effort = effort;
-			docs.traits = traits;
+
+			if (docs.asset1) {
+				const ass = await Asset.findOne({ name: docs.asset1 });
+				ass.status.used = false;
+				await ass.save();
+			}
+			if (docs.asset2) {
+				const ass = await Asset.findOne({ name: docs.asset2 });
+				ass.status.used = false;
+				await ass.save();
+			}
+			if (docs.asset3) {
+				const ass = await Asset.findOne({ name: docs.asset3 });
+				ass.status.used = false;
+				await ass.save();
+			}
+
 			asset1 === undefined ? docs.asset1 = '' : docs.asset1 = asset1;
 			asset2 === undefined ? docs.asset2 = '' : docs.asset2 = asset2;
 			asset3 === undefined ? docs.asset3 = '' : docs.asset3 = asset3;
+
+			if (docs.asset1) {
+				const ass = await Asset.findOne({ name: docs.asset1 });
+				ass.status.used = true;
+				await ass.save();
+			}
+			if (docs.asset2) {
+				const ass = await Asset.findOne({ name: docs.asset2 });
+				ass.status.used = true;
+				await ass.save();
+			}
+			if (docs.asset3) {
+				const ass = await Asset.findOne({ name: docs.asset3 });
+				ass.status.used = true;
+				await ass.save();
+			}
+
 			await docs.save();
 			nexusEvent.emit('updateActions');
 			res.status(200).send('Action successfully edited');

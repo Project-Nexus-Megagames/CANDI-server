@@ -165,9 +165,23 @@ router.patch('/nextRound', async function(req, res) {
 			asset.save();
 		}
 
+		for (const asset of await Asset.find({ 'status.used': true })) {
+			asset.status.used = false;
+			console.log(`UnUsing ${asset.name}`);
+			asset.save();
+		}
+
 		for (const character of await Character.find()) {
 			character.lentAssets = [];
+			character.effort = 3;
 			character.save();
+		}
+
+		for (const action of await Action.find({ 'status.ready': true })) {
+			action.status.ready = false;
+			action.status.published = true;
+
+			action.save();
 		}
 
 		data.round = data.round + 1;
@@ -175,6 +189,7 @@ router.patch('/nextRound', async function(req, res) {
 		await data.save();
 		nexusEvent.emit('updateGamestate');
 		nexusEvent.emit('updateActions');
+		nexusEvent.emit('updateCharacters');
 		return res.status(200).send('Gamestate pushed! ');
 	}
 	catch (err) {
