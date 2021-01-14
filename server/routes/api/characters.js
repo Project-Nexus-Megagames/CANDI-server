@@ -166,7 +166,9 @@ router.patch('/byUsername', async (req, res) => {
 	try {
 		const data = await Character.findOne({ username }).populate('assets').populate('traits').populate('lentAssets').populate('wealth');
 		if (data === null || data.length < 1) {
-			nexusError(`Could not find a character for username "${username}"`, 404);
+			console.log(`Could not find a character for username "${username}"`);
+			// nexusError(`Could not find a character for id "${id}"`, 404);
+			res.status(200).json(data);
 		}
 		else if (data.length > 1) {
 			nexusError(`Found multiple characters for username ${username}`, 404);
@@ -182,7 +184,7 @@ router.patch('/byUsername', async (req, res) => {
 
 router.patch('/modify', async (req, res) => {
 	logger.info('GET Route: api/characters/modify requested...');
-	const { id, email, worldAnvil, tag, timeZone, wealth, icon, popsupport, bio, characterName } = req.body.data;
+	const { id, effort, email, worldAnvil, tag, timeZone, wealth, icon, popsupport, bio, characterName } = req.body.data;
 	try {
 		let data = await Character.findById(id).populate('wealth');
 		let wealthAss = await Asset.findById(data.wealth._id);
@@ -198,6 +200,7 @@ router.patch('/modify', async (req, res) => {
 			data.worldAnvil = worldAnvil;
 			data.tag = tag;
 			data.timeZone = timeZone;
+			data.effort = effort;
 
 			wealthAss.description = wealth;
 

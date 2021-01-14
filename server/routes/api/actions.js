@@ -76,6 +76,7 @@ router.post('/', async function(req, res) {
 
 			const character = await Character.findById(data.creator);
 			character.effort = character.effort - data.effort;
+			if (character.effort > 3) character.effort = 3;
 			await character.save();
 
 			newElement = await newElement.save();
@@ -120,7 +121,12 @@ router.delete('/:id', async function(req, res) {
 				await ass.save();
 			}
 
+			const character = await Character.findById(element.creator);
+			character.effort = character.effort + element.effort;
+			await character.save();
+
 			logger.info(`Action with the id ${id} was deleted!`);
+			nexusEvent.emit('updateCharacters');
 			nexusEvent.emit('updateActions');
 			nexusEvent.emit('updateAssets');
 			res.status(200).send(`Action with the id ${id} was deleted!`);
@@ -171,6 +177,11 @@ router.patch('/editAction', async function(req, res) {
 		else {
 			docs.description = description;
 			docs.intent = intent;
+
+			const character = await Character.findById(docs.creator);
+			character.effort = character.effort - (effort - docs.effort);
+			await character.save();
+
 			docs.effort = effort;
 
 			if (docs.asset1) {
@@ -210,8 +221,10 @@ router.patch('/editAction', async function(req, res) {
 			}
 
 			await docs.save();
+			nexusEvent.emit('updateCharacters');
 			nexusEvent.emit('updateActions');
-			res.status(200).send('Action successfully edited');
+			nexusEvent.emit('updateAssets');
+			res.status(200).json(docs);
 		}
 	}
 	catch (err) {

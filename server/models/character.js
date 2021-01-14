@@ -10,7 +10,7 @@ const CharacterSchema = new Schema({
 	model:  { type: String, default: 'Character' },
 	playerName: { type: String, minlength: 2, maxlength: 50, required: true },
 	email: { type: String, required: true },
-	controlEmail: { type: String, required: true },
+	controlEmail: { type: String, default: ''},
 	worldAnvil: { type: String, required: true },
 	timeZone: { type: String, required: true },
 	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
@@ -18,7 +18,6 @@ const CharacterSchema = new Schema({
 	username: { type: String, minlength: 2, maxlength: 50, required: true },
 	bio: { type: String },
 	icon: { type: String },
-	objectives: { type: String },
 	standingOrders: { type: String },
 	traits: [{ type: ObjectId, ref: 'Asset' }], // change to trait ID
 	assets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
