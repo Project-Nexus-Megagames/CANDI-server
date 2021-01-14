@@ -30,9 +30,9 @@ const characters = [
 	},
 	{
 		playerName: 'LJ',
-	 pronouns: 'She/Her',
+		pronouns: 'She/Her',
 		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-claviger---pc-person',
-		characterName: 'The Aviator',
+		characterName: 'Claviger',
 		tag: 'Former Servants',
 		email: 'theclaviger@gmail.com',
 		controlEmail: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
@@ -59,9 +59,9 @@ const characters = [
 	},
 	{
 		playerName: 'Matthew B',
-	 pronouns: 'She/Her',
+		pronouns: 'She/Her',
 		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-foreman---pc—person',
-		characterName: 'The Foreman', 
+		characterName: 'The Foreman',
 		tag: 'Former Servants',
 		email: 'theforeman.afterlife@gmail.com',
 		controlEmail: 'AfterLifeEpsilon@gmail.com afterlifecontrol@gmail.com',
@@ -88,7 +88,7 @@ const characters = [
 	},
 	{
 		playerName: 'Destin',
-	 pronouns: 'He/Him',
+		pronouns: 'He/Him',
 		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/trouble2C-the-avenging-fury---pc-person',
 		characterName: 'The Avenging Fury',
 		tag: 'Former Servants',
@@ -117,7 +117,7 @@ const characters = [
 	},
 	{
 		playerName: 'Celeste',
-	 pronouns: 'She/Her',
+		pronouns: 'She/Her',
 		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/trouble2C-the-implacable-fury---pc-person',
 		characterName: 'The Implacable Fury',
 		tag: 'Former Servants',
@@ -146,7 +146,7 @@ const characters = [
 	},
 	{
 		playerName: 'Alex M',
-	 pronouns: 'He/Him',
+		pronouns: 'He/Him',
 		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/atlas-kite2C-the-gnostic--pc-person',
 		characterName: 'The Gnostic',
 		tag: 'Gehennatown',
@@ -204,7 +204,7 @@ const characters = [
 	},
 	{
 		playerName: 'Dan C',
-	 pronouns: 'He/Him',
+		pronouns: 'He/Him',
 		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-house----pc-person',
 		characterName: 'The House',
 		tag: 'Elysian Fields',
@@ -233,7 +233,7 @@ const characters = [
 	},
 	{
 		playerName: 'Kyle',
-	 pronouns: 'They/Them',
+		pronouns: 'They/Them',
 		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/arte2C-the-jester---pc-person',
 		characterName: 'The Jester',
 		tag: 'Former Servants',
@@ -407,7 +407,7 @@ const characters = [
 	},
 	{
 		playerName: 'Christina',
-	 pronouns: 'She/Her',
+		pronouns: 'She/Her',
 		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-seeker---pc-person',
 		characterName: 'The Seeker',
 		tag: 'Misfits',
@@ -436,7 +436,7 @@ const characters = [
 	},
 	{
 		playerName: 'Greg',
-	 pronouns: 'He/Him',
+		pronouns: 'He/Him',
 		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/k2C-the-seneschal---pc-person',
 		characterName: 'The Seneschal',
 		tag: 'Former Servants',
