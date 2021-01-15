@@ -9,7 +9,7 @@ const characters = [
 		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
 		timeZone: 'GMT',
 		bio: 'A Ferryman by trade, but an explorer by calling.',
-		username: 'FroBoyX',
+		username: 'temp',
 		icon: '',
 		control: 'Delta',
 		memories: {
@@ -39,7 +39,7 @@ const characters = [
 		timeZone: 'EST',
 		bio: 'A quiet and mysterious servant of the Silent King, the keeper of the keys had access to almost everywhere in the city, sealing and unsealing at the King\'s decree. Her motives are currently inscrutable.',
 		username: 'temp',
-		icon: '',
+		icon: '‘https://www.worldanvil.com/media/cache/skyscraper/uploads/images/5f180d4b68aacc09ba428d11b4e7c0da.jpg',
 		control: 'Beta',
 		memories: {
 			first: {
@@ -68,7 +68,7 @@ const characters = [
 		timeZone: 'GMT',
 		bio: 'The Foreman was a cog in the Silent King\'s machine, operating the Expanse, one of the largest workhouses. She seems deeply concerned about the Necropolitan economy.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/5141b3459997394aa4c2f09b95bea150.jpg',
 		control: 'Beta',
 		memories: {
 			first: {
@@ -97,7 +97,7 @@ const characters = [
 		timeZone: 'EST',
 		bio: 'One of the Silent King\'s Furies. Formerly his most dreaded enforcers and hunters, what will they become without him?',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/ffacb97bd06c8f873eced60462d69131.jpg',
 		control: 'Epsilon',
 		memories: {
 			first: {
@@ -126,7 +126,7 @@ const characters = [
 		timeZone: 'EST',
 		bio: 'One of the Silent King\'s Furies. Formerly his most dreaded enforcers and hunters, what will they become without him?',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/b49a1972bb4cf1b4dd61a8c86bf44024.jpg',
 		control: 'Epsilon',
 		memories: {
 			first: {
@@ -155,7 +155,7 @@ const characters = [
 		timeZone: 'GMT',
 		bio: 'Is this all there is? Is this what we were promised? Is this what we deserve? These are common questions among shades, quickly silenced in the previous regime, but now they\'re being asked, and asked loudly, by a shade in Gehennatown looking for higher truths.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/7fdd21612bbf22dd2060c57952b9b2c0.jpg',
 		control: 'Gamma',
 		memories: {
 			first: {
@@ -184,7 +184,7 @@ const characters = [
 		timeZone: 'EST',
 		bio: 'In the world of the Silent King, those without a role in his system tended to be broken by it. This shade was able to create their own role, one that has never been more relevant. They are an information broker, trading in secrets. Once little better than a spy for the King, now… they\'re freelance.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/85b471116d879c4418d61f3bc66d3bad.png',
 		control: 'Beta',
 		memories: {
 			first: {
@@ -213,7 +213,7 @@ const characters = [
 		timeZone: 'GMT',
 		bio: 'The House runs a casino where memories and pieces of the self are stakes. The House has left many a soul a broken thing, but a rare few souls have been catapulted into wealth and power. The stakes aren\'t just memories; the down-on-their luck gamblers of the Necropolis have been known to stake their skills and some people leave the casino with entirely new capabilities. By all accounts, the House (who, of course, always wins), is one of - if not the - wealthiest shades in the Necropolis.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/39f74323232359e511460a063770af61.jpg',
 		control: 'Gamma',
 		memories: {
 			first: {
@@ -242,7 +242,7 @@ const characters = [
 		timeZone: 'GMT+8',
 		bio: 'Life was a joke and so is the afterlife. They held an odd role in the court of the Silent King, their humour mostly just another tool of cruelty (though the Arte was the only person who could ever insult the Silent King and get away with it)… but now they\'re free to become their own comedian. The Jester wears a variety of costumes - changing their face, body and mannerisms to match - for different roles. Their red eye paint reveals the Jester\'s identity.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/arte2C-the-jester---pc-person',
 		control: 'Gamma',
 		memories: {
 			first: {
@@ -271,7 +271,7 @@ const characters = [
 		timeZone: 'GMT',
 		bio: 'A scout and soldier, one of the senior Grey Marchers under the Silent King and Margrave, since the King\'s disappearance he\'s been expressing an interest in exploration and study of the afterlife beyond the Necropolis (something the King forbade).',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/db8179894f7c8498fa79d1ade47c6c03.jpg',
 		control: 'Delta',
 		memories: {
 			first: {
@@ -300,7 +300,7 @@ const characters = [
 		timeZone: 'EST',
 		bio: 'A former disciple of the Flagellant, the Penitent is trying to atone for their sins (whatever those are). They parted amicably with the Unforgiven, seeking a different atonement and believing the suffering of the Flagellant to serve no real spiritual purpose. They also find the methods of the Baptist and their cult too extreme to the opposite side of the scale. The Prophet of Penance has established their own cult - Repentants - as another option for those seeking absolution. The Repentants believe that if a shade has truly atoned for their sins on Earth they will find absolution and be able live their afterlife in peace. Word has spread that the Prophet of Penance has begun performing a ritual of confession. The ritual can remove the regret, guilt, and even memory of earthly sins from a shade and have the Prophet of Penance bear that burden in their place.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/552b6775b7700f3f90fbb1b9f062fc6a.jpg',
 		control: 'Beta',
 		memories: {
 			first: {
@@ -329,7 +329,7 @@ const characters = [
 		timeZone: 'GMT',
 		bio: 'The Gourmand was a magnate under the old regime and has only grown more influential as shades awaken. They operate a private club that provides choice foodstuffs (all once burned as offerings to the dead) and other vices. Some disapprove of their businesses and the free will, or lack thereof, of their staff is becoming a more awkward and pressing issue, but by all accounts the Gourmand is remarkably amiable.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/bd281218374f209be2bc7418b6d5d9db.jpg',
 		control: 'Gamma',
 		memories: {
 			first: {
@@ -387,7 +387,7 @@ const characters = [
 		timeZone: 'GMT',
 		bio: 'A crafter and genuine innovator in a city where everything that exists is secondhand, something about the Sculptor makes people uncomfortable but their brilliance is undeniable.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/314942b9996592a92cd6695c02ed97a2.jpg',
 		control: 'Epsilon',
 		memories: {
 			first: {
@@ -416,7 +416,7 @@ const characters = [
 		timeZone: 'GMT',
 		bio: 'An unremarkable soul working on the Shores, the Seeker awakened and has begun looking for something, poking her nose wherever she can. The Seeker is tormented more than most shades by the knowledge that a key piece of her self is missing, something absolutely fundamental. Essential. She will look everywhere for the clue that will spark her memory, working as a private detective of sorts while searching for her personal Maltese Falcon.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/3f465b6a2f5fcb38191afb71d86d89b6.jpg',
 		control: 'Delta',
 		memories: {
 			first: {
@@ -445,7 +445,7 @@ const characters = [
 		timeZone: 'PST',
 		bio: 'The Silent King\'s right hand-shade, devastated by his apparent abdication. He\'s one of the only people interested in what happened to the King. K\'s awakening is a painful one as doubt creeps into a soul conditioned for absolute loyalty.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/2fb56f54396c499358b59a0bd28758c2.png',
 		control: 'Delta',
 		memories: {
 			first: {
@@ -474,7 +474,7 @@ const characters = [
 		timeZone: 'GMT',
 		bio: 'The Steward\'s role seemed pointless, vestigial. The Silent King needed no valet or bodyguard, yet the Steward was always close at hand. Reeve seems to have moved on from the King very quickly and is taking an extremely active interest in the pending election.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/f6b7fa0d51b891f910fc28800b44956d.jpeg',
 		control: 'Beta',
 		memories: {
 			first: {
@@ -532,7 +532,7 @@ const characters = [
 		timeZone: 'GMT+2',
 		bio: 'The Upstart was some newly-dead nobody who awakened in the (now unmoving) queue to see She Who Bears The Scale and absconded into the city. They\'ve quickly started to build a powerbase that has more established shades impressed and intimidated.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/f5367489a18742dff8b7ae162e9909ff.png',
 		control: 'Gamma',
 		memories: {
 			first: {
@@ -556,7 +556,7 @@ const characters = [
 		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-unknown-soldier---pc-person',
 		characterName: 'The Unknown Soldier',
 		tag: 'Misfits',
-		email: 'alexeynikolaev31@gmail.com',
+		email: 'TheUnknownSoldier@yandex.com',
 		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
 		timeZone: 'GMT+3',
 		bio: 'The Unknown Soldier awoke, suddenly, in a prison. The second they recovered their mind they knew that no prison could not hold them. They walked to the River and were ferried across by the Driver. They\'re a former soldier of some sort and seem to be highly intelligent and highly driven.',
@@ -648,7 +648,7 @@ const characters = [
 		timeZone: 'GMT',
 		bio: 'One of the demons active in the Necropolis.',
 		username: 'temp',
-		icon: '',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/98dd6d32c21c30575a484b7587b41e03.jpg',
 		control: 'Game Control',
 		memories: {
 			first: {
