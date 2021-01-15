@@ -135,7 +135,8 @@ router.post('/initCharacters', async function(req, res) {
 			const wealth = {
 				name: `${newCharacter.characterName}'s Wealth`,
 				description: char.wealthLevel,
-				model: 'Wealth'
+				model: 'Wealth',
+				uses: 2
 			};
 			const asset = new Asset(wealth);
 			newCharacter.wealth = asset;
@@ -225,7 +226,7 @@ router.patch('/byUsername', async (req, res) => {
 
 router.patch('/modify', async (req, res) => {
 	logger.info('GET Route: api/characters/modify requested...');
-	const { id, effort, email, worldAnvil, tag, timeZone, wealth, icon, popsupport, bio, characterName } = req.body.data;
+	const { id, effort, email, worldAnvil, tag, timeZone, wealth, icon, popsupport, bio, characterName, uses } = req.body.data;
 	try {
 		let data = await Character.findById(id).populate('wealth');
 		let wealthAss = await Asset.findById(data.wealth._id);
@@ -244,6 +245,7 @@ router.patch('/modify', async (req, res) => {
 			data.effort = effort;
 
 			wealthAss.description = wealth;
+			wealthAss.uses = uses;
 
 			data.icon = icon;
 			data.popsupport = popsupport;
