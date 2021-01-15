@@ -1,6 +1,7 @@
 const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
 const nexusEvent = require('../../middleware/events/events'); // Local event triggers
+const axios = require('axios');
 
 const validateObjectId = require('../../middleware/util/validateObjectId');
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
@@ -384,11 +385,46 @@ router.patch('/register', async (req, res) => {
 			data = await data.save();
 			nexusEvent.emit('updateCharacters');
 			res.status(200).json(data);
+
+			/*
+			const emailStuff = {
+				from: 'Afterlife Registration',
+				to: data.email,
+				subject: 'Afterlife Registration',
+				html: `<p>Dear ${data.playerName},</p> <p> You have been successfully registered for the Afterlife App, and can now log in. Please follow the link when possible and make sure all your character information is correct.</p> <p><b>Note:</b> The webpage may take a moment to load on your first log-in. </p> <p>Have fun!</p> <p>Your Character: ${data.characterName} </p> https://afterlife-app.herokuapp.com/`
+			};
+			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
+			*/
+		}
+
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
+router.patch('/test', async (req, res) => {
+	logger.info('GET Route: api/characters/modify requested...');
+	const { character } = req.body;
+	try {
+		const data = await Character.findById(character).populate('wealth');
+		if (data) {
+			const emailStuff = {
+				from: 'Afterlife Registration',
+				to: data.email,
+				subject: 'Afterlife Registration',
+				html: `<p>Dear ${data.playerName},</p> <p> You have been successfully registered for the Afterlife App, and can now log in. Please follow the link when possible and make sure all your character information is correct.</p> <p><b>Note:</b> The webpage may take a moment to load on your first log-in. </p> <p>Have fun!</p> <p>Your Character: ${data.characterName} </p> https://afterlife-app.herokuapp.com/`
+			};
+			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
+		}
+		else {
+			nexusError(`Could not find a character for id "${character}"`, 404);
 		}
 	}
 	catch (err) {
 		httpErrorHandler(res, err);
 	}
 });
+
 
 module.exports = router;
