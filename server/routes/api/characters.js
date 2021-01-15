@@ -386,6 +386,7 @@ router.patch('/register', async (req, res) => {
 			nexusEvent.emit('updateCharacters');
 			res.status(200).json(data);
 
+			/*
 			const emailStuff = {
 				from: 'Afterlife Registration',
 				to: data.email,
@@ -393,6 +394,7 @@ router.patch('/register', async (req, res) => {
 				html: `<p>Dear ${data.playerName},</p> <p> You have been successfully registered for the Afterlife App, and can now log in. Please follow the link when possible and make sure all your character information is correct.</p> <p><b>Note:</b> The webpage may take a moment to load on your first log-in. </p> <p>Have fun!</p> <p>Your Character: ${data.characterName} </p> https://afterlife-app.herokuapp.com/`
 			};
 			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
+			*/
 		}
 
 	}
