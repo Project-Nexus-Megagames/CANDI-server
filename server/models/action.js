@@ -8,7 +8,7 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const ActionSchema = new Schema({
 	model:  { type: String, default: 'Action' },
-	creator: { type: ObjectId, ref: 'Character' },
+	creator: { type: ObjectId, required: true, ref: 'Character' },
 	players: [{ type: ObjectId, ref: 'Character' }],
 	asset1: { type: String },
 	asset2: { type: String },

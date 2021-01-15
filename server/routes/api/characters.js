@@ -10,6 +10,7 @@ const { Character } = require('../../models/character'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const characters = require('../../config/characterList');
+const assets = require('../../config/startingassets');
 const { Asset } = require('../../models/asset');
 
 // @route   GET api/characters
@@ -137,18 +138,57 @@ router.post('/initCharacters', async function(req, res) {
 			};
 			const asset = new Asset(wealth);
 			newCharacter.wealth = asset;
-			asset.save();
 			//	await newAgent.validateAgent();
 			const docs = await Character.find({ characterName: char.characterName });
 
 			if (docs.length < 1) {
 				newCharacter = await newCharacter.save();
+				asset.save();
 				logger.info(`${newCharacter.characterName} created.`);
 			}
 			else {
 				console.log(`${newCharacter.characterName} already exists!\n`);
 			}
 		}
+
+		for (const ass of assets) {
+			const character = await Character.findOne({ characterName: ass.owner });
+			if (character) {
+				const newAsset = new Asset(ass);
+				newAsset.model === 'Trait' ? character.traits.push(newAsset) : character.assets.push(newAsset);
+				newAsset.save();
+				character.save();
+				logger.info(`${newAsset.name} created.`);
+			}
+			else {
+				console.log(`Could not find ${ass.owner}!\n`);
+			}
+		}
+
+		// Special Assets for Angels n Deamons
+		const angelAss = new Asset({ model: 'Trait', name: 'Angelic Blessing', description: 'You have a limited ability to command the matter of the afterlife itself. Examples of this include  temporarily rearranging the layout of streets and buildings, changing the gloom briefly into day creating short-lived golems out of grave-dirt, changing that dirt into mud or fire (though, of course, you can\'t hurt a shade unless they attack first).' });
+		let judgementAngel = await Character.findOne({ characterName: 'The Angel of Judgement' });
+		const dawnAngel = await Character.findOne({ characterName: 'The Angel of Dawn' });
+
+		judgementAngel.traits.push(angelAss);
+		dawnAngel.traits.push(angelAss);
+
+		judgementAngel = await judgementAngel.save();
+		dawnAngel.save();
+		angelAss.save();
+
+		const demonAss = new Asset({ model: 'Trait', name: 'Demonic  Blessing', description: 'A tiny extension of the First Demon’s power that might take the form of additional abilities or literal demonic support for the recipient.' });
+		let mercy = await Character.findOne({ characterName: 'The Demon of Mercy' });
+		let dusk = await Character.findOne({ characterName: 'The Demon of Dusk' });
+
+		mercy.traits.push(demonAss);
+		dusk.traits.push(demonAss);
+
+		dusk = await dusk.save();
+		mercy = await mercy.save();
+		demonAss.save();
+
+
 		nexusEvent.emit('updateCharacters');
 		res.status(200).send('All done');
 	}
@@ -294,6 +334,53 @@ router.patch('/newAsset', async (req, res) => {
 				data.assets.push(newAsset);
 			}
 			newAsset = await newAsset.save();
+			data = await data.save();
+			nexusEvent.emit('updateCharacters');
+			res.status(200).json(data);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
+router.patch('/standing', async (req, res) => {
+	logger.info('GET Route: api/characters/modify requested...');
+	const { id, standing } = req.body.data;
+	try {
+		let data = await Character.findById(id).populate('wealth');
+
+		if (data === null) {
+			nexusError(`Could not find a character for id "${id}"`, 404);
+		}
+		else if (data.length > 1) {
+			nexusError(`Found multiple characters for id ${id}`, 404);
+		}
+		else {
+			data.standingOrders = standing;
+
+			data = await data.save();
+			nexusEvent.emit('updateCharacters');
+			res.status(200).json(data);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
+// register
+router.patch('/register', async (req, res) => {
+	logger.info('GET Route: api/characters/modify requested...');
+	const { character, username } = req.body.data;
+	try {
+		let data = await Character.findById(character).populate('wealth');
+
+		if (data === null) {
+			nexusError(`Could not find a character for id "${character}"`, 404);
+		}
+		else {
+			data.username = username;
 			data = await data.save();
 			nexusEvent.emit('updateCharacters');
 			res.status(200).json(data);
