@@ -24,7 +24,7 @@ router.get('/', async function(req, res) {
 	}
 	catch (err) {
 		logger.error(err.message, { meta: err.stack });
-		res.status(500).send(err.message);
+		res.status(500).send(err);
 	}
 });
 
@@ -127,10 +127,7 @@ router.patch('/deleteAll', async function(req, res) {
 	return res.status(200).send(`We wiped out ${data.deletedCount} Users!`);
 });
 
-// game route
-// @route   GET /user
-// @Desc    Get all Users
-// @access  Public
+
 router.patch('/promote', async function(req, res) {
 	logger.info('GET Route: api/user/login requested...');
 	const { username } = req.body;
@@ -157,5 +154,31 @@ router.patch('/promote', async function(req, res) {
 	}
 });
 
+router.patch('/demote', async function(req, res) {
+	logger.info('GET Route: api/user/login requested...');
+	const { username } = req.body;
+	try {
+		const docs = await User.findOne({ username });
+		if (docs != null) {
+			if (docs.roles.some(el => el === 'Control')) {
+				const index = docs.roles.indexOf('Control');
+				docs.roles.splice(index, 1);
+				await docs.save();
+				return res.status(200).json(docs);
+			}
+			else {
+				return res.status(500).json(`${username} already has the role of Control!`);
+			}
+
+		}
+		else {
+			nexusError(`The user with the username "${username}" was not found!`, 404);
+		}
+	}
+	catch (err) {
+		logger.error(err.message, { meta: err.stack });
+		res.status(500).send(err.message);
+	}
+});
 
 module.exports = router;

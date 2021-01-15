@@ -32,7 +32,7 @@ const characters = [
 		playerName: 'LJ',
 		pronouns: 'She/Her',
 		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-claviger---pc-person',
-		characterName: 'Claviger',
+		characterName: 'The Claviger',
 		tag: 'Former Servants',
 		email: 'theclaviger@gmail.com',
 		controlEmail: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
@@ -694,6 +694,591 @@ const characters = [
 			}
 		},
 		wealthLevel: 'Poor'
+	},
+
+
+	{
+		playerName: 'Game Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-first-angel--person',
+		characterName: 'The First Angel',
+		tag: 'Angels',
+		email: 'afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'The leader of the angels has never been seen in the Necropolis. Their aims are unknown beyond their wish that the First Demon be eradicated and for the shades to prosper.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/ae6f7c79e22998c229b198a655d29734.jpg',
+		control: 'Game Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Game Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-first-demon-person?preview=true',
+		characterName: 'The First Demon',
+		tag: 'Demons',
+		email: 'afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'The leader of the demons and sworn enemy of the First Angel. An enigmatic figure, the First Demon is seldom heard from. They generally let other demons represent them and assist the shades',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/215751e11b2b6a4a0f5a384861fab8a5.jpg',
+		control: 'Game Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Game Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-librarian-person',
+		characterName: 'The Librarian',
+		tag: 'Chthonians',
+		email: 'afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'The Librarian, lord of the Burning Library, is extremely knowledgeable, having read every book ever burned (a significant fraction of every book ever written). They dislike interlopers in their library, but it is possible to treat with them.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/83276a2e0d4102122afb1177599878d3.jpg',
+		control: 'Game Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Game Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-eremite--person',
+		characterName: 'The Eremite',
+		tag: 'NPC',
+		email: 'afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'An enigmatic, possibly insane, shade wanted by the Silent King.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/c797c1b4773f0ce70d8ec4123a460836.jpg',
+		control: 'Game Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Game Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-archivist-person',
+		characterName: 'The Archivist',
+		tag: 'NPC',
+		email: 'afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'The Archivist, master of the Hall of Records, is extremely knowledgeable and incredibly dull, though there are some subtle signs of a personality returning.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/8d751f877847d9a38b32a2daf5faa54e.jpg',
+		control: 'Game Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Game Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-chronicler-person',
+		characterName: 'The Chronicler',
+		tag: 'NPC',
+		email: 'afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Previously one of the Archivist\'s numerous near-mindless scribes, the first to awaken is suddenly intensely curious, oddly naive and seemingly incapable of lying. He has begun disseminating a simple newsletter.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/99a9a8e022f87b9b21ed46ca00fc150d.png',
+		control: 'Game Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Game Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-crier-person',
+		characterName: 'The Crier',
+		tag: 'NPC',
+		email: 'afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'A walking advertisement.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/34cecc7c65f9f05227c31fe0dc4388c2.jpg',
+		control: 'Game Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Game Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/gallowglass2C-the-contractor-person',
+		characterName: 'Gallowglass, the Contractor',
+		tag: 'NPC',
+		email: 'afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Gallowglass is muscle (well, bone) for hire. He\'ll take any job if it pays, no matter how questionable the morality, and with impeccable discretion. If he had lips, he\'d keep them sealed.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/d0e4299aa64c3318e00ebbb9f0051964.jpg',
+		control: 'Game Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Beta Control',
+		pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/madame-person',
+		characterName: 'Madame',
+		tag: 'NPC',
+		email: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Socialite, trendsetter, gossip, iconic.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/bdca99e7b0e3a222d9e407cc8c322b61.jpg',
+		control: 'Beta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Beta Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-margrave-of-the-grey-borders-person',
+		characterName: 'The Margrave',
+		tag: 'NPC',
+		email: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'The Margrave was once the Silent King\'s head scout and ranger out in the forbidden wastes beyond the city. He is incredibly serious, dour, severe and dutiful. The Margrave was the first to declare his candidacy for the vacant throne.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/fcf7ea7c87634d205f4034498e917351.jpg',
+		control: 'Beta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Beta Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-baptist-person-1',
+		characterName: 'The Baptist',
+		tag: 'NPC',
+		email: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'A sinister confessor.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/2679961d999d87947bcf25690c61ccad.jpg',
+		control: 'Beta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Beta Control',
+		pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/she-who-bears-the-scale—person',
+		characterName: 'She Who Bears the Scale',
+		tag: 'NPC',
+		email: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'A terrifying judge of character.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/36771c3814b7a9cc2d764022b7dde7d7.jpg',
+		control: 'Beta Control',
+		wealthLevel: 'Comfortable'
+	},
+	{
+		playerName: 'Beta Control',
+		pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-medium-person',
+		characterName: 'The Medium',
+		tag: 'NPC',
+		email: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'A fortune-teller and speaker to the living.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/f1f547f52f405d6754aaaadc31e80292.jpg',
+		control: 'Beta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Beta Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-flagellant-person',
+		characterName: 'The Flagellant',
+		tag: 'NPC',
+		email: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Foremost of the Unforgiven, a friendly fanatic',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/d09e9db9a549a58ce4f955da32834d1d.jpg',
+		control: 'Beta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Beta Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-gaoler-person',
+		characterName: 'The Gaoler',
+		tag: 'NPC',
+		email: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Once a particularly dreaded servant of the King, the cruel overseer of the Gaol, their reawakening started with their conscience and they abandoned their former role in shame and disgust. They\'re now a fixture in Gehennatown, seeking to atone.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/6a2fdd896f1319f9cfb49946d9579fb5.jpg',
+		control: 'Beta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Beta Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-warden-person',
+		characterName: 'The Warden',
+		tag: 'NPC',
+		email: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'An elevated scribe who ensured the souls in the Bleak Gaol were admitted, logged and (for a lucky few) released correctly in line with their sentence. In the absence of the Gaoler he has become the de-facto head of the facility and he is already calling for assistance to keep the (awakening) inmates in line.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/945873a371ccd9ffd8a5399a9fa3105b.jpg',
+		control: 'Beta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Gamma Control',
+		pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-painter-person',
+		characterName: 'The Painter',
+		tag: 'NPC',
+		email: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'EST',
+		bio: 'A haunted artist.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/a6a922e46b4301dc3978e59c5e1d8a03.jpg',
+		control: 'Gamma Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Gamma Control',
+		pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/lady-crane2C-the-tailor-person',
+		characterName: 'Lady Crane, the Tailor',
+		tag: 'NPC',
+		email: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'EST',
+		bio: 'A tailor.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/17bf6f2afa191daf0be58fe6f9f09c32.jpg',
+		control: 'Gamma Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Gamma Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-high-roller-person',
+		characterName: 'The High-Roller',
+		tag: 'NPC',
+		email: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'EST',
+		bio: 'A lucky, rich bastard.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/a855db85a75fc9d17f31d9edc89b952b.jpg',
+		control: 'Gamma Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Gamma Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-sommelier-person',
+		characterName: 'The Sommelier',
+		tag: 'NPC',
+		email: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'EST',
+		bio: 'The Sommelier is the face of the Midnight Vintners. They are impeccably dressed and impeccably polite.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/cd9fff280c4daa103b494021d14dfa84.jpg',
+		control: 'Gamma Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Gamma Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/sam2C-the-barman-person',
+		characterName: 'Sam, the Barman',
+		tag: 'NPC',
+		email: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'EST',
+		bio: 'The best barman ever to die.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/011e1bde2d8893036a182990d70ac95c.jpg',
+		control: 'Gamma Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Delta Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/hackett-and-cripps2C-esq-person',
+		characterName: 'Hackett and Cripps, Esq',
+		tag: 'NPC',
+		email: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'A terrifying, iconic duo of enthusiastic barber-surgeons.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/7576eba6b8aaa77e8cb89e416161ff40.jpg',
+		control: 'Delta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Delta Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-conductor-of-souls-person',
+		characterName: 'The Conductor of Souls',
+		tag: 'NPC',
+		email: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'A sinister Ferryman.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/8ba95b4253a2ab148df226a2488f70f6.jpg',
+		control: 'Delta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Delta Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-taxi-driver-person',
+		characterName: 'The Taxi Driver',
+		tag: 'NPC',
+		email: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'A friendlier Ferryman.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/13b20d031c33076000d66a413cae1f51.jpg',
+		control: 'Delta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Delta Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-curator-person',
+		characterName: 'The Curator',
+		tag: 'NPC',
+		email: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Mournful custodian of the Museum of Faces.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/a6080d78a204d4e431f887012797e99e.jpg',
+		control: 'Delta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Delta Control',
+		pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-bailiff-person',
+		characterName: 'The Baillif',
+		tag: 'NPC',
+		email: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'Affable, hard-drinking enforcer.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/431166d2f9493c066176ba648c4130e5.jpg',
+		control: 'Delta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Delta Control',
+		pronouns: 'It',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-kerberos-person',
+		characterName: 'The Kerberos',
+		tag: 'Chthonians',
+		email: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
+		timeZone: 'GMT',
+		bio: 'A Chthonic predator.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/29035aa9c2f133e2c1b3cb9f921bc205.jpg',
+		control: 'Delta Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Epsilon Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-rampant-fury-person',
+		characterName:'The Rampant Fury',
+		tag: 'NPC',
+		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PT',
+		bio: 'One of the Silent King\'s Furies. Formerly his most dreaded enforcers and hunters.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/42cf3d6130be1d758f8bad7ac59bdda7.jpg',
+		control: 'Epsilon Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Epsilon Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-overseer-person',
+		characterName:'The Overseer',
+		tag: 'NPC',
+		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PT',
+		bio: 'A pitiless taskmaster.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/a645da62ec2ceca3619c81d8213c226c.jpg',
+		control: 'Epsilon Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Epsilon Control',
+		pronouns: 'They/Them',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-fulcrum-person',
+		characterName:'The Fulcrum',
+		tag: 'NPC',
+		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PT',
+		bio: 'The first fence.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/38b4deb8ab0807ea1d3ceff99bb71f9c.jpg',
+		control: 'Epsilon Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Epsilon Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-inspector-person',
+		characterName:'The Inspector',
+		tag: 'NPC',
+		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PT',
+		bio: 'Manager of the Paper Mill, asleep at the wheel.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/bf40dea0849f1d3896a42941cd7d69cc.jpg',
+		control: 'Epsilon Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Epsilon Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/lokta2C-the-protege-person',
+		characterName:'Lokta, The Protege',
+		tag: 'NPC',
+		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PT',
+		bio: 'Lokta, the Protégé, is the Overseer\'s right hand. With the Inspector left behind by the changing Necropolis, their former subordinate Lokta has fallen in with the Overseer. Lokta\'s awakening, unlike most, seems to have made him better at his job. Some have opined that the King and/or She Who Bears The Scale undervalued this bright little shade.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/5e344735f83767fd606f7665cc5c85ba.jpg',
+		control: 'Epsilon Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Epsilon Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-smith-person',
+		characterName:'The Smith',
+		tag: 'NPC',
+		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PT',
+		bio: 'An affable shade who specialises in restoring, copying and recreating objects. Toys, weapons, cars, he can try his hand at anything, though he struggles if the job requires originality.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/e9a2dbf2095dc8842b05b7a49687ad42.jpg',
+		control: 'Epsilon Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Epsilon Control',
+		pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-smelter-person',
+		characterName:'The Smelter',
+		tag: 'NPC',
+		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PT',
+		bio: 'Master of the Crucible, an amiable shade who burns with heat of a furnace.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/fde55294e851c3c76fb4c33f22e50087.jpg',
+		control: 'Epsilon Control',
+		wealthLevel: 'Comfortable'
+	},
+
+	{
+		playerName: 'Epsilon Control',
+		pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-weaver-person',
+		characterName:'The Weaver',
+		tag: 'NPC',
+		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PT',
+		bio: 'The Weaver, Mistress of the Loom, is more hands-on than other overseers and works the lines so often her fingers can become scissor-blades and needles.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/e5b36ef0f482d01a37542ecfe68c169a.jpg',
+		control: 'Epsilon Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Epsilon Control',
+		pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-songbird-person',
+		characterName:'The Songbird',
+		tag: 'NPC',
+		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PT',
+		bio: 'An incredible singer.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/09adc0d9005d08125b7a9dc4a77c0604.jpg',
+		control: 'Epsilon Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Epsilon Control',
+		pronouns: 'She/Her',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-executioner-person',
+		characterName:'The Executioner',
+		tag: 'NPC',
+		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PT',
+		bio: 'Provides a singular service.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/db92ea32f9cb228e7bec4666f640ad4b.jpg',
+		control: 'Epsilon Control',
+		wealthLevel: 'Comfortable'
+	},
+
+
+	{
+		playerName: 'Zeta Control',
+		pronouns: 'He/Him',
+		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/hoffman2C-the-alchemist-person',
+		characterName:'Hoffman, The Alchemist',
+		tag: 'NPC',
+		email: 'hoffmanthealchemist@gmail.com afterlifecontrol@gmail.com',
+		timeZone: 'PT',
+		bio: 'Definitely not a mad scientist.',
+		username: 'temp',
+		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/76ec8aff91da462cb6fdacfa470f9627.jpg',
+		control: 'Zeta Control',
+		wealthLevel: 'Comfortable'
 	}
 ];
 
