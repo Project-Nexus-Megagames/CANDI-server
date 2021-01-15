@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); // Mongo DB object modeling module
 
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
@@ -8,7 +8,7 @@ const config = require('config');
 
 const UserSchema = new Schema({
 	model: { type: String, default: 'User' },
-	username: { type: String, required: true, unique: true, minlength: 5, maxlength: 15 },
+	username: { type: String, required: true, unique: true, minlength: 5, maxlength: 25 },
 	password: { type: String, required: true, minlength: 8, maxlength: 1024 },
 	name: {
 		prefix: { type: String, minlength: 2, maxlength: 10 },
@@ -31,11 +31,12 @@ const UserSchema = new Schema({
 	achievements: [{ type: ObjectId, ref: 'Achivement' }],
 	community: {
 		friends: [{ type: ObjectId, ref: 'User' }],
-		encountered: [{ type: ObjectId, ref: 'user' }]
+		encountered: [{ type: ObjectId, ref: 'User' }]
 	},
 	dateRegistered: { type: Date },
 	lastLogin: { type: Date },
 	lastGame: { type: Date },
+	bio: { type: String },
 	lastUpdated: { type: Date }
 });
 
