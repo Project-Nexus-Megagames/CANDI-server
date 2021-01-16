@@ -23,7 +23,7 @@ const ActionSchema = new Schema({
 		published: { type: Boolean, default: false },
 		progress: { type: Number, default: 0 }
 	},
-	dieResult: { type: Number, default: 0 },
+	dieResult: { type: String },
 	result: { type: String, default: 'No Result Recorded Yet...' }
 });
 
