@@ -1275,7 +1275,7 @@ const characters = [
 		email: 'hoffmanthealchemist@gmail.com afterlifecontrol@gmail.com',
 		timeZone: 'PT',
 		bio: 'Definitely not a mad scientist.',
-		username: 'temp',
+		username: 'BobtheNinjaMan',
 		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/76ec8aff91da462cb6fdacfa470f9627.jpg',
 		control: 'Zeta Control',
 		wealthLevel: 'Comfortable'
