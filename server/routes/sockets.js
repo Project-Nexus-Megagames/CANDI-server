@@ -4,6 +4,7 @@ const SocketServer = require('../scripts/socketServer'); // Client Tracking Obje
 const { Character } = require('../models/character');
 const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
+const { Asset } = require('../models/asset');
 
 module.exports = function(server) {
 	const Clients = new SocketServer();
@@ -39,6 +40,11 @@ module.exports = function(server) {
 		nexusEvent.on('updateGamestate', async () => {
 			const gamestate = await GameState.findOne();
 			client.emit('updateGamestate', gamestate);
+		});
+
+		nexusEvent.on('updateAssets', async () => {
+			const assets = await Asset.find();
+			client.emit('updateAssets', assets);
 		});
 
 	});

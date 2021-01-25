@@ -267,7 +267,7 @@ router.patch('/support', async (req, res) => {
 	logger.info('GET Route: api/characters/modify requested...');
 	const { id, supporter } = req.body;
 	try {
-		let data = await Character.findById(id).populate('wealth');
+		let data = await Character.findById(id);
 		if (data === null) {
 			nexusError(`Could not find a character for id "${id}"`, 404);
 		}
@@ -425,6 +425,25 @@ router.patch('/test', async (req, res) => {
 		httpErrorHandler(res, err);
 	}
 });
+
+router.patch('/scrubAsset', async (req, res) => {
+	logger.info('PATCH Route: api/characters/scrubAsset requested...');
+	try {
+		let mercy = await Character.findOne({ characterName: 'The Demon of Mercy' });
+		const demonAss = new Asset({ model: 'Trait', name: 'Mercy\'s Demonic  Blessing', description: 'A tiny extension of the First Demon’s power that might take the form of additional abilities or literal demonic support for the recipient.' });
+		mercy.traits = [];
+		mercy.traits.push(demonAss);
+		mercy = await mercy.save();
+		await demonAss.save();
+
+		nexusEvent.emit('updateCharacters');
+		res.status(200).send('All done');
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
 
 
 module.exports = router;
