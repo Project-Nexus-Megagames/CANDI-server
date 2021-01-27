@@ -273,5 +273,39 @@ router.patch('/editResult', async function(req, res) {
 	}
 });
 
+router.post('/project', async function(req, res) {
+	logger.info('POST Route: api/action/project call made...');
+	const { data } = req.body;
+	try {
+		let newElement = new Action(data);
+		newElement = await newElement.save();
+		res.status(200).json(newElement);
+		nexusEvent.emit('updateActions');
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
+router.patch('/project', async function(req, res) {
+	logger.info('patch Route: api/action/project call made...');
+	const { description, intent, progress, players, image, id } = req.body.data;
+	try {
+		const project = await Action.findById(id);
+		project.description = description;
+		project.intent = intent;
+		project.progress = progress;
+		project.players = players;
+		project.image = image;
+		await project.save();
+
+		nexusEvent.emit('updateActions');
+		res.status(200).json(project);
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
 
 module.exports = router;
