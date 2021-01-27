@@ -278,6 +278,9 @@ router.post('/project', async function(req, res) {
 	const { data } = req.body;
 	try {
 		let newElement = new Action(data);
+		newElement.status.draft = false;
+		newElement.status.published = true;
+
 		newElement = await newElement.save();
 		res.status(200).json(newElement);
 		nexusEvent.emit('updateActions');
