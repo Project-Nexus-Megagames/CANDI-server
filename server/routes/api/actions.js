@@ -18,8 +18,8 @@ const { Character } = require('../../models/character');
 router.get('/', async function(req, res) {
 	logger.info('GET Route: api/action requested...');
 	try {
-		const agents = await Action.find().populate('creator');
-		res.status(200).json(agents);
+		const actions = await Action.find().populate('creator');
+		res.status(200).json(actions);
 	}
 	catch (err) {
 		logger.error(err.message, { meta: err.stack });

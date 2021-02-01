@@ -13,6 +13,8 @@ const nexusError = require('../../middleware/util/throwError');
 const characters = require('../../config/characterList');
 const assets = require('../../config/startingassets');
 const { Asset } = require('../../models/asset');
+const { Action } = require('../../models/action');
+const { GameState } = require('../../models/gamestate');
 
 // @route   GET api/characters
 // @Desc    Get all characters
@@ -206,13 +208,25 @@ router.patch('/byUsername', async (req, res) => {
 	logger.info('GET Route: api/characters/byUsername requested...');
 	const { username } = req.body;
 	try {
-		const data = await Character.findOne({ username }).populate('assets').populate('traits').populate('lentAssets').populate('wealth');
-		if (data === null || data.length < 1) {
+		const playerCharacter = await Character.findOne({ username }).populate('assets').populate('traits').populate('lentAssets').populate('wealth');
+		const servAssets = await Asset.find();
+		const actions = await Action.find().populate('creator');
+		const gamestates = await GameState.findOne();
+		const char = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+		const data = {
+			assets: servAssets,
+			actions: actions,
+			gamestate: gamestates,
+			playerCharacter: playerCharacter,
+			players: char
+		};
+
+		if (playerCharacter === null || playerCharacter.length < 1) {
 			console.log(`Could not find a character for username "${username}"`);
 			// nexusError(`Could not find a character for id "${id}"`, 404);
-			res.status(200).json(data);
+			res.status(200).json(playerCharacter);
 		}
-		else if (data.length > 1) {
+		else if (playerCharacter.length > 1) {
 			nexusError(`Found multiple characters for username ${username}`, 404);
 		}
 		else {
@@ -443,7 +457,6 @@ router.patch('/scrubAsset', async (req, res) => {
 		httpErrorHandler(res, err);
 	}
 });
-
 
 
 module.exports = router;
