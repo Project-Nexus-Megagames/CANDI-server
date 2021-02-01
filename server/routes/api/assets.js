@@ -64,6 +64,7 @@ router.post('/', async function(req, res) {
 			logger.info(`${newElement.name} created.`);
 			res.status(200).json(newElement);
 			nexusEvent.emit('updateCharacters');
+			nexusEvent.emit('updateAssets');
 		}
 		else {
 			nexusError(`An Asset with name ${newElement.name} already exists!`, 400);
@@ -86,6 +87,7 @@ router.delete('/:id', async function(req, res) {
 			element = await Asset.findByIdAndDelete(id);
 			logger.info(`Asset with the id ${id} was deleted!`);
 			nexusEvent.emit('updateCharacters');
+			nexusEvent.emit('updateAssets');
 			res.status(200).send(`Asset with the id ${id} was deleted!`);
 		}
 		else {
@@ -176,6 +178,7 @@ router.post('/add', async function(req, res) {
 				newElement = await newElement.save();
 				logger.info(`${newElement.name} created.`);
 				nexusEvent.emit('updateCharacters');
+				nexusEvent.emit('updateAssets');
 				res.status(200).json(newElement);
 			}
 
