@@ -295,6 +295,8 @@ router.patch('/project', async function(req, res) {
 	const { description, intent, progress, players, image, id } = req.body.data;
 	try {
 		const project = await Action.findById(id);
+		project.status.draft = false;
+		project.status.published = true;
 		project.description = description;
 		project.intent = intent;
 		project.progress = progress;
