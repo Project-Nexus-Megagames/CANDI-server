@@ -7,9 +7,9 @@ const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const ActionSchema = new Schema({
-	model:  { type: String, default: 'Action' },
+	model:  { type: String, default: 'Action', enum: ['Action', 'Project' ] },
 	creator: { type: ObjectId, required: true, ref: 'Character' },
-	players: [{ type: ObjectId, ref: 'Character' }],
+	players: [{ type: String }],
 	asset1: { type: String },
 	asset2: { type: String },
 	asset3: { type: String },
@@ -20,10 +20,11 @@ const ActionSchema = new Schema({
 	status: {
 		draft: { type: Boolean, default: true },
 		ready: { type: Boolean, default: false },
-		published: { type: Boolean, default: false },
-		progress: { type: Number, default: 0 }
+		published: { type: Boolean, default: false }
 	},
+	progress: { type: Number, default: 0 },
 	dieResult: { type: String },
+	image: { type: String },
 	result: { type: String, default: 'No Result Recorded Yet...' }
 });
 

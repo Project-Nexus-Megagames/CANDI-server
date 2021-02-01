@@ -706,7 +706,7 @@ const characters = [
 		email: 'afterlifecontrol@gmail.com',
 		timeZone: 'GMT',
 		bio: 'The leader of the angels has never been seen in the Necropolis. Their aims are unknown beyond their wish that the First Demon be eradicated and for the shades to prosper.',
-		username: 'temp',
+		username: 'Game Control',
 		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/ae6f7c79e22998c229b198a655d29734.jpg',
 		control: 'Game Control',
 		wealthLevel: 'Comfortable'
@@ -830,7 +830,7 @@ const characters = [
 		email: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
 		timeZone: 'GMT',
 		bio: 'Socialite, trendsetter, gossip, iconic.',
-		username: 'temp',
+		username: 'Beta Control',
 		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/bdca99e7b0e3a222d9e407cc8c322b61.jpg',
 		control: 'Beta Control',
 		wealthLevel: 'Comfortable'
@@ -1011,7 +1011,7 @@ const characters = [
 		email: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
 		timeZone: 'EST',
 		bio: 'The best barman ever to die.',
-		username: 'temp',
+		username: 'Warsprite',
 		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/011e1bde2d8893036a182990d70ac95c.jpg',
 		control: 'Gamma Control',
 		wealthLevel: 'Comfortable'
@@ -1118,7 +1118,7 @@ const characters = [
 		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
 		timeZone: 'PT',
 		bio: 'One of the Silent King\'s Furies. Formerly his most dreaded enforcers and hunters.',
-		username: 'temp',
+		username: 'EpsilonControl',
 		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/42cf3d6130be1d758f8bad7ac59bdda7.jpg',
 		control: 'Epsilon Control',
 		wealthLevel: 'Comfortable'
@@ -1259,7 +1259,7 @@ const characters = [
 		email: 'afterlifeepsilon@gmail.com afterlifecontrol@gmail.com',
 		timeZone: 'PT',
 		bio: 'Provides a singular service.',
-		username: 'temp',
+		username: 'FroBoyX',
 		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/db92ea32f9cb228e7bec4666f640ad4b.jpg',
 		control: 'Epsilon Control',
 		wealthLevel: 'Comfortable'

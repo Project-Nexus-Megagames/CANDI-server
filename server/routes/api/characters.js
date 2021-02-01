@@ -13,6 +13,8 @@ const nexusError = require('../../middleware/util/throwError');
 const characters = require('../../config/characterList');
 const assets = require('../../config/startingassets');
 const { Asset } = require('../../models/asset');
+const { Action } = require('../../models/action');
+const { GameState } = require('../../models/gamestate');
 
 // @route   GET api/characters
 // @Desc    Get all characters
@@ -206,13 +208,25 @@ router.patch('/byUsername', async (req, res) => {
 	logger.info('GET Route: api/characters/byUsername requested...');
 	const { username } = req.body;
 	try {
-		const data = await Character.findOne({ username }).populate('assets').populate('traits').populate('lentAssets').populate('wealth');
-		if (data === null || data.length < 1) {
+		const playerCharacter = await Character.findOne({ username }).populate('assets').populate('traits').populate('lentAssets').populate('wealth');
+		const servAssets = await Asset.find();
+		const actions = await Action.find().populate('creator');
+		const gamestates = await GameState.findOne();
+		const char = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+		const data = {
+			assets: servAssets,
+			actions: actions,
+			gamestate: gamestates,
+			playerCharacter: playerCharacter,
+			players: char
+		};
+
+		if (playerCharacter === null || playerCharacter.length < 1) {
 			console.log(`Could not find a character for username "${username}"`);
 			// nexusError(`Could not find a character for id "${id}"`, 404);
-			res.status(200).json(data);
+			res.status(200).json(playerCharacter);
 		}
-		else if (data.length > 1) {
+		else if (playerCharacter.length > 1) {
 			nexusError(`Found multiple characters for username ${username}`, 404);
 		}
 		else {
@@ -267,7 +281,7 @@ router.patch('/support', async (req, res) => {
 	logger.info('GET Route: api/characters/modify requested...');
 	const { id, supporter } = req.body;
 	try {
-		let data = await Character.findById(id).populate('wealth');
+		let data = await Character.findById(id);
 		if (data === null) {
 			nexusError(`Could not find a character for id "${id}"`, 404);
 		}
@@ -392,7 +406,7 @@ router.patch('/register', async (req, res) => {
 				from: 'Afterlife Registration',
 				to: data.email,
 				subject: 'Afterlife Registration',
-				html: `<p>Dear ${data.playerName},</p> <p> You have been successfully registered for the Afterlife App, and can now log in to the Afterlife App. Make sure you use either your username or the email you used to register with to log in.</p> <p><b>Note:</b> The webpage may take a moment to load on your first log-in. </p> <p>Have fun!</p> <p>Your Character: ${data.characterName} </p> https://afterlife-app.herokuapp.com/`
+				html: `<p>Dear ${data.playerName},</p> <p> You have been successfully registered for the Afterlife App, and can now log in. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p><b>Note:</b> The webpage may take a moment to load on your first log-in. </p> <p>Have fun!</p> <p>Your Character: ${data.characterName} </p> https://afterlife-app.herokuapp.com/`
 			};
 			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
 		}
@@ -420,6 +434,24 @@ router.patch('/test', async (req, res) => {
 		else {
 			nexusError(`Could not find a character for id "${character}"`, 404);
 		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
+router.patch('/scrubAsset', async (req, res) => {
+	logger.info('PATCH Route: api/characters/scrubAsset requested...');
+	try {
+		let mercy = await Character.findOne({ characterName: 'The Demon of Mercy' });
+		const demonAss = new Asset({ model: 'Trait', name: 'Mercy\'s Demonic  Blessing', description: 'A tiny extension of the First Demon’s power that might take the form of additional abilities or literal demonic support for the recipient.' });
+		mercy.traits = [];
+		mercy.traits.push(demonAss);
+		mercy = await mercy.save();
+		await demonAss.save();
+
+		nexusEvent.emit('updateCharacters');
+		res.status(200).send('All done');
 	}
 	catch (err) {
 		httpErrorHandler(res, err);

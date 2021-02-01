@@ -128,6 +128,34 @@ router.patch('/deleteAll', async function(req, res) {
 });
 
 // game routes
+router.patch('/modify', async (req, res) => {
+	logger.info('GET Route: api/characters/modify requested...');
+	const { id, name, description, uses } = req.body.data;
+	try {
+		let data = await Asset.findById(id).populate('wealth');
+		if (data === null) {
+			nexusError(`Could not find an asset for id "${id}"`, 404);
+		}
+		else if (data.length > 1) {
+			nexusError(`Found multiple characters for id ${id}`, 404);
+		}
+		else {
+			data.name = name;
+			data.description = description;
+			data.uses = uses;
+
+			data = await data.save();
+
+			nexusEvent.emit('updateCharacters');
+			nexusEvent.emit('updateAssets');
+			res.status(200).json(data);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
 
 router.post('/add', async function(req, res) {
 	logger.info('POST Route: api/asset/add call made...');
