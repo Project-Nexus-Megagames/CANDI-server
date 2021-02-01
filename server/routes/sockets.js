@@ -28,12 +28,12 @@ module.exports = function(server) {
 		});
 
 		nexusEvent.on('updateCharacters', async () => {
-			const characters = await Character.find();
+			const characters = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');;
 			client.emit('updateCharacters', characters);
 		});
 
 		nexusEvent.on('updateActions', async () => {
-			const actions = await Action.find();
+			const actions = await Action.find().populate('creator');
 			client.emit('updateActions', actions);
 		});
 
