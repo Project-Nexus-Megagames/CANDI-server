@@ -18,8 +18,8 @@ const { Character } = require('../../models/character');
 router.get('/', async function(req, res) {
 	logger.info('GET Route: api/action requested...');
 	try {
-		const agents = await Action.find().populate('creator');
-		res.status(200).json(agents);
+		const actions = await Action.find().populate('creator');
+		res.status(200).json(actions);
 	}
 	catch (err) {
 		logger.error(err.message, { meta: err.stack });
@@ -267,6 +267,43 @@ router.patch('/editResult', async function(req, res) {
 			nexusEvent.emit('updateActions');
 			res.status(200).send('Action result successfully edited');
 		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
+router.post('/project', async function(req, res) {
+	logger.info('POST Route: api/action/project call made...');
+	const { data } = req.body;
+	try {
+		let newElement = new Action(data);
+		newElement.status.draft = false;
+		newElement.status.published = true;
+
+		newElement = await newElement.save();
+		res.status(200).json(newElement);
+		nexusEvent.emit('updateActions');
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
+router.patch('/project', async function(req, res) {
+	logger.info('patch Route: api/action/project call made...');
+	const { description, intent, progress, players, image, id } = req.body.data;
+	try {
+		const project = await Action.findById(id);
+		project.description = description;
+		project.intent = intent;
+		project.progress = progress;
+		project.players = players;
+		project.image = image;
+		await project.save();
+
+		nexusEvent.emit('updateActions');
+		res.status(200).json(project);
 	}
 	catch (err) {
 		httpErrorHandler(res, err);
