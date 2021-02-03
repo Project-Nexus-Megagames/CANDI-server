@@ -115,12 +115,13 @@ router.patch('/deleteAll', async function(req, res) {
 // game routes
 
 router.patch('/modify', async function(req, res) {
-	const { round, status } = req.body.data;
+	const { round, status, endTime } = req.body.data;
 	let data = await GameState.findOne();
 
 	try {
 		data.round = round;
 		data.status = status;
+		data.endTime = endTime,
 		data = await data.save();
 		console.log(data);
 		nexusEvent.emit('updateGamestate');
