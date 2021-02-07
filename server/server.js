@@ -1,6 +1,7 @@
 const express = require('express'); // Import of EXPRESS to create routing app
 const http = require('http'); // Import of the NODE HTTP module to create the http server
 const { logger } = require('./middleware/log/winston'); // Import of winston for error logging
+require('newrelic');
 
 logger.info('Booting Project Nexus Server...');
 

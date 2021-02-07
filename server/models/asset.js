@@ -15,7 +15,7 @@ const AssetSchema = new Schema({
 		used: { type: Boolean, default: false }
 	},
 	currentHolder: { type: String },
-	uses: { type: Number, default: 2 }
+	uses: { type: Number, default: 999 }
 });
 
 const Asset = mongoose.model('Asset', AssetSchema);

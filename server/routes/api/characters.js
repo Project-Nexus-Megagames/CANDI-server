@@ -453,7 +453,7 @@ router.patch('/scrubAsset', async (req, res) => {
 	logger.info('PATCH Route: api/characters/scrubAsset requested...');
 	try {
 		let mercy = await Character.findOne({ characterName: 'The Demon of Mercy' });
-		const demonAss = new Asset({ model: 'Trait', name: 'Mercy\'s Demonic  Blessing', description: 'A tiny extension of the First Demon’s power that might take the form of additional abilities or literal demonic support for the recipient.' });
+		const demonAss = await Asset.findById('6004ae5d5c282252cc010d09');
 		mercy.traits = [];
 		mercy.traits.push(demonAss);
 		mercy = await mercy.save();
