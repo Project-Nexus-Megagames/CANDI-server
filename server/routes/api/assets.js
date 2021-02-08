@@ -60,9 +60,9 @@ router.post('/', async function(req, res) {
 		const docs = await Asset.find({ name: req.body.name });
 
 		if (docs.length < 1) {
-			newElement = await newElement.save();
+			newElement = newElement.save();
 			logger.info(`${newElement.name} created.`);
-			res.status(200).json(newElement);
+			res.status(200);
 			nexusEvent.emit('updateCharacters');
 			nexusEvent.emit('updateAssets');
 		}
@@ -84,7 +84,7 @@ router.delete('/:id', async function(req, res) {
 		const id = req.params.id;
 		let element = await Asset.findById(id);
 		if (element != null) {
-			element = await Asset.findByIdAndDelete(id);
+			element = Asset.findByIdAndDelete(id);
 			logger.info(`Asset with the id ${id} was deleted!`);
 			nexusEvent.emit('updateCharacters');
 			nexusEvent.emit('updateAssets');
@@ -146,11 +146,11 @@ router.patch('/modify', async (req, res) => {
 			data.description = description;
 			data.uses = uses;
 
-			data = await data.save();
+			data = data.save();
 
 			nexusEvent.emit('updateCharacters');
 			nexusEvent.emit('updateAssets');
-			res.status(200).json(data);
+			res.status(200);
 		}
 	}
 	catch (err) {
@@ -174,8 +174,8 @@ router.post('/add', async function(req, res) {
 			}
 			else {
 				newElement.model === 'Asset' ? char.assets.push(newElement) : char.traits.push(newElement);
-				char = await char.save();
-				newElement = await newElement.save();
+				char = char.save();
+				newElement = newElement.save();
 				logger.info(`${newElement.name} created.`);
 				nexusEvent.emit('updateCharacters');
 				nexusEvent.emit('updateAssets');
@@ -220,8 +220,8 @@ router.post('/lend', async function(req, res) {
 				docs.status.lent = lendingBoolean;
 				lendingBoolean === true ? docs.currentHolder = char.characterName : docs.currentHolder = null;
 
-				char = await char.save();
-				docs = await docs.save();
+				char = char.save();
+				docs = docs.save();
 				logger.info(`${docs.name} Lent to ${char.characterName}.`);
 				nexusEvent.emit('updateCharacters');
 				res.status(200).json(docs);

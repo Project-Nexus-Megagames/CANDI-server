@@ -58,33 +58,16 @@ router.post('/', async function(req, res) {
 		const docs = await Action.find({ intent: data.intent });
 
 		if (docs.length < 1) {
-			if (data.asset1) {
-				const ass = await Asset.findOne({ name: data.asset1 });
-				ass.status.used = true;
-				await ass.save();
-			}
-			if (data.asset2) {
-				const ass = await Asset.findOne({ name: data.asset2 });
-				ass.status.used = true;
-				await ass.save();
-			}
-			if (data.asset3) {
-				const ass = await Asset.findOne({ name: data.asset3 });
-				ass.status.used = true;
-				await ass.save();
-			}
-
 			const character = await Character.findById(data.creator);
 			character.effort = character.effort - data.effort;
 			if (character.effort > 3) character.effort = 3;
-			await character.save();
+			character.save();
 
-			newElement = await newElement.save();
+			newElement = newElement.save();
 			logger.info(`${newElement.intent} created.`);
 			nexusEvent.emit('updateCharacters');
-			nexusEvent.emit('updateAssets');
 			nexusEvent.emit('updateActions');
-			res.status(200).json(newElement);
+			res.status(200);
 		}
 		else {
 			nexusError(`An action with intent ${newElement.intent} already exists!`, 400);
@@ -105,30 +88,14 @@ router.delete('/:id', async function(req, res) {
 		let element = await Action.findById(id);
 		if (element != null) {
 			element = await Action.findByIdAndDelete(id);
-			if (element.asset1) {
-				const ass = await Asset.findOne({ name: element.asset1 });
-				ass.status.used = false;
-				await ass.save();
-			}
-			if (element.asset2) {
-				const ass = await Asset.findOne({ name: element.asset2 });
-				ass.status.used = false;
-				await ass.save();
-			}
-			if (element.asset3) {
-				const ass = await Asset.findOne({ name: element.asset3 });
-				ass.status.used = false;
-				await ass.save();
-			}
 
 			const character = await Character.findById(element.creator);
 			character.effort = character.effort + element.effort;
-			await character.save();
+			character.save();
 
 			logger.info(`Action with the id ${id} was deleted!`);
 			nexusEvent.emit('updateCharacters');
 			nexusEvent.emit('updateActions');
-			nexusEvent.emit('updateAssets');
 			res.status(200).send(`Action with the id ${id} was deleted!`);
 		}
 		else {
@@ -180,50 +147,17 @@ router.patch('/editAction', async function(req, res) {
 
 			const character = await Character.findById(docs.creator);
 			character.effort = character.effort - (effort - docs.effort);
-			await character.save();
+			character.save();
 
 			docs.effort = effort;
-
-			if (docs.asset1) {
-				const ass = await Asset.findOne({ name: docs.asset1 });
-				ass.status.used = false;
-				await ass.save();
-			}
-			if (docs.asset2) {
-				const ass = await Asset.findOne({ name: docs.asset2 });
-				ass.status.used = false;
-				await ass.save();
-			}
-			if (docs.asset3) {
-				const ass = await Asset.findOne({ name: docs.asset3 });
-				ass.status.used = false;
-				await ass.save();
-			}
 
 			asset1 === undefined ? docs.asset1 = '' : docs.asset1 = asset1;
 			asset2 === undefined ? docs.asset2 = '' : docs.asset2 = asset2;
 			asset3 === undefined ? docs.asset3 = '' : docs.asset3 = asset3;
 
-			if (docs.asset1) {
-				const ass = await Asset.findOne({ name: docs.asset1 });
-				ass.status.used = true;
-				await ass.save();
-			}
-			if (docs.asset2) {
-				const ass = await Asset.findOne({ name: docs.asset2 });
-				ass.status.used = true;
-				await ass.save();
-			}
-			if (docs.asset3) {
-				const ass = await Asset.findOne({ name: docs.asset3 });
-				ass.status.used = true;
-				await ass.save();
-			}
-
-			await docs.save();
+			docs.save();
 			nexusEvent.emit('updateCharacters');
 			nexusEvent.emit('updateActions');
-			nexusEvent.emit('updateAssets');
 			res.status(200).json(docs);
 		}
 	}
@@ -263,7 +197,7 @@ router.patch('/editResult', async function(req, res) {
 				}
 			}
 
-			await docs.save();
+			docs.save();
 			nexusEvent.emit('updateActions');
 			res.status(200).send('Action result successfully edited');
 		}
@@ -302,7 +236,7 @@ router.patch('/project', async function(req, res) {
 		project.progress = progress;
 		project.players = players;
 		project.image = image;
-		await project.save();
+		project.save();
 
 		nexusEvent.emit('updateActions');
 		res.status(200).json(project);
