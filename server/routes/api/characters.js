@@ -15,6 +15,8 @@ const assets = require('../../config/startingassets');
 const { Asset } = require('../../models/asset');
 const { Action } = require('../../models/action');
 const { GameState } = require('../../models/gamestate');
+const { modifyCharacter, modifyMemory, modifySupport } = require('../../game/characters');
+const { addAsset } = require('../../game/assets');
 
 // @route   GET api/characters
 // @Desc    Get all characters
@@ -240,10 +242,10 @@ router.patch('/byUsername', async (req, res) => {
 
 router.patch('/modify', async (req, res) => {
 	logger.info('GET Route: api/characters/modify requested...');
-	const { id, effort, email, worldAnvil, tag, timeZone, wealth, icon, popsupport, bio, characterName, uses } = req.body.data;
+	const { id } = req.body.data;
 	try {
-		let data = await Character.findById(id).populate('wealth');
-		let wealthAss = await Asset.findById(data.wealth._id);
+		const data = await Character.findById(id).populate('wealth');
+
 		if (data === null) {
 			nexusError(`Could not find a character for id "${id}"`, 404);
 		}
@@ -251,24 +253,7 @@ router.patch('/modify', async (req, res) => {
 			nexusError(`Found multiple characters for id ${id}`, 404);
 		}
 		else {
-			data.email = email;
-			data.characterName = characterName;
-			data.worldAnvil = worldAnvil;
-			data.tag = tag;
-			data.timeZone = timeZone;
-			data.effort = effort;
-
-			wealthAss.description = wealth;
-			wealthAss.uses = uses;
-
-			data.icon = icon;
-			data.popsupport = popsupport;
-			data.bio = bio;
-
-			wealthAss = wealthAss.save();
-			data = await data.save();
-			nexusEvent.emit('updateCharacters');
-			nexusEvent.emit('updateAssets');
+			modifyCharacter(data, req.body.data);
 			res.status(200).json(data);
 		}
 	}
@@ -278,7 +263,7 @@ router.patch('/modify', async (req, res) => {
 });
 
 router.patch('/support', async (req, res) => {
-	logger.info('GET Route: api/characters/modify requested...');
+	logger.info('GET Route: api/characters/support requested...');
 	const { id, supporter } = req.body;
 	try {
 		let data = await Character.findById(id);
@@ -289,15 +274,7 @@ router.patch('/support', async (req, res) => {
 			nexusError(`Found multiple characters for id ${id}`, 404);
 		}
 		else {
-			if (data.supporters.some(el => el === supporter)) {
-				const index = data.supporters.indexOf(supporter);
-				data.supporters.splice(index, 1);
-			}
-			else {
-				data.supporters.push(supporter);
-			}
-			data = await data.save();
-			nexusEvent.emit('updateCharacters');
+			modifySupport(data, supporter);
 			res.status(200).json(data);
 		}
 	}
@@ -307,10 +284,10 @@ router.patch('/support', async (req, res) => {
 });
 
 router.patch('/memory', async (req, res) => {
-	logger.info('GET Route: api/characters/modify requested...');
+	logger.info('GET Route: api/characters/memory requested...');
 	const { id, memories } = req.body.data;
 	try {
-		let data = await Character.findById(id);
+		const data = await Character.findById(id);
 		if (data === null) {
 			nexusError(`Could not find a character for id "${id}"`, 404);
 		}
@@ -318,10 +295,7 @@ router.patch('/memory', async (req, res) => {
 			nexusError(`Found multiple characters for id ${id}`, 404);
 		}
 		else {
-			data.memories = memories;
-
-			data = await data.save();
-			nexusEvent.emit('updateCharacters');
+			modifyMemory(data, memories);
 			res.status(200).json(data);
 		}
 	}
@@ -331,7 +305,7 @@ router.patch('/memory', async (req, res) => {
 });
 
 router.patch('/newAsset', async (req, res) => {
-	logger.info('GET Route: api/characters/modify requested...');
+	logger.info('GET Route: api/characters/newAsset requested...');
 	const { id, asset } = req.body.data;
 	try {
 		let data = await Character.findById(id);
@@ -343,16 +317,7 @@ router.patch('/newAsset', async (req, res) => {
 		}
 		else {
 			let newAsset = new Asset(asset);
-
-			if (newAsset.model === 'Trait') {
-				data.traits.push(newAsset);
-			}
-			else {
-				data.assets.push(newAsset);
-			}
-			newAsset = await newAsset.save();
-			data = await data.save();
-			nexusEvent.emit('updateCharacters');
+			addAsset(newAsset, data);
 			res.status(200).json(data);
 		}
 	}
@@ -362,7 +327,7 @@ router.patch('/newAsset', async (req, res) => {
 });
 
 router.patch('/standing', async (req, res) => {
-	logger.info('GET Route: api/characters/modify requested...');
+	logger.info('GET Route: api/characters/standing requested...');
 	const { id, standing } = req.body.data;
 	try {
 		let data = await Character.findById(id).populate('wealth');
@@ -376,7 +341,7 @@ router.patch('/standing', async (req, res) => {
 		else {
 			data.standingOrders = standing;
 
-			data = await data.save();
+			data = data.save();
 			nexusEvent.emit('updateCharacters');
 			res.status(200).json(data);
 		}
@@ -388,7 +353,7 @@ router.patch('/standing', async (req, res) => {
 
 // register
 router.patch('/register', async (req, res) => {
-	logger.info('GET Route: api/characters/modify requested...');
+	logger.info('GET Route: api/characters/register requested...');
 	const { character, username } = req.body.data;
 	try {
 		let data = await Character.findById(character).populate('wealth');
@@ -417,28 +382,6 @@ router.patch('/register', async (req, res) => {
 	}
 });
 
-router.patch('/test', async (req, res) => {
-	logger.info('GET Route: api/characters/modify requested...');
-	const { character } = req.body;
-	try {
-		const data = await Character.findById(character).populate('wealth');
-		if (data) {
-			const emailStuff = {
-				from: 'Afterlife Registration',
-				to: data.email,
-				subject: 'Afterlife Registration',
-				html: `<p>Dear ${data.playerName},</p> <p> You have been successfully registered for the Afterlife App, and can now log in. Please follow the link when possible and make sure all your character information is correct.</p> <p><b>Note:</b> The webpage may take a moment to load on your first log-in. </p> <p>Have fun!</p> <p>Your Character: ${data.characterName} </p> https://afterlife-app.herokuapp.com/`
-			};
-			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
-		}
-		else {
-			nexusError(`Could not find a character for id "${character}"`, 404);
-		}
-	}
-	catch (err) {
-		httpErrorHandler(res, err);
-	}
-});
 
 router.patch('/scrubAsset', async (req, res) => {
 	logger.info('PATCH Route: api/characters/scrubAsset requested...');
