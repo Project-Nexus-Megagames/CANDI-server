@@ -63,7 +63,7 @@ router.post('/', async function(req, res) {
 		if (docs.length < 1) {
 			newElement = newElement.save();
 			logger.info(`${newElement.name} created.`);
-			res.status(200).json(newElement);
+			res.status(200);
 			nexusEvent.emit('updateCharacters');
 			nexusEvent.emit('updateAssets');
 		}
@@ -85,7 +85,7 @@ router.delete('/:id', async function(req, res) {
 		const id = req.params.id;
 		let element = await Asset.findById(id);
 		if (element != null) {
-			element = await Asset.findByIdAndDelete(id);
+			element = Asset.findByIdAndDelete(id);
 			logger.info(`Asset with the id ${id} was deleted!`);
 			nexusEvent.emit('updateCharacters');
 			nexusEvent.emit('updateAssets');
@@ -176,6 +176,7 @@ router.post('/lend', async function(req, res) {
 				nexusError(`Could not find character with id "${target}"`, 400);
 			}
 			else {
+
 				lendAsset(docs, char, lendingBoolean);
 				res.status(200).json(docs);
 			}

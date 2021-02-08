@@ -62,11 +62,20 @@ router.post('/', async function(req, res) {
 
 	try {
 		let newCharacter = new Character(req.body);
+		const wealth = {
+			name: `${newCharacter.characterName}'s Wealth`,
+			description: req.body.wealthLevel,
+			model: 'Wealth',
+			uses: 2
+		};
+		const asset = new Asset(wealth);
+		newCharacter.wealth = asset;
 
 		//	await newAgent.validateAgent();
 		const docs = await Character.find({ characterName: req.body.characterName });
 
 		if (docs.length < 1) {
+			asset.save();
 			newCharacter = await newCharacter.save();
 			logger.info(`${newCharacter.characterName} created.`);
 			nexusEvent.emit('updateCharacters');

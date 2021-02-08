@@ -7,7 +7,7 @@ const Schema = mongoose.Schema; // Destructure of Schema
 
 const GameStateSchema = new Schema({
 	round: { type: Number, required: true },
-	endTime: { type: Date, required: true },
+	endTime: { type: String, required: true },
 	status: { type: String, enum: ['Active', 'Resolution', 'Down']	},
 	tag: { type: String, unique: true }
 });
