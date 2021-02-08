@@ -121,7 +121,7 @@ router.patch('/modify', async function(req, res) {
 	try {
 		data.round = round;
 		data.status = status;
-		data.endTime = endTime,
+		data.endTime = endTime;
 		data = await data.save();
 		console.log(data);
 		nexusEvent.emit('updateGamestate');
