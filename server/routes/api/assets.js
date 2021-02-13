@@ -15,16 +15,20 @@ const { modifyAsset, addAsset, lendAsset } = require('../../game/assets');
 // @route   GET api/assets
 // @Desc    Get all assets
 // @access  Public
-router.get('/', async function(req, res) {
+router.get('/', async function(req, res, next) {
 	logger.info('GET Route: api/asset requested...');
-	try {
-		const assets = await Asset.find();
-
-		res.status(200).json(assets);
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		logger.error(err.message, { meta: err.stack });
-		res.status(500).send(err.message);
+	else {
+		try {
+			const assets = await Asset.find();
+			res.status(200).json(assets);
+		}
+		catch (err) {
+			logger.error(err.message, { meta: err.stack });
+			res.status(500).send(err.message);
+		}
 	}
 });
 
@@ -51,52 +55,61 @@ router.get('/:id', validateObjectId, async (req, res) => {
 // @route   POST api/assets
 // @Desc    Post a new asset
 // @access  Public
-router.post('/', async function(req, res) {
+router.post('/', async function(req, res, next) {
 	logger.info('POST Route: api/asset call made...');
-
-	try {
-		let newElement = new Asset(req.body);
-
-		//	await newAgent.validateAgent();
-		const docs = await Asset.find({ name: req.body.name });
-
-		if (docs.length < 1) {
-			newElement = newElement.save();
-			logger.info(`${newElement.name} created.`);
-			res.status(200);
-			nexusEvent.emit('updateCharacters');
-			nexusEvent.emit('updateAssets');
-		}
-		else {
-			nexusError(`An Asset with name ${newElement.name} already exists!`, 400);
-		}
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		try {
+			let newElement = new Asset(req.body);
+
+			//	await newAgent.validateAgent();
+			const docs = await Asset.find({ name: req.body.name });
+
+			if (docs.length < 1) {
+				newElement = newElement.save();
+				logger.info(`${newElement.name} created.`);
+				res.status(200);
+				nexusEvent.emit('updateCharacters');
+				nexusEvent.emit('updateAssets');
+			}
+			else {
+				nexusError(`An Asset with name ${newElement.name} already exists!`, 400);
+			}
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
 
 // @route   DELETE api/assets/:id
 // @Desc    Delete an asset
 // @access  Public
-router.delete('/:id', async function(req, res) {
+router.delete('/:id', async function(req, res, next) {
 	logger.info('DEL Route: Asset api/delete:id call made...');
-	try {
-		const id = req.params.id;
-		let element = await Asset.findById(id);
-		if (element != null) {
-			element = Asset.findByIdAndDelete(id);
-			logger.info(`Asset with the id ${id} was deleted!`);
-			nexusEvent.emit('updateCharacters');
-			nexusEvent.emit('updateAssets');
-			res.status(200).send(`Asset with the id ${id} was deleted!`);
-		}
-		else {
-			nexusError(`No asset with the id ${id} exists!`, 400);
-		}
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		try {
+			const id = req.params.id;
+			let element = await Asset.findById(id);
+			if (element != null) {
+				element = Asset.findByIdAndDelete(id);
+				logger.info(`Asset with the id ${id} was deleted!`);
+				nexusEvent.emit('updateCharacters');
+				nexusEvent.emit('updateAssets');
+				res.status(200).send(`Asset with the id ${id} was deleted!`);
+			}
+			else {
+				nexusError(`No asset with the id ${id} exists!`, 400);
+			}
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
 
@@ -131,60 +144,70 @@ router.patch('/deleteAll', async function(req, res) {
 });
 
 // game routes
-router.patch('/modify', async (req, res) => {
+router.patch('/modify', async (req, res, next) => {
 	logger.info('GET Route: api/characters/modify requested...');
-	const { id } = req.body.data;
-	try {
-		let data = await Asset.findById(id).populate('wealth');
-		if (data === null) {
-			nexusError(`Could not find an asset for id "${id}"`, 404);
-		}
-		else if (data.length > 1) {
-			nexusError(`Found multiple characters for id ${id}`, 404);
-		}
-		else {
-			modifyAsset(data, req.body.data);
-			res.status(200);
-		}
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		const { id } = req.body.data;
+		try {
+			let data = await Asset.findById(id).populate('wealth');
+			if (data === null) {
+				nexusError(`Could not find an asset for id "${id}"`, 404);
+			}
+			else if (data.length > 1) {
+				nexusError(`Found multiple characters for id ${id}`, 404);
+			}
+			else {
+				modifyAsset(data, req.body.data);
+				res.status(200);
+			}
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
 
 
-router.post('/lend', async function(req, res) {
+router.post('/lend', async function(req, res, next) {
 	logger.info('POST Route: api/asset/lend call made...');
-	const { asset, target, lendingBoolean } = req.body.data;
-	try {
-		let docs = await Asset.findById(asset);
+	if (req.timedout) {
+		next();
+	}
+	else {
+		const { asset, target, lendingBoolean } = req.body.data;
+		try {
+			let docs = await Asset.findById(asset);
 
-		if (docs === null) {
-			nexusError(`Could not find asset with id "${asset}"`, 400);
-		}
-		else {
-
-			if (lendingBoolean === docs.status.lent) { // this is a check to see if someone is trying to relend a previously lent asset
-				nexusError(`Detected an attempt to lend a lent asset "${docs.name}"`, 400);
-			}
-
-			let char = await Character.findById(target);
-			if (char === null || !char) {
-				char = await Character.findBy({ characterName: target });
-			}
-			if (char === null) {
-				nexusError(`Could not find character with id "${target}"`, 400);
+			if (docs === null) {
+				nexusError(`Could not find asset with id "${asset}"`, 400);
 			}
 			else {
 
-				lendAsset(docs, char, lendingBoolean);
-				res.status(200).json(docs);
-			}
-		}
+				if (lendingBoolean === docs.status.lent) { // this is a check to see if someone is trying to relend a previously lent asset
+					nexusError(`Detected an attempt to lend a lent asset "${docs.name}"`, 400);
+				}
 
-	}
-	catch (err) {
-		nexusError(`${err.message}`, 500);
+				let char = await Character.findById(target);
+				if (char === null || !char) {
+					char = await Character.findBy({ characterName: target });
+				}
+				if (char === null) {
+					nexusError(`Could not find character with id "${target}"`, 400);
+				}
+				else {
+
+					lendAsset(docs, char, lendingBoolean);
+					res.status(200).json(docs);
+				}
+			}
+
+		}
+		catch (err) {
+			nexusError(`${err.message}`, 500);
+		}
 	}
 });
 
