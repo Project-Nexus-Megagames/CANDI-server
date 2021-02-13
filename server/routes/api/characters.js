@@ -13,8 +13,6 @@ const nexusError = require('../../middleware/util/throwError');
 const characters = require('../../config/characterList');
 const assets = require('../../config/startingassets');
 const { Asset } = require('../../models/asset');
-const { Action } = require('../../models/action');
-const { GameState } = require('../../models/gamestate');
 const { modifyCharacter, modifyMemory, modifySupport } = require('../../game/characters');
 const { addAsset } = require('../../game/assets');
 
@@ -42,19 +40,24 @@ router.get('/', async function(req, res, next) {
 // @Desc    Get a single Character by ID
 // @access  Public
 router.get('/:id', validateObjectId, async (req, res, next) => {
-	logger.info('GET Route: api/character/:id requested...');
-	const id = req.params.id;
-	try {
-		const character = await Character.findById(id);
-		if (character != null) {
-			res.status(200).json(character);
-		}
-		else {
-			nexusError(`The Character with the ID ${id} was not found!`, 404);
-		}
+	logger.info('GET Route: api/character/:id requested...');	
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		const id = req.params.id;
+		try {
+			const character = await Character.findById(id);
+			if (character != null) {
+				res.status(200).json(character);
+			}
+			else {
+				nexusError(`The Character with the ID ${id} was not found!`, 404);
+			}
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
 
@@ -131,7 +134,7 @@ router.delete('/:id', async function(req, res, next) {
 // @route   PATCH api/characters/deleteAll
 // @desc    Delete All Agents
 // @access  Public
-router.patch('/deleteAll', async function(req, res, next) {
+router.patch('/deleteAll', async function(req, res) {
 	let airDelCount = 0;
 	for await (const agent of Character.find()) {
 		const id = agent.id;
@@ -153,7 +156,7 @@ router.patch('/deleteAll', async function(req, res, next) {
 });
 
 // game routes
-router.post('/initCharacters', async function(req, res, next) {
+router.post('/initCharacters', async function(req, res) {
 	logger.info('POST Route: api/character call made...');
 
 	try {
@@ -227,7 +230,7 @@ router.post('/initCharacters', async function(req, res, next) {
 });
 
 router.patch('/modify', async (req, res, next) => {
-	logger.info('GET Route: api/characters/modify requested...');	
+	logger.info('GET Route: api/characters/modify requested...');
 	if (req.timedout) {
 		next();
 	}
@@ -280,7 +283,7 @@ router.patch('/support', async (req, res, next) => {
 });
 
 router.patch('/memory', async (req, res, next) => {
-	logger.info('GET Route: api/characters/memory requested...');	
+	logger.info('GET Route: api/characters/memory requested...');
 	if (req.timedout) {
 		next();
 	}
@@ -334,31 +337,37 @@ router.patch('/newAsset', async (req, res, next) => {
 
 router.patch('/standing', async (req, res, next) => {
 	logger.info('GET Route: api/characters/standing requested...');
-	const { id, standing } = req.body.data;
-	try {
-		let data = await Character.findById(id).populate('wealth');
+	if (req.timedout) {
+		next();
+	}
+	else {
+		const { id, standing } = req.body.data;
+		try {
+			let data = await Character.findById(id).populate('wealth');
 
-		if (data === null) {
-			nexusError(`Could not find a character for id "${id}"`, 404);
-		}
-		else if (data.length > 1) {
-			nexusError(`Found multiple characters for id ${id}`, 404);
-		}
-		else {
-			data.standingOrders = standing;
+			if (data === null) {
+				nexusError(`Could not find a character for id "${id}"`, 404);
+			}
+			else if (data.length > 1) {
+				nexusError(`Found multiple characters for id ${id}`, 404);
+			}
+			else {
+				data.standingOrders = standing;
 
-			data = data.save();
-			nexusEvent.emit('updateCharacters');
-			res.status(200).json(data);
+				data = data.save();
+				nexusEvent.emit('updateCharacters');
+				res.status(200).json(data);
+			}
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
 		}
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
-	}
+
 });
 
 // register
-router.patch('/register', async (req, res, next) => {
+router.patch('/register', async (req, res) => {
 	logger.info('GET Route: api/characters/register requested...');
 	const { character, username } = req.body.data;
 	try {
@@ -389,7 +398,7 @@ router.patch('/register', async (req, res, next) => {
 });
 
 
-router.patch('/scrubAsset', async (req, res, next) => {
+router.patch('/scrubAsset', async (req, res) => {
 	logger.info('PATCH Route: api/characters/scrubAsset requested...');
 	try {
 		let mercy = await Character.findOne({ characterName: 'The Demon of Mercy' });
@@ -428,7 +437,7 @@ router.patch('/test', async (req, res, next) => {
 			else {
 				res.send('success');
 			}
-		}, Math.random() * 7000);
+		}, Math.random() * 10000 + 10000);
 	}
 	catch (err) {
 		httpErrorHandler(res, err);

@@ -14,95 +14,115 @@ const { removeEffort, addEffort, editAction, editResult } = require('../../game/
 // @route   GET api/actions
 // @Desc    Get all actions
 // @access  Public
-router.get('/', async function(req, res) {
+router.get('/', async function(req, res, next) {
 	logger.info('GET Route: api/action requested...');
-	try {
-		const actions = await Action.find().populate('creator');
-		res.status(200).json(actions);
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		logger.error(err.message, { meta: err.stack });
-		res.status(500).send(err.message);
+	else {
+		try {
+			const actions = await Action.find().populate('creator');
+			res.status(200).json(actions);
+		}
+		catch (err) {
+			logger.error(err.message, { meta: err.stack });
+			res.status(500).send(err.message);
+		}
 	}
 });
 
 // @route   GET api/actions/:id
 // @Desc    Get a single Action by ID
 // @access  Public
-router.get('/:id', validateObjectId, async (req, res) => {
+router.get('/:id', validateObjectId, async (req, res, next) => {
 	logger.info('GET Route: api/action/:id requested...');
-	const id = req.params.id;
-	try {
-		const action = await Action.findById(id);
-		if (action != null) {
-			res.status(200).json(action);
-		}
-		else {
-			nexusError(`The Action with the ID ${id} was not found!`, 404);
-		}
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		const id = req.params.id;
+		try {
+			const action = await Action.findById(id);
+			if (action != null) {
+				res.status(200).json(action);
+			}
+			else {
+				nexusError(`The Action with the ID ${id} was not found!`, 404);
+			}
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
 
 // @route   POST api/actions
 // @Desc    Post a new action
 // @access  Public
-router.post('/', async function(req, res) {
+router.post('/', async function(req, res, next) {
 	logger.info('POST Route: api/action call made...');
-	const { data } = req.body;
-	try {
-		let newElement = new Action(data);
-		const docs = await Action.find({ intent: data.intent });
-
-		if (docs.length < 1) {
-			removeEffort(data);
-			newElement = await newElement.save();
-			const action = await Action.findById(newElement._id).populate('creator');
-			logger.info(`Action "${newElement.intent}" created.`);
-			nexusEvent.emit('updateActions');
-			res.status(200).json(action);
-		}
-		else {
-			nexusError(`An action with intent ${newElement.intent} already exists!`, 400);
-		}
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		const { data } = req.body;
+		try {
+			let newElement = new Action(data);
+			const docs = await Action.find({ intent: data.intent });
+
+			if (docs.length < 1) {
+				removeEffort(data);
+				newElement = await newElement.save();
+				const action = await Action.findById(newElement._id).populate('creator');
+				logger.info(`Action "${newElement.intent}" created.`);
+				nexusEvent.emit('updateActions');
+				res.status(200).json(action);
+			}
+			else {
+				nexusError(`An action with intent ${newElement.intent} already exists!`, 400);
+			}
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
 
 // @route   DELETE api/actions/:id
 // @Desc    Delete an action
 // @access  Public
-router.delete('/:id', async function(req, res) {
+router.delete('/:id', async function(req, res, next) {
 	logger.info('DEL Route: api/agent:id call made...');
-	try {
-		const id = req.params.id;
-		let element = await Action.findById(id);
-		if (element != null) {
-			element = await Action.findByIdAndDelete(id);
-
-			addEffort(element);
-
-			logger.info(`Action with the id ${id} was deleted!`);
-			nexusEvent.emit('updateActions');
-			res.status(200).send(`Action with the id ${id} was deleted!`);
-		}
-		else {
-			nexusError(`No action with the id ${id} exists!`, 400);
-		}
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		try {
+			const id = req.params.id;
+			let element = await Action.findById(id);
+			if (element != null) {
+				element = await Action.findByIdAndDelete(id);
+
+				addEffort(element);
+
+				logger.info(`Action with the id ${id} was deleted!`);
+				nexusEvent.emit('updateActions');
+				res.status(200).send(`Action with the id ${id} was deleted!`);
+			}
+			else {
+				nexusError(`No action with the id ${id} exists!`, 400);
+			}
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
 
 // @route   PATCH api/actions/deleteAll
 // @desc    Delete All actions
 // @access  Public
-router.patch('/deleteAll', async function(req, res) {
+router.patch('/deleteAll', async function(req, res, next) {
 	let delCount = 0;
 	for await (const element of Action.find()) {
 		const id = element.id;
@@ -124,83 +144,102 @@ router.patch('/deleteAll', async function(req, res) {
 });
 
 // ~~~Game Routes~~~
-router.patch('/editAction', async function(req, res) {
+router.patch('/editAction', async function(req, res, next) {
 	logger.info('POST Route: api/action call made...');
-	const { id } = req.body.data;
-	try {
-		const docs = await Action.findById(id);
-
-		if (docs === null) {
-			nexusError('Could not find the action desired, please contact Tech Control', 400);
-		}
-		else {
-
-			editAction(docs, req.body.data);
-			res.status(200).json(docs);
-		}
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		const { id } = req.body.data;
+		try {
+			const docs = await Action.findById(id);
+
+			if (docs === null) {
+				nexusError('Could not find the action desired, please contact Tech Control', 400);
+			}
+			else {
+
+				editAction(docs, req.body.data);
+				res.status(200).json(docs);
+			}
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
 
-router.patch('/editResult', async function(req, res) {
+router.patch('/editResult', async function(req, res, next) {
 	logger.info('POST Route: api/action/editResult call made...');
-	const { id } = req.body.data;
-	try {
-		const docs = await Action.findById(id);
-
-		if (docs === null) {
-			nexusError('Could not find the action desired, please contact Tech Control', 400);
-		}
-		else {
-			editResult(docs, req.body.data);
-			res.status(200).send('Action result successfully edited');
-		}
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		const { id } = req.body.data;
+		try {
+			const docs = await Action.findById(id);
+
+			if (docs === null) {
+				nexusError('Could not find the action desired, please contact Tech Control', 400);
+			}
+			else {
+				editResult(docs, req.body.data);
+				res.status(200).send('Action result successfully edited');
+			}
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
 
-router.post('/project', async function(req, res) {
+router.post('/project', async function(req, res, next) {
 	logger.info('POST Route: api/action/project call made...');
-	const { data } = req.body;
-	try {
-		let newElement = new Action(data);
-		newElement.status.draft = false;
-		newElement.status.published = true;
-
-		newElement = await newElement.save();
-		res.status(200).json(newElement);
-		nexusEvent.emit('updateActions');
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		const { data } = req.body;
+		try {
+			let newElement = new Action(data);
+			newElement.status.draft = false;
+			newElement.status.published = true;
+
+			newElement = await newElement.save();
+			res.status(200).json(newElement);
+			nexusEvent.emit('updateActions');
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
 
-router.patch('/project', async function(req, res) {
+router.patch('/project', async function(req, res, next) {
 	logger.info('patch Route: api/action/project call made...');
-	const { description, intent, progress, players, image, id } = req.body.data;
-	try {
-		const project = await Action.findById(id);
-		project.status.draft = false;
-		project.status.published = true;
-		project.description = description;
-		project.intent = intent;
-		project.progress = progress;
-		project.players = players;
-		project.image = image;
-		project.save();
-
-		nexusEvent.emit('updateActions');
-		res.status(200).json(project);
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		const { description, intent, progress, players, image, id } = req.body.data;
+		try {
+			const project = await Action.findById(id);
+			project.status.draft = false;
+			project.status.published = true;
+			project.description = description;
+			project.intent = intent;
+			project.progress = progress;
+			project.players = players;
+			project.image = image;
+			project.save();
+
+			nexusEvent.emit('updateActions');
+			res.status(200).json(project);
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
-
 
 module.exports = router;

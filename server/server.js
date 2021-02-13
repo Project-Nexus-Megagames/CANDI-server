@@ -23,6 +23,7 @@ require('./middleware/production/prod')(app); // Production compression and midd
 // require('./middleware/discord')(); // Signs on the discord bot...
 
 app.use((err, req, res, next) => {
+	logger.error(`Response Teimout and Terminated: ${err}`);
 	res.send('Response timeout');
 });
 
