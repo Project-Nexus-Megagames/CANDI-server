@@ -10,7 +10,7 @@ const { Asset } = require('../../models/asset'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { Character } = require('../../models/character');
-const { modifyAsset, addAsset, lendAsset } = require('../../game/assets');
+const { modifyAsset, lendAsset } = require('../../game/assets');
 
 // @route   GET api/assets
 // @Desc    Get all assets
@@ -97,7 +97,7 @@ router.delete('/:id', async function(req, res, next) {
 			const id = req.params.id;
 			let element = await Asset.findById(id);
 			if (element != null) {
-				element = Asset.findByIdAndDelete(id);
+				element = await Asset.findByIdAndDelete(id);
 				logger.info(`Asset with the id ${id} was deleted!`);
 				nexusEvent.emit('updateCharacters');
 				nexusEvent.emit('updateAssets');
