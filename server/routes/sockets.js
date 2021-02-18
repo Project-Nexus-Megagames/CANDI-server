@@ -28,7 +28,7 @@ module.exports = function(server) {
 		});
 
 		nexusEvent.on('updateCharacters', async () => {
-			const characters = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');;
+			const characters = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');
 			client.emit('updateCharacters', characters);
 		});
 
