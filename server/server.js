@@ -9,7 +9,7 @@ logger.info('Booting Project Nexus Server...');
 // Boot Processes
 logger.info('Looding start-up processes...');
 const app = express(); // Init for express
-app.use(timeout('13s'));
+app.use(timeout('20s'));
 app.use(haltOnTimedout);
 logger.info('Express Initilized...');
 const server = http.createServer(app); // Creation of an HTTP server
