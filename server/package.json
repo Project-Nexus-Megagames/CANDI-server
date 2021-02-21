@@ -41,7 +41,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.9",
     "newrelic": "^7.1.1",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.4.0",
     "winston": "^3.3.3",
     "winston-mongodb": "^5.0.5"
   },

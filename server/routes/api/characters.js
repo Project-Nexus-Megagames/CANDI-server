@@ -429,18 +429,28 @@ router.patch('/scrubAsset', async (req, res) => {
 
 router.patch('/test', async (req, res, next) => {
 	logger.info('PATCH Route: api/characters/test requested...');
-	try {
-		setTimeout(() => {
-			if (req.timedout) {
-				next();
-			}
-			else {
-				res.send('success');
-			}
-		}, Math.random() * 10000 + 10000);
+	if (req.timedout) {
+		next();
 	}
-	catch (err) {
-		httpErrorHandler(res, err);
+	else {
+		const { id } = req.body;
+		try {
+			const character = await Character.findById(id);
+			const record = [];
+
+			for (const supporter of character.supporters) {
+				if (!record.some(el => el === supporter)) {
+					record.push(supporter);
+				}
+			}
+
+			character.supporters = record;
+			await character.save();
+			res.status(200).json(character);
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
 	}
 });
 

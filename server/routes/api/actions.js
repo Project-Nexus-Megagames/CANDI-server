@@ -7,6 +7,8 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 
 // Agent Model - Using Mongoose Model
 const { Action } = require('../../models/action'); // Agent Model
+const { Character } = require('../../models/character');
+const { User } = require('../../models/user');
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { removeEffort, addEffort, editAction, editResult } = require('../../game/actions');
@@ -15,7 +17,7 @@ const { removeEffort, addEffort, editAction, editResult } = require('../../game/
 // @Desc    Get all actions
 // @access  Public
 router.get('/', async function(req, res, next) {
-	logger.info('GET Route: api/action requested...');
+	logger.info('GET Route: api/action requested... BBBBBBBBBBBBBBBBBBB');
 	if (req.timedout) {
 		next();
 	}
@@ -34,24 +36,22 @@ router.get('/', async function(req, res, next) {
 // @route   GET api/actions/:id
 // @Desc    Get a single Action by ID
 // @access  Public
-router.get('/:id', validateObjectId, async (req, res, next) => {
-	logger.info('GET Route: api/action/:id requested...');
+router.get('/:id', async (req, res, next) => {
+	logger.info('GET Route: api/action requested... AAAAAAAAAAAAAAAAAA');
 	if (req.timedout) {
 		next();
 	}
 	else {
-		const id = req.params.id;
+		const username = req.params.id;
 		try {
-			const action = await Action.findById(id);
-			if (action != null) {
-				res.status(200).json(action);
-			}
-			else {
-				nexusError(`The Action with the ID ${id} was not found!`, 404);
-			}
+			// if the user is a control member send them everything
+			const myCharacter = await Character.findOne({ username });
+			const actions = await Action.find({ creator: myCharacter._id }).populate('creator');
+			res.status(200).json(actions);
 		}
 		catch (err) {
-			httpErrorHandler(res, err);
+			logger.error(err.message, { meta: err.stack });
+			res.status(500).send(err.message);
 		}
 	}
 });

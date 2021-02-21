@@ -10,10 +10,11 @@ module.exports = function(server) {
 	const Clients = new SocketServer();
 
 	logger.info('Socket.io servers initialized...');
-	const io = require('socket.io')(server); // Creation of websocket Server
+	const io = require('socket.io')(server);
+
 	io.on('connection', client => {
 		Clients.connections.push(client);
-		client.emit('connect');
+		client.emit('Hello');
 		console.log(`A user connected via ${client.id}!`);
 
 		client.on('login', data => {
@@ -25,6 +26,22 @@ module.exports = function(server) {
 			logger.info(`Client disconnecting from update service... ${client.id}`);
 			Clients.delClient(client);
 			console.log(`${Clients.connections.length} clients connected`);
+
+			nexusEvent.off('updateCharacters', () => {
+				console.log(`${client.id} updateCharacters listner offline...`);
+			});
+
+			nexusEvent.off('updateActions', () => {
+				console.log(`${client.id} updateActions listner offline...`);
+			});
+
+			nexusEvent.off('updateGamestate', () => {
+				console.log(`${client.id} updateGamestate listner offline...`);
+			});
+
+			nexusEvent.off('updateAssets', () => {
+				console.log(`${client.id} updateAssets listner offline...`);
+			});
 		});
 
 		nexusEvent.on('updateCharacters', async () => {
