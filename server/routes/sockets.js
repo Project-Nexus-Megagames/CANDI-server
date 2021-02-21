@@ -10,13 +10,18 @@ module.exports = function(server) {
 	const Clients = new SocketServer();
 
 	logger.info('Socket.io servers initialized...');
-	const io = require('socket.io')(server); // Creation of websocket Server
+	const io = require('socket.io')(server, {
+		cors: {
+			origin: 'http://localhost:3000',
+			methods: ['GET', 'POST']
+		}
+	});
 	io.on('connection', client => {
 		Clients.connections.push(client);
-		client.emit('connect');
+		client.send('Hello');
 		console.log(`A user connected via ${client.id}!`);
 
-		client.once('login', data => {
+		client.on('login', data => {
 			Clients.saveUser(data, client);
 			logger.info(`${data.username} has been registered as a socket subscriber...`);
 		});
