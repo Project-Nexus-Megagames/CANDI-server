@@ -16,7 +16,7 @@ module.exports = function(server) {
 		client.emit('connect');
 		console.log(`A user connected via ${client.id}!`);
 
-		client.on('login', data => {
+		client.once('login', data => {
 			Clients.saveUser(data, client);
 			logger.info(`${data.username} has been registered as a socket subscriber...`);
 		});
