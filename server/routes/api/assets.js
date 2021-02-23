@@ -70,7 +70,7 @@ router.post('/', async function(req, res, next) {
 			if (docs.length < 1) {
 				newElement = newElement.save();
 				logger.info(`${newElement.name} created.`);
-				res.status(200);
+				res.status(200).json(newElement);
 				nexusEvent.emit('updateCharacters');
 				nexusEvent.emit('updateAssets');
 			}
@@ -145,7 +145,7 @@ router.patch('/deleteAll', async function(req, res) {
 
 // game routes
 router.patch('/modify', async (req, res, next) => {
-	logger.info('GET Route: api/characters/modify requested...');
+	logger.info('PATCH Route: api/characters/modify requested...');
 	if (req.timedout) {
 		next();
 	}
@@ -161,7 +161,7 @@ router.patch('/modify', async (req, res, next) => {
 			}
 			else {
 				modifyAsset(data, req.body.data);
-				res.status(200);
+				res.status(200).json(data);
 			}
 		}
 		catch (err) {

@@ -24,7 +24,7 @@ require('./middleware/production/prod')(app); // Production compression and midd
 
 app.use((err, req, res, next) => {
 	logger.error(`Response Teimout and Terminated: ${err}`);
-	res.status(500).send('Response timeout!!!', req.params);
+	res.status(500).send('Response timeout!!!');
 });
 
 function haltOnTimedout(req, res, next) {
