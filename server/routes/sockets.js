@@ -22,6 +22,10 @@ module.exports = function(server) {
 			logger.info(`${data.username} has been registered as a socket subscriber...`);
 		});
 
+		client.on('trigger', data => {
+			nexusEvent.emit(`${data}`);
+		});
+
 		client.on('disconnect', () => {
 			logger.info(`Client disconnecting from update service... ${client.id}`);
 			Clients.delClient(client);
