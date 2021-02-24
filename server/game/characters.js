@@ -3,7 +3,7 @@ const nexusEvent = require('../middleware/events/events'); // Local event trigge
 
 
 async function modifyCharacter(character, data) {
-	const { effort, email, worldAnvil, tag, timeZone, wealth, icon, popsupport, bio, characterName, uses } = data;
+	const { effort, email, worldAnvil, tag, control, timeZone, wealth, icon, popsupport, bio, characterName, uses } = data;
 
 	let wealthAss = await Asset.findById(character.wealth._id);
 
@@ -11,6 +11,7 @@ async function modifyCharacter(character, data) {
 	character.characterName = characterName;
 	character.worldAnvil = worldAnvil;
 	character.tag = tag;
+	character.control = control;
 	character.timeZone = timeZone;
 	character.effort = effort;
 
