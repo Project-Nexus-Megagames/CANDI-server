@@ -24,11 +24,11 @@ async function addEffort(data) {
 
 async function editAction(data) {
 	const { id, description, intent, effort, asset1, asset2, asset3 } = data;
-	const action = await Action.findById(id);
+	const action = await Action.findById(id).populate('creator');
 	action.description = description;
 	action.intent = intent;
 
-	const character = await Character.findById(action.creator).populate('creator');
+	const character = await Character.findById(action.creator);
 	character.effort = character.effort - (effort - action.effort);
 	character.save();
 
