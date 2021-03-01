@@ -1,5 +1,6 @@
 const { Character } = require('../models/character');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
+const { Action } = require('../models/action');
 
 async function removeEffort(data) {
 	const character = await Character.findById(data.creator);
@@ -21,12 +22,13 @@ async function addEffort(data) {
 	return;
 }
 
-async function editAction(action, data) {
-	const { description, intent, effort, asset1, asset2, asset3 } = data;
+async function editAction(data) {
+	const { id, description, intent, effort, asset1, asset2, asset3 } = data;
+	const action = await Action.findById(id);
 	action.description = description;
 	action.intent = intent;
 
-	const character = await Character.findById(action.creator);
+	const character = await Character.findById(action.creator).populate('creator');
 	character.effort = character.effort - (effort - action.effort);
 	character.save();
 
@@ -38,8 +40,8 @@ async function editAction(action, data) {
 
 	await action.save();
 	nexusEvent.emit('updateCharacters');
-	nexusEvent.emit('updateActions');
-	return;
+	// nexusEvent.emit('updateActions');
+	return action;
 }
 
 async function editResult(action, data) {

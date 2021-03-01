@@ -427,8 +427,8 @@ router.patch('/scrubAsset', async (req, res) => {
 	}
 });
 
-router.patch('/test', async (req, res, next) => {
-	logger.info('PATCH Route: api/characters/test requested...');
+router.patch('/cleanSupporters', async (req, res, next) => {
+	logger.info('PATCH Route: api/characters/cleanSupporters requested...');
 	if (req.timedout) {
 		next();
 	}
@@ -447,6 +447,32 @@ router.patch('/test', async (req, res, next) => {
 			character.supporters = record;
 			await character.save();
 			res.status(200).json(character);
+		}
+		catch (err) {
+			httpErrorHandler(res, err);
+		}
+	}
+});
+
+router.patch('/test', async (req, res, next) => {
+	logger.info('PATCH Route: api/characters/test requested...');
+	if (req.timedout) {
+		next();
+	}
+	else {
+		try {
+			const blessing = await Asset.findById('6004ae5d5c282252cc010d05');
+			const judgement = await Character.findById('6004ae5a5c282252cc010c45');
+			const dawn = await Character.findById('6004ae5a5c282252cc010c48');
+
+			const index2 = dawn.traits.indexOf('6004ae5d5c282252cc010d05');
+			dawn.traits.splice(index2, 1);
+			console.log('index2', index2);
+
+			await judgement.save();
+			await dawn.save();
+
+			res.status(200).json(dawn);
 		}
 		catch (err) {
 			httpErrorHandler(res, err);

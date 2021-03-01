@@ -46,6 +46,9 @@ router.get('/:id', async (req, res, next) => {
 		try {
 			// if the user is a control member send them everything
 			const myCharacter = await Character.findOne({ username });
+			if (!myCharacter) {
+				res.status(404).send('No Character Found');
+			}
 			const actions = await Action.find({ creator: myCharacter._id }).populate('creator');
 			res.status(200).json(actions);
 		}
