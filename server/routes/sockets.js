@@ -28,9 +28,9 @@ module.exports = function(server) {
 		});
 
 		client.on('updateActionRequest', async (data) => {
-			console.log(data);
 			const action = await editAction(data);
 			io.emit('updateAction', action);
+			client.emit('Alert', { message : 'Action Socket Success' });
 		});
 
 		client.on('disconnect', () => {
