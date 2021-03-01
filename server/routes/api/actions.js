@@ -13,6 +13,7 @@ const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { removeEffort, addEffort, editAction, editResult } = require('../../game/actions');
 
+let count = 0;
 // @route   GET api/actions
 // @Desc    Get all actions
 // @access  Public
@@ -21,8 +22,13 @@ router.get('/', async function(req, res, next) {
 	if (req.timedout) {
 		next();
 	}
+	else if (count < 4) {
+		res.status(500).send('oopsie');
+		count++;
+	}
 	else {
 		try {
+			count = 0;
 			const actions = await Action.find().populate('creator');
 			res.status(200).json(actions);
 		}
@@ -46,6 +52,9 @@ router.get('/:id', async (req, res, next) => {
 		try {
 			// if the user is a control member send them everything
 			const myCharacter = await Character.findOne({ username });
+			if (!myCharacter) {
+				res.status(404).send('No Character Found');
+			}
 			const actions = await Action.find({ creator: myCharacter._id }).populate('creator');
 			res.status(200).json(actions);
 		}

@@ -5,6 +5,7 @@ const { Character } = require('../models/character');
 const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
+const { editAction } = require('../game/actions');
 
 module.exports = function(server) {
 	const Clients = new SocketServer();
@@ -26,47 +27,37 @@ module.exports = function(server) {
 			nexusEvent.emit(`${data}`);
 		});
 
+		client.on('updateActionRequest', async (data) => {
+			console.log(data);
+			const action = await editAction(data);
+			io.emit('updateAction', action);
+		});
+
 		client.on('disconnect', () => {
 			logger.info(`Client disconnecting from update service... ${client.id}`);
 			Clients.delClient(client);
 			console.log(`${Clients.connections.length} clients connected`);
-
-			nexusEvent.off('updateCharacters', () => {
-				console.log(`${client.id} updateCharacters listner offline...`);
-			});
-
-			nexusEvent.off('updateActions', () => {
-				console.log(`${client.id} updateActions listner offline...`);
-			});
-
-			nexusEvent.off('updateGamestate', () => {
-				console.log(`${client.id} updateGamestate listner offline...`);
-			});
-
-			nexusEvent.off('updateAssets', () => {
-				console.log(`${client.id} updateAssets listner offline...`);
-			});
 		});
-
-		nexusEvent.on('updateCharacters', async () => {
-			const characters = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');
-			client.emit('updateCharacters', characters);
-		});
-
-		nexusEvent.on('updateActions', async () => {
-			const actions = await Action.find().populate('creator');
-			client.emit('updateActions', actions);
-		});
-
-		nexusEvent.on('updateGamestate', async () => {
-			const gamestate = await GameState.findOne();
-			client.emit('updateGamestate', gamestate);
-		});
-
-		nexusEvent.on('updateAssets', async () => {
-			const assets = await Asset.find();
-			client.emit('updateAssets', assets);
-		});
-
 	});
+
+	nexusEvent.on('updateCharacters', async () => {
+		const characters = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+		io.emit('updateCharacters', characters);
+	});
+
+	nexusEvent.on('updateActions', async () => {
+		const actions = await Action.find().populate('creator');
+		io.emit('updateActions', actions);
+	});
+
+	nexusEvent.on('updateGamestate', async () => {
+		const gamestate = await GameState.findOne();
+		io.emit('updateGamestate', gamestate);
+	});
+
+	nexusEvent.on('updateAssets', async () => {
+		const assets = await Asset.find();
+		io.emit('updateAssets', assets);
+	});
+
 };
