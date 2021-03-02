@@ -169,7 +169,7 @@ router.patch('/closeRound', async function(req, res, next) {
 	}
 });
 
-router.patch('/nextRound', async function(req, res) {
+router.patch('/nextRound', async function(req, res, next) {
 	logger.info('GET Route: api/gamestate/nextRound requested...');
 	if (req.timedout) {
 		next();

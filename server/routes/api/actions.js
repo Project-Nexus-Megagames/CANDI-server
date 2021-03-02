@@ -17,7 +17,7 @@ const { removeEffort, addEffort, editAction, editResult } = require('../../game/
 // @Desc    Get all actions
 // @access  Public
 router.get('/', async function(req, res, next) {
-	logger.info('GET Route: api/action requested... BBBBBBBBBBBBBBBBBBB');
+	logger.info('GET Route: api/action requested: get all');
 	if (req.timedout) {
 		next();
 	}
@@ -37,12 +37,12 @@ router.get('/', async function(req, res, next) {
 // @Desc    Get a single Action by ID
 // @access  Public
 router.get('/:id', async (req, res, next) => {
-	logger.info('GET Route: api/action requested... AAAAAAAAAAAAAAAAAA');
+	const username = req.params.id;
+	logger.info(`GET Route: api/action requested: Get for character: ${username}`);
 	if (req.timedout) {
 		next();
 	}
 	else {
-		const username = req.params.id;
 		try {
 			// if the user is a control member send them everything
 			const myCharacter = await Character.findOne({ username });
@@ -78,7 +78,6 @@ router.post('/', async function(req, res, next) {
 				newElement = await newElement.save();
 				const action = await Action.findById(newElement._id).populate('creator');
 				logger.info(`Action "${newElement.intent}" created.`);
-				nexusEvent.emit('updateActions');
 				res.status(200).json(action);
 			}
 			else {
@@ -94,6 +93,7 @@ router.post('/', async function(req, res, next) {
 // @route   DELETE api/actions/:id
 // @Desc    Delete an action
 // @access  Public
+// DEPRECIATED
 router.delete('/:id', async function(req, res, next) {
 	logger.info('DEL Route: api/agent:id call made...');
 	if (req.timedout) {
@@ -125,6 +125,7 @@ router.delete('/:id', async function(req, res, next) {
 // @route   PATCH api/actions/deleteAll
 // @desc    Delete All actions
 // @access  Public
+/*
 router.patch('/deleteAll', async function(req, res, next) {
 	let delCount = 0;
 	for await (const element of Action.find()) {
@@ -145,8 +146,10 @@ router.patch('/deleteAll', async function(req, res, next) {
 	nexusEvent.emit('updateActions');
 	return res.status(200).send(`We wiped out ${delCount} Actions`);
 });
+*/
 
 // ~~~Game Routes~~~
+// DEPRECIATED
 router.patch('/editAction', async function(req, res, next) {
 	logger.info('POST Route: api/action call made...');
 	if (req.timedout) {
@@ -171,7 +174,7 @@ router.patch('/editAction', async function(req, res, next) {
 		}
 	}
 });
-
+// DEPRECIATED
 router.patch('/editResult', async function(req, res, next) {
 	logger.info('POST Route: api/action/editResult call made...');
 	if (req.timedout) {

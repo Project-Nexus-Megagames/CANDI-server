@@ -6,10 +6,9 @@ async function removeEffort(data) {
 	const character = await Character.findById(data.creator);
 	character.effort = character.effort - data.effort;
 	await character.save();
-
-	nexusEvent.emit('updateCharacters');
-	nexusEvent.emit('updateActions');
-	return;
+	character.populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+	// nexusEvent.emit('updateCharacters');
+	return character;
 }
 
 async function addEffort(data) {
@@ -17,9 +16,11 @@ async function addEffort(data) {
 	character.effort = character.effort + data.effort;
 	if (character.effort > 3) character.effort = 3;
 	await character.save();
+	character.populate('assets').populate('traits').populate('wealth').populate('lentAssets');
 
-	nexusEvent.emit('updateCharacters');
-	return;
+	// nexusEvent.emit('updateCharacters');
+
+	return character;
 }
 
 async function editAction(data) {
@@ -44,8 +45,10 @@ async function editAction(data) {
 	return action;
 }
 
-async function editResult(action, data) {
-	const { result, status, dieResult } = data;
+async function editResult(data) {
+	const { id, result, status, dieResult } = data;
+	const action = await Action.findById(id).populate('creator');
+
 	action.result = result;
 	action.dieResult = dieResult;
 	if (status) {
@@ -66,9 +69,9 @@ async function editResult(action, data) {
 			break;
 		}
 	}
-
 	await action.save();
-	nexusEvent.emit('updateActions');
+	// nexusEvent.emit('updateActions');
+	return action;
 }
 
 module.exports = { removeEffort, addEffort, editAction, editResult };
