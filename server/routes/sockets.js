@@ -35,12 +35,12 @@ module.exports = function(server) {
 				if (docs.length < 1) {
 					const character = removeEffort(data);
 					newElement = await newElement.save();
-					newElement.populate('creator');
+					const action = await Action.findById(newElement._id).populate('creator');
 
 					logger.info(`Action "${newElement.intent}" created.`);
 
 					io.emit('updateCharacter', character);
-					io.emit('actionCreated', newElement);
+					io.emit('actionCreated', action);
 					client.emit('Alert', { message : 'Action Creation Success', type: 'success' });
 				}
 				else {
@@ -60,7 +60,8 @@ module.exports = function(server) {
 				if (element != null) {
 					element = await Action.findByIdAndDelete(id);
 
-					const character = addEffort(element);
+					const character = await addEffort(element);
+					console.log(character);
 
 					logger.info(`Action with the id ${id} was deleted via Socket!`);
 
@@ -79,7 +80,6 @@ module.exports = function(server) {
 		});
 
 		client.on('updateActionRequest', async (data) => {
-			console.log(data);
 			let action;
 			if (data.playerBoolean) {
 				action = await editAction(data);
