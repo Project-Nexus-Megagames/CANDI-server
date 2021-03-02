@@ -12,11 +12,10 @@ async function removeEffort(data) {
 }
 
 async function addEffort(data) {
-	const character = await Character.findById(data.creator);
+	const character = await Character.findById(data.creator).populate('assets').populate('traits').populate('wealth').populate('lentAssets');
 	character.effort = character.effort + data.effort;
 	if (character.effort > 3) character.effort = 3;
 	await character.save();
-	character.populate('assets').populate('traits').populate('wealth').populate('lentAssets');
 
 	// nexusEvent.emit('updateCharacters');
 
