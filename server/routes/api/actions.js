@@ -13,6 +13,8 @@ const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { removeEffort, addEffort, editAction, editResult } = require('../../game/actions');
 
+let oops = 0;
+
 // @route   GET api/actions
 // @Desc    Get all actions
 // @access  Public
@@ -42,8 +44,14 @@ router.get('/:id', async (req, res, next) => {
 	if (req.timedout) {
 		next();
 	}
+	else if (oops < 4) {
+		oops++;
+		console.log('Oopsies ', oops);
+		// res.status(500).send(oops);
+	}
 	else {
 		try {
+			oops = 0;
 			// if the user is a control member send them everything
 			const myCharacter = await Character.findOne({ username });
 			if (!myCharacter) {
@@ -149,55 +157,6 @@ router.patch('/deleteAll', async function(req, res, next) {
 */
 
 // ~~~Game Routes~~~
-// DEPRECIATED
-router.patch('/editAction', async function(req, res, next) {
-	logger.info('POST Route: api/action call made...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { id } = req.body.data;
-		try {
-			const docs = await Action.findById(id);
-
-			if (docs === null) {
-				nexusError('Could not find the action desired, please contact Tech Control', 400);
-			}
-			else {
-
-				editAction(docs, req.body.data);
-				res.status(200).json(docs);
-			}
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-});
-// DEPRECIATED
-router.patch('/editResult', async function(req, res, next) {
-	logger.info('POST Route: api/action/editResult call made...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { id } = req.body.data;
-		try {
-			const docs = await Action.findById(id);
-
-			if (docs === null) {
-				nexusError('Could not find the action desired, please contact Tech Control', 400);
-			}
-			else {
-				editResult(docs, req.body.data);
-				res.status(200).send('Action result successfully edited');
-			}
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-});
 
 router.post('/project', async function(req, res, next) {
 	logger.info('POST Route: api/action/project call made...');

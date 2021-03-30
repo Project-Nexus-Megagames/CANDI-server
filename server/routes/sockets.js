@@ -5,7 +5,10 @@ const { Character } = require('../models/character');
 const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
-const { editAction, removeEffort, addEffort, editResult } = require('../game/actions');
+const { editAction, removeEffort, addEffort, editResult, createAction, deleteAction } = require('../game/actions');
+const { modifyCharacter, modifySupport, deleteCharacter, createCharacter } = require('../game/characters');
+const { modifyAsset, lendAsset, deleteAsset } = require('../game/assets');
+const { modifyGameState, closeRound, nextRound } = require('../game/gamestate');
 
 module.exports = function(server) {
 	const Clients = new SocketServer();
@@ -27,69 +30,135 @@ module.exports = function(server) {
 			nexusEvent.emit(`${data}`);
 		});
 
-		// Action Sockets
-		client.on('createActionRequest', async (data) => {
-			try {
-				let newElement = new Action(data);
-				const docs = await Action.find({ intent: data.intent });
-				if (docs.length < 1) {
-					const character = removeEffort(data);
-					newElement = await newElement.save();
-					const action = await Action.findById(newElement._id).populate('creator');
-
-					logger.info(`Action "${newElement.intent}" created.`);
-
-					io.emit('updateCharacter', character);
-					io.emit('actionCreated', action);
-					client.emit('Alert', { message : 'Action Creation Success', type: 'success' });
+		// Action Socket
+		client.on('actionRequest', async (type, data) => {
+			logger.info(`actionRequest triggered: ''${type}''`);
+			let response;
+			switch(type) {
+			case 'create': {
+				// console.log(data);
+				response = await createAction(data);
+				break;
+			}
+			case 'delete': {
+				// console.log(data);
+				response = await deleteAction(data);
+				break;
+			}
+			case 'createProject': {
+				// console.log(data);
+				response = await deleteAction(data);
+				break;
+			}
+			case 'update': {
+				// console.log(data);
+				if (data.playerBoolean) {
+					response = await editAction(data);
 				}
 				else {
-					client.emit('Alert', { message : 'This Action Already Exists!', type: 'error' });
+					response = await editResult(data);
 				}
+				break;
 			}
-			catch (err) {
-				logger.error(`message : Server Error: ${err.message}`);
-				client.emit('Alert', { message : `Server Error: ${err.message}`, type: 'error' });
+			default:
+				console.log('Bad actionRequest Request: ', type); // need an error socket to trigger
+				response = { message : `Bad actionRequest Request: ${type}`, type: 'error' };
+				break;
 			}
+			client.emit('alert', response);
 		});
 
-		client.on('deleteActionRequest', async (data) => {
-			try {
-				const id = data.id;
-				let element = await Action.findById(id);
-				if (element != null) {
-					element = await Action.findByIdAndDelete(id);
-
-					const character = await addEffort(element);
-					console.log(character);
-
-					logger.info(`Action with the id ${id} was deleted via Socket!`);
-
-					io.emit('updateCharacter', character);
-					io.emit('actionDeleted', id);
-					client.emit('Alert', { message : 'Action Delete Success', type: 'success' });
-				}
-				else {
-					client.emit('Alert', { message : 'No action with the id ${id} exists!', type: 'error' });
-				}
+		// Character Socket
+		client.on('characterRequest', async (type, data) => {
+			logger.info(`characterRequest triggered: ''${type}''`);
+			let response;
+			switch(type) {
+			case 'modify': {
+				// console.log(data);
+				response = await modifyCharacter(data);
+				break;
 			}
-			catch (err) {
-				logger.error(`message : Server Error: ${err.message}`);
-				client.emit('Alert', { message : `Server Error: ${err.message}`, type: 'error' });
+			case 'support': {
+				// console.log(data);
+				response = await modifySupport(data);
+				break;
 			}
+			case 'delete': {
+				// console.log(data);
+				response = await deleteCharacter(data);
+				break;
+			}
+			case 'create': {
+				// console.log(data);
+				response = await createCharacter(data);
+				break;
+			}
+			default:
+				console.log('Bad characterRequest Request: ', type); // need an error socket to trigger
+				response = { message : `Bad characterRequest Request: ${type}`, type: 'error' };
+				break;
+			}
+			client.emit('alert', response);
 		});
 
-		client.on('updateActionRequest', async (data) => {
-			let action;
-			if (data.playerBoolean) {
-				action = await editAction(data);
+		// Asset Socket
+		client.on('assetRequest', async (type, data) => {
+			logger.info(`assetRequest triggered: ''${type}''`);
+			let response;
+			switch(type) {
+			case 'modify': {
+				// console.log(data);
+				response = await modifyAsset(data);
+				break;
 			}
-			else {
-				action = await editResult(data);
+			case 'lend': {
+				// console.log(data);
+				response = await lendAsset(data);
+				break;
 			}
+			case 'delete': {
+				// console.log(data);
+				response = await deleteAsset(data);
+				break;
+			}
+			case 'create': {
+				// console.log(data);
+				response = await createCharacter(data);
+				break;
+			}
+			default:
+				console.log('Bad characterRequest Request: ', type); // need an error socket to trigger
+				response = { message : `Bad characterRequest Request: ${type}`, type: 'error' };
+				break;
+			}
+			client.emit('alert', response);
+		});
 
-			io.emit('updateAction', action);
-			client.emit('Alert', { message : 'Action Edit Success', type: 'success' });
+		client.on('gamestateRequest', async (type, data) => {
+			logger.info(`gamestateRequest triggered: ''${type}''`);
+			let response;
+			switch(type) {
+			case 'modify': {
+				// console.log(data);
+				response = await modifyGameState(data);
+				break;
+			}
+			case 'closeRound': {
+				// console.log(data);
+				response = await closeRound();
+				break;
+			}
+			case 'nextRound': {
+				// console.log(data);
+				response = await nextRound();
+				break;
+			}
+			default:
+				console.log('Bad gamestateRequest Request: ', type); // need an error socket to trigger
+				response = { message : `Bad gamestateRequest Request: ${type}`, type: 'error' };
+				break;
+			}
+			client.emit('alert', response);
 		});
 
 		client.on('disconnect', () => {
@@ -99,6 +168,7 @@ module.exports = function(server) {
 		});
 	});
 
+	// all the old nexusUpdates I am leaving in so that I don't have to go fix any of the old html routes. 
 	nexusEvent.on('updateCharacters', async () => {
 		const characters = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');
 		io.emit('updateCharacters', characters);
@@ -118,5 +188,22 @@ module.exports = function(server) {
 		const assets = await Asset.find();
 		io.emit('updateAssets', assets);
 	});
+
+	nexusEvent.on('respondClient', async (type, data) => {
+		switch(type) {
+		case 'update':
+			io.emit('updateClients', data);
+			break;
+		case 'delete':
+			io.emit('deleteClients', data);
+			break;
+		case 'create':
+			io.emit('createClients', data);
+			break;
+		default:
+			logger.error('Scott Should never see this....');
+		}
+	});
+	
 
 };

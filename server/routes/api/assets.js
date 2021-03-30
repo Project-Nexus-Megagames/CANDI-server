@@ -10,7 +10,6 @@ const { Asset } = require('../../models/asset'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { Character } = require('../../models/character');
-const { modifyAsset, lendAsset } = require('../../game/assets');
 
 // @route   GET api/assets
 // @Desc    Get all assets
@@ -141,74 +140,6 @@ router.patch('/deleteAll', async function(req, res) {
 	}
 	nexusEvent.emit('updateCharacters');
 	return res.status(200).send(`We wiped out ${delCount} Assets`);
-});
-
-// game routes
-router.patch('/modify', async (req, res, next) => {
-	logger.info('PATCH Route: api/characters/modify requested...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { id } = req.body.data;
-		try {
-			let data = await Asset.findById(id).populate('wealth');
-			if (data === null) {
-				nexusError(`Could not find an asset for id "${id}"`, 404);
-			}
-			else if (data.length > 1) {
-				nexusError(`Found multiple characters for id ${id}`, 404);
-			}
-			else {
-				modifyAsset(data, req.body.data);
-				res.status(200).json(data);
-			}
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-});
-
-
-router.post('/lend', async function(req, res, next) {
-	logger.info('POST Route: api/asset/lend call made...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { asset, target, lendingBoolean } = req.body.data;
-		try {
-			let docs = await Asset.findById(asset);
-
-			if (docs === null) {
-				nexusError(`Could not find asset with id "${asset}"`, 400);
-			}
-			else {
-
-				if (lendingBoolean === docs.status.lent) { // this is a check to see if someone is trying to relend a previously lent asset
-					nexusError(`Detected an attempt to lend a lent asset "${docs.name}"`, 400);
-				}
-
-				let char = await Character.findById(target);
-				if (char === null || !char) {
-					char = await Character.findBy({ characterName: target });
-				}
-				if (char === null) {
-					nexusError(`Could not find character with id "${target}"`, 400);
-				}
-				else {
-
-					lendAsset(docs, char, lendingBoolean);
-					res.status(200).json(docs);
-				}
-			}
-
-		}
-		catch (err) {
-			nexusError(`${err.message}`, 500);
-		}
-	}
 });
 
 module.exports = router;
