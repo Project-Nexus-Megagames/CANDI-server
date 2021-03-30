@@ -24,12 +24,22 @@ async function modifyAsset(data) {
 
 }
 
-async function addAsset(asset, character) {
-	asset.model === 'Asset' ? character.assets.push(asset) : character.traits.push(asset);
-	character = await character.save();
-	asset = await asset.save();
-	nexusEvent.emit('updateCharacters');
-	nexusEvent.emit('updateAssets');
+async function addAsset(data) {
+	const { id, asset } = data;
+	let character = await Character.findById(id).populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+
+	if (character === null) {
+		return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
+	}
+	else {
+		let newAsset = new Asset(asset);
+		newAsset.model === 'Asset' ? character.assets.push(newAsset) : character.traits.push(newAsset);
+		character = await character.save();
+		newAsset = await newAsset.save();
+		nexusEvent.emit('respondClient', 'update', [ character, newAsset ]);
+	}
+
+
 }
 
 async function lendAsset(data) {
@@ -45,12 +55,12 @@ async function lendAsset(data) {
 				return ({ message : `You cannot lend an already loaned asset "${asset.name}"`, type: 'error' });
 			}
 
-			let char = await Character.findById(target);
+			let char = await Character.findById(target).populate('assets').populate('traits').populate('wealth').populate('lentAssets');
 			if (char === null || !char) {
 				char = await Character.findBy({ characterName: target });
 			}
 			if (char === null) {
-				nexusError(`Could not find character with id "${target}"`, 400);
+				return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
 			}
 			else {
 				const index = char.lentAssets.indexOf(asset);
@@ -61,7 +71,7 @@ async function lendAsset(data) {
 				char = await char.save();
 				asset = await asset.save();
 				logger.info(`${asset.name} Lent to ${char.characterName}.`);
-				nexusEvent.emit('updateCharacters');
+				nexusEvent.emit('respondClient', 'update', [ char, asset ]);
 			}
 		}
 	}

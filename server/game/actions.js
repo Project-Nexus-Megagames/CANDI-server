@@ -93,8 +93,9 @@ async function createAction(data) {
 		const docs = await Action.find({ intent: data.intent });
 		if (docs.length < 1) {
 			if (action.model === 'Action') {
-				const character = removeEffort(data);
-				character.populate('assets').populate('traits').populate('wealth').populate('lentAssets');;
+				const character = await Character.findById(data.creator).populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+				character.effort = character.effort - data.effort;
+				await character.save();
 				nexusEvent.emit('respondClient', 'update', [ character ]);
 			}
 
@@ -103,7 +104,6 @@ async function createAction(data) {
 
 			logger.info(`Action "${action.intent}" created.`);
 
-			nexusEvent.emit('respondClient', 'update', [ action ]);
 			nexusEvent.emit('respondClient', 'create', [ action ]);
 			return ({ message : 'Action Creation Success', type: 'success' });
 		}

@@ -1,6 +1,5 @@
 const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
-const nexusEvent = require('../../middleware/events/events'); // Local event triggers
 
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
 const validateObjectId = require('../../middleware/util/validateObjectId'); // Middleware that validates object ID's in HTTP perameters
@@ -9,9 +8,6 @@ const nexusError = require('../../middleware/util/throwError'); // Project Nexus
 
 // Mongoose Model Import
 const { GameState } = require('../../models/gamestate');
-const { Asset } = require('../../models/asset'); // Agent Model
-const { Action } = require('../../models/action'); // Agent Model
-const { Character } = require('../../models/character');
 
 // @route   GET /gamestate
 // @Desc    Get all GameStates

@@ -5,9 +5,9 @@ const { Character } = require('../models/character');
 const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
-const { editAction, removeEffort, addEffort, editResult, createAction, deleteAction } = require('../game/actions');
-const { modifyCharacter, modifySupport, deleteCharacter, createCharacter } = require('../game/characters');
-const { modifyAsset, lendAsset, deleteAsset } = require('../game/assets');
+const { editAction, editResult, createAction, deleteAction } = require('../game/actions');
+const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory } = require('../game/characters');
+const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound } = require('../game/gamestate');
 
 module.exports = function(server) {
@@ -74,8 +74,13 @@ module.exports = function(server) {
 			let response;
 			switch(type) {
 			case 'modify': {
-				// console.log(data);
+				console.log(data);
 				response = await modifyCharacter(data);
+				break;
+			}
+			case 'memory': {
+				// console.log(data);
+				response = await modifyMemory(data);
 				break;
 			}
 			case 'support': {
@@ -123,7 +128,7 @@ module.exports = function(server) {
 			}
 			case 'create': {
 				// console.log(data);
-				response = await createCharacter(data);
+				response = await addAsset(data);
 				break;
 			}
 			default:
@@ -168,7 +173,7 @@ module.exports = function(server) {
 		});
 	});
 
-	// all the old nexusUpdates I am leaving in so that I don't have to go fix any of the old html routes. 
+	// all the old nexusUpdates I am leaving in so that I don't have to go fix any of the old html routes.
 	nexusEvent.on('updateCharacters', async () => {
 		const characters = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');
 		io.emit('updateCharacters', characters);
@@ -204,6 +209,5 @@ module.exports = function(server) {
 			logger.error('Scott Should never see this....');
 		}
 	});
-	
 
 };

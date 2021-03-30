@@ -321,18 +321,7 @@ router.patch('/test', async (req, res, next) => {
 	}
 	else {
 		try {
-			const blessing = await Asset.findById('6004ae5d5c282252cc010d05');
-			const judgement = await Character.findById('6004ae5a5c282252cc010c45');
-			const dawn = await Character.findById('6004ae5a5c282252cc010c48');
-
-			const index2 = dawn.traits.indexOf('6004ae5d5c282252cc010d05');
-			dawn.traits.splice(index2, 1);
-			console.log('index2', index2);
-
-			await judgement.save();
-			await dawn.save();
-
-			res.status(200).json(dawn);
+			console.log('test');
 		}
 		catch (err) {
 			httpErrorHandler(res, err);
