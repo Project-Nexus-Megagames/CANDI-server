@@ -42,9 +42,8 @@ async function editAction(data) {
 		asset3 === undefined ? action.asset3 = '' : action.asset3 = asset3;
 	}
 	else {
-		const { progress, players, image } = data;
-		action.status.draft = false;
-		action.status.published = true;
+		const { progress, players, image, status } = data;
+		action.status = status;
 		action.description = description;
 		action.intent = intent;
 		action.progress = progress;
@@ -64,24 +63,9 @@ async function editResult(data) {
 
 	action.result = result;
 	action.dieResult = dieResult;
-	if (status) {
-		action.status.draft = false;
-		action.status.ready = false;
-		action.status.published = false;
-		switch (status) {
-		case 'draft':
-			action.status.draft = true;
-			break;
-		case 'ready':
-			action.status.ready = true;
-			break;
-		case 'published':
-			action.status.published = true;
-			break;
-		default:
-			break;
-		}
-	}
+
+	action.status = status;
+
 	await action.save();
 	nexusEvent.emit('respondClient', 'update', [ action ]);
 	return ({ message : 'Action Result Edit Success', type: 'success' });

@@ -32,7 +32,6 @@ function haltOnTimedout(req, res, next) {
 	else console.log('Timeout!!!!');
 }
 
-
 const port = process.env.PORT || 5000; // Server entry point - Node Server
 server.listen(port, () =>
 	logger.info(`Project Nexus server has started on port ${port}...`)

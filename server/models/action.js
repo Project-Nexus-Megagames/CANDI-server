@@ -17,11 +17,7 @@ const ActionSchema = new Schema({
 	description: { type: String, required: true },
 	intent: { type: String, required: true },
 	effort: { type: Number, required: true },
-	status: {
-		draft: { type: Boolean, default: true },
-		ready: { type: Boolean, default: false },
-		published: { type: Boolean, default: false }
-	},
+	status: { type: String, default: 'Draft', enum: ['Draft', 'Awaiting', 'Ready', 'Published' ] },
 	progress: { type: Number, default: 0 },
 	dieResult: { type: String },
 	image: { type: String },

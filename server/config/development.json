@@ -1,4 +1,7 @@
 {
   "jwtPrivateKey": "rawr",
-  "dbName": "nexusTest"
+  "dbName": "nexusTest",
+	"clientURL": "http://localhost:3000/",
+	"serverURL": "http://localhost:5000/",
+  "socketCORS": "http://localhost:3000"
 }

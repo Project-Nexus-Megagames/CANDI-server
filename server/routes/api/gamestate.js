@@ -114,4 +114,14 @@ router.patch('/deleteAll', async function(req, res) {
 
 // game routes
 
+setInterval(async () => {
+	const gamestate = await GameState.findOne();
+	if (gamestate.discovered) {
+		gamestate.hunger = gamestate.hunger - 13;
+		gamestate.happiness = gamestate.happiness - 13;
+		await gamestate.save();
+		console.log('hi');
+	}
+}, 10000);
+
 module.exports = router;

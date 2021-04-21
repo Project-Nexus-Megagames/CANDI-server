@@ -47,7 +47,7 @@ const CharacterSchema = new Schema({
 		candidate: { type: Boolean, default: false }
 	},
 	supporters: [{ type: String }],
-	effort: { type: Number, default: 3, min: 0, max: 3 }
+	effort: { type: Number, default: 3, min: 0, max: 6 }
 });
 
 const Character = mongoose.model('Character', CharacterSchema);

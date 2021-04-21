@@ -10,8 +10,7 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const { Character } = require('../../models/character'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
-const characters = require('../../config/characterList');
-const assets = require('../../config/startingassets');
+const { assets, characters } = require('../../config/startingData');
 const { Asset } = require('../../models/asset');
 
 // @route   GET api/characters

@@ -133,7 +133,7 @@ router.delete('/:id', async function(req, res, next) {
 // @route   PATCH api/actions/deleteAll
 // @desc    Delete All actions
 // @access  Public
-/*
+
 router.patch('/deleteAll', async function(req, res, next) {
 	let delCount = 0;
 	for await (const element of Action.find()) {
@@ -154,7 +154,7 @@ router.patch('/deleteAll', async function(req, res, next) {
 	nexusEvent.emit('updateActions');
 	return res.status(200).send(`We wiped out ${delCount} Actions`);
 });
-*/
+
 
 // ~~~Game Routes~~~
 

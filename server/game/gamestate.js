@@ -27,9 +27,9 @@ async function modifyGameState(data) {
 async function closeRound() {
 	const gamestate = await GameState.findOne();
 	try {
-		const actions = await Action.find({ 'status.draft': true });
+		const actions = await Action.find({ 'status': 'Draft' });
 		for (const action of actions) {
-			action.status.draft = false;
+			action.status = 'Awaiting';
 			await action.save();
 		}
 
@@ -72,9 +72,8 @@ async function nextRound() {
 			character.save();
 		}
 
-		for (const action of await Action.find({ 'status.ready': true })) {
-			action.status.ready = false;
-			action.status.published = true;
+		for (const action of await Action.find({ 'status': 'Ready' })) {
+			action.status = 'Published';
 			await action.save();
 			actions.push(action);
 		}
@@ -93,4 +92,13 @@ async function nextRound() {
 	}
 }
 
-module.exports = { modifyGameState, closeRound, nextRound };
+async function easterEgg(data) {
+	const gamestate = await GameState.findOne();
+	const { hunger, happiness, discovered } = data;
+	gamestate.discovered = discovered;
+	gamestate.happiness = happiness;
+	gamestate.hunger = hunger;
+	await gamestate.save();
+}
+
+module.exports = { modifyGameState, closeRound, nextRound, easterEgg };

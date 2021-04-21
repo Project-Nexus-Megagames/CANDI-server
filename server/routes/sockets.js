@@ -8,27 +8,36 @@ const { Asset } = require('../models/asset');
 const { editAction, editResult, createAction, deleteAction } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
-const { modifyGameState, closeRound, nextRound } = require('../game/gamestate');
+const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
+const config = require('config');
 
 module.exports = function(server) {
 	const Clients = new SocketServer();
 
 	logger.info('Socket.io servers initialized...');
-	const io = require('socket.io')(server);
+	const io = require('socket.io')(server, {
+		cors: {
+			origin: config.get('socketCORS')
+		}
+	}); // Creation of websocket Server
+	io.use((client, next) => {
+		const username = client.handshake.auth.username;
+		if (!username) return next(new Error('Invalid Username'));
+		client.username = username;
+
+		next();
+	});
 
 	io.on('connection', client => {
-		Clients.connections.push(client);
-		client.emit('Hello');
-		console.log(`A user connected via ${client.id}!`);
-
-		client.on('login', data => {
-			Clients.saveUser(data, client);
-			logger.info(`${data.username} has been registered as a socket subscriber...`);
-		});
-
-		client.on('trigger', data => {
-			nexusEvent.emit(`${data}`);
-		});
+		logger.info(`${client.username} connected (${client.id}), ${io.of('/').sockets.size} clients connected.`);
+		const users = [];
+		for (const [id, socket] of io.of('/').sockets) {
+			users.push({
+				userID: id,
+				username: socket.username
+			});
+		}
+		io.emit('clients', users);
 
 		// Action Socket
 		client.on('actionRequest', async (type, data) => {
@@ -156,6 +165,11 @@ module.exports = function(server) {
 			case 'nextRound': {
 				// console.log(data);
 				response = await nextRound();
+				break;
+			}
+			case 'easterEgg': {
+				// console.log(data);
+				response = await easterEgg();
 				break;
 			}
 			default:
