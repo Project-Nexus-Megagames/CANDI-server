@@ -24,37 +24,42 @@ async function addEffort(data) {
 }
 
 async function editAction(data) {
-	const { id, description, intent, effort, asset1, asset2, asset3 } = data;
-	const action = await Action.findById(id).populate('creator');
-	if (action.model === 'Action') {
-		action.description = description;
-		action.intent = intent;
+	try {
+		const { id, description, intent, effort, asset1, asset2, asset3 } = data;
+		const action = await Action.findById(id).populate('creator');
+		if (action.model === 'Action') {
+			action.description = description;
+			action.intent = intent;
 
-		const character = await Character.findById(action.creator).populate('assets').populate('traits').populate('wealth').populate('lentAssets');
-		character.effort = character.effort - (effort - action.effort);
-		await character.save();
-		nexusEvent.emit('respondClient', 'update', [ character ]);
+			const character = await Character.findById(action.creator).populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+			character.effort = character.effort - (effort - action.effort);
+			await character.save();
+			nexusEvent.emit('respondClient', 'update', [ character ]);
 
-		action.effort = effort;
+			action.effort = effort;
 
-		asset1 === undefined ? action.asset1 = '' : action.asset1 = asset1;
-		asset2 === undefined ? action.asset2 = '' : action.asset2 = asset2;
-		asset3 === undefined ? action.asset3 = '' : action.asset3 = asset3;
+			asset1 === undefined ? action.asset1 = '' : action.asset1 = asset1;
+			asset2 === undefined ? action.asset2 = '' : action.asset2 = asset2;
+			asset3 === undefined ? action.asset3 = '' : action.asset3 = asset3;
+		}
+		else {
+			const { progress, players, image, status } = data;
+			action.status = status;
+			action.description = description;
+			action.intent = intent;
+			action.progress = progress;
+			action.players = players;
+			action.image = image;
+		}
+
+		await action.save();
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+		return { message : 'Action Edit Success', type: 'success' };
 	}
-	else {
-		const { progress, players, image, status } = data;
-		action.status = status;
-		action.description = description;
-		action.intent = intent;
-		action.progress = progress;
-		action.players = players;
-		action.image = image;
+	catch (err) {
+		return { message : err, type: 'error' };
 	}
 
-
-	await action.save();
-	nexusEvent.emit('respondClient', 'update', [ action ]);
-	return { message : 'Action Edit Success', type: 'success' };
 }
 
 async function editResult(data) {

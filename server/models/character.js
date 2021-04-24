@@ -17,35 +17,15 @@ const CharacterSchema = new Schema({
 	tag: { type: String, enum: ['Former Servants', 'Ferrymen', 'Furies', 'Angels', 'Demons', 'Cold Forges', 'Gehennatown', 'Misfits', 'Chthonians', 'Elysian Fields', 'NPC'], required: true },
 	username: { type: String, minlength: 2, maxlength: 50, required: true },
 	pronouns: { type: String },
-	control: { type: String },
+	control: { type: String, default: 'None' },
 	bio: { type: String },
 	icon: { type: String },
 	standingOrders: { type: String },
 	traits: [{ type: ObjectId, ref: 'Asset' }], // change to trait ID
 	assets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
+	bonds: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	popSupport: { type: Number, default: 0 },
-	wealth: { type: ObjectId, ref: 'Asset', required: true },
-	memories: {
-		first: {
-			trigger: { type: String },
-			recall: { type: String },
-			revealed: { type: Boolean, default: false }
-		},
-		second: {
-			trigger: { type: String },
-			recall: { type: String },
-			revealed: { type: Boolean, default: false }
-		},
-		third: {
-			trigger: { type: String },
-			recall: { type: String },
-			revealed: { type: Boolean, default: false }
-		}
-	},
-	status: {
-		candidate: { type: Boolean, default: false }
-	},
 	supporters: [{ type: String }],
 	effort: { type: Number, default: 3, min: 0, max: 6 }
 });
