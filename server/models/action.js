@@ -18,10 +18,13 @@ const ActionSchema = new Schema({
 	intent: { type: String, required: true },
 	effort: { type: Number, required: true },
 	status: { type: String, default: 'Draft', enum: ['Draft', 'Awaiting', 'Ready', 'Published' ] },
+	newsworthy: { type: Boolean, default: false },
 	progress: { type: Number, default: 0 },
-	dieResult: { type: String },
+	dieResult: { type: String, default: 'None Yet...' },
+	controlAssigned: { type: String, default: 'None Yet...' },
 	image: { type: String },
-	result: { type: String, default: 'No Result Recorded Yet...' }
+	result: { type: String, default: 'No Result Recorded Yet...' },
+	bonusResult: { type: String, default: 'No Bonus Result Recorded Yet...' }
 });
 
 const Action = mongoose.model('Action', ActionSchema);
