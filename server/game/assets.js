@@ -25,21 +25,26 @@ async function modifyAsset(data) {
 }
 
 async function addAsset(data) {
-	const { id, asset } = data;
-	let character = await Character.findById(id).populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+	try {
+		const { id, asset } = data;
+		let character = await Character.findById(id).populate('assets').populate('traits').populate('wealth').populate('lentAssets');
 
-	if (character === null) {
-		return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
+		if (character === null) {
+			return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
+		}
+		else {
+			let newAsset = new Asset(asset);
+			character.assets.push(newAsset);
+			character = await character.save();
+			newAsset = await newAsset.save();
+			nexusEvent.emit('respondClient', 'update', [ character, newAsset ]);
+			return ({ message : `${newAsset.name} created`, type: 'success' });
+		}
 	}
-	else {
-		let newAsset = new Asset(asset);
-		newAsset.model === 'Asset' ? character.assets.push(newAsset) : character.traits.push(newAsset);
-		character = await character.save();
-		newAsset = await newAsset.save();
-		nexusEvent.emit('respondClient', 'update', [ character, newAsset ]);
+	catch (err) {
+		logger.error(err);
+		return ({ message : `ERROR: ${err}`, type: 'error' });
 	}
-
-
 }
 
 async function lendAsset(data) {

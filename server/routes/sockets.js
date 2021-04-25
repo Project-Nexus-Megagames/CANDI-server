@@ -145,6 +145,7 @@ module.exports = function(server) {
 				response = { message : `Bad characterRequest Request: ${type}`, type: 'error' };
 				break;
 			}
+			logger.info(response);
 			client.emit('alert', response);
 		});
 

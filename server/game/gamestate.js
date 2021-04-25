@@ -110,6 +110,13 @@ async function nextRound() {
 			assets.push(asset);
 		}
 
+		for (const asset of await Asset.find({ 'status.hidden': true })) {
+			asset.status.hidden = false;
+			console.log(`Un-Hiding ${asset.name}`);
+			await asset.save();
+			assets.push(asset);
+		}
+
 
 		for (const character of await Character.find()) {
 			character.lentAssets = [];
