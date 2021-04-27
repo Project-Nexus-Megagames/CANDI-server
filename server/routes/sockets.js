@@ -190,7 +190,7 @@ module.exports = function(server) {
 
 	// all the old nexusUpdates I am leaving in so that I don't have to go fix any of the old html routes.
 	nexusEvent.on('updateCharacters', async () => {
-		const characters = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+		const characters = await Character.find().populate('assets').populate('lentAssets');
 		io.emit('updateCharacters', characters);
 	});
 

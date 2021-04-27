@@ -23,7 +23,7 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const char = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+			const char = await Character.find().populate('assets').populate('lentAssets');
 			res.status(200).json(char);
 		}
 		catch (err) {
@@ -162,11 +162,14 @@ router.post('/initCharacters', async function(req, res) {
 			const wealth = {
 				name: `${newCharacter.characterName}'s Wealth`,
 				description: char.wealthLevel,
-				model: 'Wealth',
+				type: 'Wealth',
+				status: {
+					lendable: true
+				},
 				uses: 2
 			};
 			const asset = new Asset(wealth);
-			newCharacter.wealth = asset;
+			newCharacter.assets.push(asset);
 			//	await newAgent.validateAgent();
 			const docs = await Character.find({ characterName: char.characterName });
 
@@ -184,7 +187,15 @@ router.post('/initCharacters', async function(req, res) {
 			const character = await Character.findOne({ characterName: ass.owner });
 			if (character) {
 				const newAsset = new Asset(ass);
-				newAsset.model === 'Trait' ? character.traits.push(newAsset) : character.assets.push(newAsset);
+				switch (newAsset.type) {
+				case 'Asset':
+					newAsset.lendable = true;
+					break;
+				default:
+					newAsset.uses = 999;
+					break;
+				}
+				character.assets.push(newAsset);
 				newAsset.save();
 				character.save();
 				logger.info(`${newAsset.name} created.`);
@@ -193,30 +204,6 @@ router.post('/initCharacters', async function(req, res) {
 				console.log(`Could not find ${ass.owner}!\n`);
 			}
 		}
-
-		// Special Assets for Angels n Deamons
-		const angelAss = new Asset({ model: 'Trait', name: 'Angelic Blessing', description: 'You have a limited ability to command the matter of the afterlife itself. Examples of this include  temporarily rearranging the layout of streets and buildings, changing the gloom briefly into day creating short-lived golems out of grave-dirt, changing that dirt into mud or fire (though, of course, you can\'t hurt a shade unless they attack first).' });
-		let judgementAngel = await Character.findOne({ characterName: 'The Angel of Judgement' });
-		const dawnAngel = await Character.findOne({ characterName: 'The Angel of Dawn' });
-
-		judgementAngel.traits.push(angelAss);
-		dawnAngel.traits.push(angelAss);
-
-		judgementAngel = await judgementAngel.save();
-		dawnAngel.save();
-		angelAss.save();
-
-		const demonAss = new Asset({ model: 'Trait', name: 'Demonic  Blessing', description: 'A tiny extension of the First Demon’s power that might take the form of additional abilities or literal demonic support for the recipient.' });
-		let mercy = await Character.findOne({ characterName: 'The Demon of Mercy' });
-		let dusk = await Character.findOne({ characterName: 'The Demon of Dusk' });
-
-		mercy.traits.push(demonAss);
-		dusk.traits.push(demonAss);
-
-		dusk = await dusk.save();
-		mercy = await mercy.save();
-		demonAss.save();
-
 
 		nexusEvent.emit('updateCharacters');
 		res.status(200).send('All done');

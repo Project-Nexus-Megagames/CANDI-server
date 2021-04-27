@@ -21,9 +21,7 @@ const CharacterSchema = new Schema({
 	bio: { type: String },
 	icon: { type: String },
 	standingOrders: { type: String },
-	traits: [{ type: ObjectId, ref: 'Asset' }], // change to trait ID
 	assets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
-	bonds: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	popSupport: { type: Number, default: 0 },
 	supporters: [{ type: String }],

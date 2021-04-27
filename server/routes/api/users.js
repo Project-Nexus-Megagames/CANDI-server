@@ -6,20 +6,23 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const validateObjectId = require('../../middleware/util/validateObjectId'); // Middleware that validates object ID's in HTTP perameters
 const httpErrorHandler = require('../../middleware/util/httpError'); // Middleware that parses errors and status for Express responses
 const nexusError = require('../../middleware/util/throwError'); // Project Nexus middleware for error handling
+const { default: axios } = require('axios');
 
 // Mongoose Model Import
 const { User } = require('../../models/user');
 const { Character } = require('../../models/character'); // Agent Model
+
+
+// https://nexus-central-server.herokuapp.com/api/users/
+
 
 // @route   GET /user
 // @Desc    Get all Users
 // @access  Public
 router.get('/', async function(req, res) {
 	logger.info('GET Route: api/user requested...');
-
 	try {
-		const users = await User.find()
-			.populate('team', 'name shortName');
+		const users = await	axios.get('https://nexus-central-server.herokuapp.com/api/users/');
 		res.status(200).json(users);
 	}
 	catch (err) {
@@ -178,6 +181,28 @@ router.patch('/demote', async function(req, res) {
 	catch (err) {
 		logger.error(err.message, { meta: err.stack });
 		res.status(500).send(err.message);
+	}
+});
+
+// game routes
+router.post('/reset', async function(req, res) {
+	logger.info('POST Route: api/users/reset call made...');
+
+	try {
+		await	axios.patch('http://localhost:5000/api/locations/deleteAll');
+		await	axios.patch('http://localhost:5000/api/characters/deleteAll');
+		await	axios.patch('http://localhost:5000/api/assets/deleteAll');
+		await	axios.patch('http://localhost:5000/api/actions/deleteAll');
+
+
+		await	axios.post('http://localhost:5000/api/locations/initLocations');
+		await	axios.post('http://localhost:5000/api/characters/initCharacters');
+		/*
+		*/
+		res.status(200).send('All done');
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
 	}
 });
 

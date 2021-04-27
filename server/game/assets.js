@@ -5,7 +5,7 @@ const { Character } = require('../models/character');
 
 async function modifyAsset(data) {
 	const { id, name, description, uses } = data;
-	const asset = await Asset.findById(id).populate('wealth');
+	const asset = await Asset.findById(id);
 
 	if (asset === null) {
 		return ({ message : `Could not find a asset for id "${id}"`, type: 'error' });
@@ -27,13 +27,21 @@ async function modifyAsset(data) {
 async function addAsset(data) {
 	try {
 		const { id, asset } = data;
-		let character = await Character.findById(id).populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+		let character = await Character.findById(id).populate('assets').populate('lentAssets');
 
 		if (character === null) {
 			return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
 		}
 		else {
 			let newAsset = new Asset(asset);
+			switch (newAsset.type) {
+			case 'Asset':
+				newAsset.lendable = true;
+				break;
+			default:
+				newAsset.uses = 999;
+				break;
+			}
 			character.assets.push(newAsset);
 			character = await character.save();
 			newAsset = await newAsset.save();
@@ -48,7 +56,7 @@ async function addAsset(data) {
 }
 
 async function lendAsset(data) {
-	const { id, target, lendingBoolean } = data;
+	const { id, target, lendingBoolean, owner } = data;
 	try {
 		let asset = await Asset.findById(id);
 
@@ -60,23 +68,36 @@ async function lendAsset(data) {
 				return ({ message : `You cannot lend an already loaned asset "${asset.name}"`, type: 'error' });
 			}
 
-			let char = await Character.findById(target).populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+			let char = await Character.findById(target).populate('assets').populate('lentAssets');
+			let assetOwner = await Character.findById(owner).populate('assets').populate('lentAssets');
 			if (char === null || !char) {
 				char = await Character.findBy({ characterName: target });
 			}
 			if (char === null) {
-				return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
+				return ({ message : `Could not find a character for id "${target}"`, type: 'error' });
 			}
 			else {
-				const index = char.lentAssets.indexOf(asset);
-				lendingBoolean === true ? char.lentAssets.push(asset) : char.lentAssets.splice(index, 1);
+				const index2 = assetOwner.assets.findIndex(el => el._id.toHexString() === id);
+
+				if (lendingBoolean) { // if the asset is being lent
+					char.lentAssets.push(asset);
+					asset.currentHolder = char.characteracterName;
+
+				}
+				else {
+					const index = char.lentAssets.indexOf(asset);
+					char.lentAssets.splice(index, 1);
+				}
 				asset.status.lent = lendingBoolean;
-				lendingBoolean === true ? asset.currentHolder = char.characteracterName : asset.currentHolder = null;
+				assetOwner.assets[index2] = asset;
 
 				char = await char.save();
 				asset = await asset.save();
+				assetOwner = await assetOwner.save();
+
 				logger.info(`${asset.name} Lent to ${char.characterName}.`);
-				nexusEvent.emit('respondClient', 'update', [ char, asset ]);
+				nexusEvent.emit('respondClient', 'update', [ char, asset, assetOwner ]);
+				return ({ message : `${asset.name} lent to ${char.characterName}`, type: 'success' });
 			}
 		}
 	}
@@ -85,6 +106,7 @@ async function lendAsset(data) {
 		return ({ message : `Server Error: ${err.message}`, type: 'error' });
 	}
 }
+
 
 async function deleteAsset(data) {
 	try {
