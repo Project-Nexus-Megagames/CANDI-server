@@ -17,7 +17,8 @@ module.exports = function(server) {
 	logger.info('Socket.io servers initialized...');
 	const io = require('socket.io')(server, {
 		cors: {
-			origin: config.get('socketCORS')
+			origin: config.get('socketCORS'),
+			methods: ["GET", "POST"]
 		}
 	}); // Creation of websocket Server
 	io.use((client, next) => {
