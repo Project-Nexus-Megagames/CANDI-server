@@ -1,6 +1,7 @@
 {
   "jwtPrivateKey": "rawr",
   "dbName": "nexusTest",
+  "version": "0.1.x [John CORS]",
 	"clientURL": "http://localhost:3000/",
 	"serverURL": "http://localhost:5000/",
   "socketCORS": "http://localhost:3000"
