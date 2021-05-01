@@ -1,4 +1,7 @@
 {
   "jwtPrivateKey": "spooky",
-  "dbName": "nexusTest"
+  "dbName": "nexusTest",
+  "clientURL": "https://candi-app.herokuapp.com/",
+	"serverURL": "https://candi-server.herokuapp.com/",
+  "socketCORS": "https://candi-app.herokuapp.com"
 }
