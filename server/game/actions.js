@@ -1,11 +1,11 @@
 const { Character } = require('../models/character');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
-const { Action } = require('../models/action');
+const { Action, FeedAction } = require('../models/action');
 const { logger } = require('../middleware/log/winston');
 const { Asset } = require('../models/asset');
 
 async function removeEffort(data) {
-	const character = await Character.findById(data.creator);
+	const character = await Character.findOne({ characterName: data.creator });
 	character.effort = character.effort - data.effort;
 	await character.save();
 	character.populate('assets').populate('lentAssets');
@@ -14,7 +14,7 @@ async function removeEffort(data) {
 }
 
 async function addEffort(data) {
-	const character = await Character.findById(data.creator).populate('assets').populate('lentAssets');
+	const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
 	character.effort = character.effort + data.effort;
 	if (character.effort > 3) character.effort = 3;
 	await character.save();
@@ -33,7 +33,7 @@ async function editAction(data) {
 			action.description = description;
 			action.intent = intent;
 
-			const character = await Character.findById(action.creator).populate('assets').populate('lentAssets');
+			const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
 			character.effort = character.effort - (effort - action.effort);
 			await character.save();
 			nexusEvent.emit('respondClient', 'update', [ character ]);
@@ -181,7 +181,7 @@ async function createAction(data) {
 		const docs = await Action.find({ intent: data.intent });
 		if (docs.length < 1) {
 			if (action.model === 'Action') {
-				const character = await Character.findById(data.creator).populate('assets').populate('lentAssets');
+				const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
 				character.effort = character.effort - data.effort;
 				await character.save();
 				nexusEvent.emit('respondClient', 'update', [ character ]);
@@ -232,5 +232,31 @@ async function deleteAction(data) {
 		return ({ message : `Server Error: ${err.message}`, type: 'error' });
 	}
 }
+
+async function createFeed(data) {
+	try {
+		let action = new FeedAction(data);
+		const docs = await FeedAction.find({ intent: data.intent });
+		if (docs.length < 1) {
+
+
+			action = await action.save();
+			action.populate('creator');
+
+			logger.info(`Action "${action.intent}" created.`);
+
+			nexusEvent.emit('respondClient', 'create', [ action ]);
+			return ({ message : 'Action Creation Success', type: 'success' });
+		}
+		else {
+			return ({ message : 'This Action Already Exists!', type: 'error' });
+		}
+	}
+	catch (err) {
+		logger.error(`message : Server Error: ${err.message}`);
+		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
+	}
+}
+
 
 module.exports = { removeEffort, addEffort, editAction, editResult, createAction, deleteAction };

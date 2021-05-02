@@ -2,16 +2,14 @@ const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
 const nexusEvent = require('../../middleware/events/events'); // Local event triggers
 
-const validateObjectId = require('../../middleware/util/validateObjectId');
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
 
 // Agent Model - Using Mongoose Model
 const { Action } = require('../../models/action'); // Agent Model
 const { Character } = require('../../models/character');
-const { User } = require('../../models/user');
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
-const { removeEffort, addEffort, editAction, editResult } = require('../../game/actions');
+const { removeEffort, addEffort } = require('../../game/actions');
 
 let oops = 0;
 
@@ -25,7 +23,7 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const actions = await Action.find().populate('creator');
+			const actions = await Action.find();
 			res.status(200).json(actions);
 		}
 		catch (err) {
@@ -134,7 +132,7 @@ router.delete('/:id', async function(req, res, next) {
 // @desc    Delete All actions
 // @access  Public
 
-router.patch('/deleteAll', async function(req, res, next) {
+router.patch('/deleteAll', async function(req, res) {
 	let delCount = 0;
 	for await (const element of Action.find()) {
 		const id = element.id;

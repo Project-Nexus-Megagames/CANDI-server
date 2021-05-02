@@ -147,7 +147,7 @@ const characters = [
 		controlEmail: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
 		timeZone: 'GMT+8',
 		bio: 'Life was a joke and so is the afterlife. They held an odd role in the court of the Silent King, their humour mostly just another tool of cruelty (though the Arte was the only person who could ever insult the Silent King and get away with it)… but now they\'re free to become their own comedian. The Jester wears a variety of costumes - changing their face, body and mannerisms to match - for different roles. Their red eye paint reveals the Jester\'s identity.',
-		username: 'temp',
+		username: 'PiFace314',
 		icon: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/arte2C-the-jester---pc-person',
 		control: 'Gamma',
 		wealthLevel: 'Comfortable'
@@ -162,7 +162,7 @@ const characters = [
 		controlEmail: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
 		timeZone: 'EST',
 		bio: 'A quiet and mysterious servant of the Silent King, the keeper of the keys had access to almost everywhere in the city, sealing and unsealing at the King\'s decree. Her motives are currently inscrutable.',
-		username: 'temp',
+		username: 'ljtrigirl',
 		icon: '‘https://www.worldanvil.com/media/cache/skyscraper/uploads/images/5f180d4b68aacc09ba428d11b4e7c0da.jpg',
 		control: 'Beta',
 		wealthLevel: 'Comfortable'
@@ -177,7 +177,7 @@ const characters = [
 		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
 		timeZone: 'MST',
 		bio: 'One of the angels active in the Necropolis.',
-		username: 'temp',
+		username: 'daniel.vehslage@gmail.com',
 		icon: '',
 		control: 'Game Control',
 		wealthLevel: 'Poor'
@@ -192,7 +192,7 @@ const characters = [
 		controlEmail: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
 		timeZone: 'GMT+2',
 		bio: 'The Upstart was some newly-dead nobody who awakened in the (now unmoving) queue to see She Who Bears The Scale and absconded into the city. They\'ve quickly started to build a powerbase that has more established shades impressed and intimidated.',
-		username: 'temp',
+		username: 'Murska',
 		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/f5367489a18742dff8b7ae162e9909ff.png',
 		control: 'Gamma',
 		wealthLevel: 'Poor'
@@ -221,7 +221,7 @@ const characters = [
 		controlEmail: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
 		timeZone: 'GMT',
 		bio: 'The Steward\'s role seemed pointless, vestigial. The Silent King needed no valet or bodyguard, yet the Steward was always close at hand. Reeve seems to have moved on from the King very quickly and is taking an extremely active interest in the pending election.',
-		username: 'temp',
+		username: 'Reeve',
 		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/f6b7fa0d51b891f910fc28800b44956d.jpeg',
 		control: 'Beta',
 		wealthLevel: 'Comfortable'
