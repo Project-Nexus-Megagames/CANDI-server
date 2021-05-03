@@ -25,19 +25,21 @@ async function addEffort(data) {
 }
 
 async function editAction(data) {
+	console.log(data);
 	try {
 		const { id, description, intent, effort, asset1, asset2, asset3 } = data;
 		const changed = [];
-		const action = await Action.findById(id).populate('creator');
-		if (action.model === 'Action') {
+		const action = await Action.findById(id);
+		if (action.type === 'Action' || action.type === 'Feed') {
 			action.description = description;
 			action.intent = intent;
 
-			const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
-			character.effort = character.effort - (effort - action.effort);
-			await character.save();
-			nexusEvent.emit('respondClient', 'update', [ character ]);
-
+			if (action.type === 'Action') {
+				const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
+				character.effort = character.effort - (effort - action.effort);
+				await character.save();
+				nexusEvent.emit('respondClient', 'update', [ character ]);
+			}
 			action.effort = effort;
 
 			// asset1 === undefined ? action.asset1 = '' : action.asset1 = asset1;
@@ -149,11 +151,12 @@ async function editAction(data) {
 			action.players = players;
 			action.image = image;
 		}
-		console.log(changed);
+		// console.log(changed);
 
 		await action.save();
 		nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
-		return { message : 'Action Edit Success', type: 'success' };
+		logger.info(`${action.type} "${action.intent}" edited.`);
+		return { message : `${action.type} Edit Success`, type: 'success' };
 	}
 	catch (err) {
 		return { message : err, type: 'error' };
@@ -178,25 +181,27 @@ async function editResult(data) {
 async function createAction(data) {
 	try {
 		let action = new Action(data);
+		console.log(data);
 		const docs = await Action.find({ intent: data.intent });
 		if (docs.length < 1) {
-			if (action.model === 'Action') {
-				const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
-				character.effort = character.effort - data.effort;
-				await character.save();
-				nexusEvent.emit('respondClient', 'update', [ character ]);
+			const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
+			if (action.type === 'Feed') {
+				character.feed = true;
 			}
-
+			else {
+				character.effort = character.effort - data.effort;
+			}
+			await character.save();
 			action = await action.save();
-			action.populate('creator');
 
-			logger.info(`Action "${action.intent}" created.`);
+			logger.info(`${action.type} "${action.intent}" created.`);
 
+			nexusEvent.emit('respondClient', 'update', [ character ]);
 			nexusEvent.emit('respondClient', 'create', [ action ]);
-			return ({ message : 'Action Creation Success', type: 'success' });
+			return ({ message : `${action.type} Creation Success`, type: 'success' });
 		}
 		else {
-			return ({ message : 'This Action Already Exists!', type: 'error' });
+			return ({ message : `This ${action.type} Already Exists!`, type: 'error' });
 		}
 	}
 	catch (err) {
@@ -211,9 +216,15 @@ async function deleteAction(data) {
 		let element = await Action.findById(id);
 		if (element != null) {
 
-			if (element.model === 'Action') {
+			if (element.type === 'Action') {
 				const character = await addEffort(element);
 				character.populate('assets').populate('lentAssets');
+				nexusEvent.emit('respondClient', 'update', [ character ]);
+			}
+			else{
+				const character = await Character.findOne({ characterName: element.creator }).populate('assets').populate('lentAssets');
+				character.feed = false;
+				await character.save();
 				nexusEvent.emit('respondClient', 'update', [ character ]);
 			}
 
@@ -232,31 +243,5 @@ async function deleteAction(data) {
 		return ({ message : `Server Error: ${err.message}`, type: 'error' });
 	}
 }
-
-async function createFeed(data) {
-	try {
-		let action = new FeedAction(data);
-		const docs = await FeedAction.find({ intent: data.intent });
-		if (docs.length < 1) {
-
-
-			action = await action.save();
-			action.populate('creator');
-
-			logger.info(`Action "${action.intent}" created.`);
-
-			nexusEvent.emit('respondClient', 'create', [ action ]);
-			return ({ message : 'Action Creation Success', type: 'success' });
-		}
-		else {
-			return ({ message : 'This Action Already Exists!', type: 'error' });
-		}
-	}
-	catch (err) {
-		logger.error(`message : Server Error: ${err.message}`);
-		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
-	}
-}
-
 
 module.exports = { removeEffort, addEffort, editAction, editResult, createAction, deleteAction };

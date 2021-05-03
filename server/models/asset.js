@@ -11,6 +11,7 @@ const AssetSchema = new Schema({
 	type: { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth', 'Bond', 'Power'] },
 	name: { type: String, required: true },
 	description: { type: String, required: true },
+	level: { type: String, default: 'Neutral', enum: ['Loathing', 'Unfriendly', 'Neutral', 'Warm', 'Friendly', 'Bonded' ] },
 	status: {
 		hidden: { type: Boolean, default: false },
 		lent: { type: Boolean, default: false },

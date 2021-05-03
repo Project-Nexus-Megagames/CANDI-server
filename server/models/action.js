@@ -7,7 +7,8 @@ const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const ActionSchema = new Schema({
-	model:  { type: String, default: 'Action', enum: ['Action', 'Project' ] },
+	model:  { type: String, default: 'Action' },
+	type: { type: String, default: 'Action', enum: ['Action', 'Project', 'Feed' ] },
 	creator: { type: String },
 	players: [{ type: String }],
 	asset1: { type: String },
@@ -33,7 +34,8 @@ const FeedAction = Action.discriminator(
 	'FeedAction',
 	new Schema({
 		type: { type: String, default: 'FeedAction' },
-		overfeeding: { type: Boolean, default: false }
+		overfeeding: { type: Number, default: 0 },
+		description: { type: String, default: 'FeedAction' }
 	})
 );
 

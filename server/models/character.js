@@ -25,7 +25,8 @@ const CharacterSchema = new Schema({
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	popSupport: { type: Number, default: 0 },
 	supporters: [{ type: String }],
-	effort: { type: Number, default: 3, min: 0, max: 6 }
+	effort: { type: Number, default: 3, min: 0, max: 6 },
+	feed: { type: Boolean, default: false }
 });
 
 const Character = mongoose.model('Character', CharacterSchema);
