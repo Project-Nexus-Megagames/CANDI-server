@@ -165,23 +165,31 @@ async function editAction(data) {
 }
 
 async function editResult(data) {
-	const { id, result, status, dieResult } = data;
-	const action = await Action.findById(id).populate('creator');
+	const { id, result, status, dieResult, mechanicalEffect } = data;
+	try {
+		const action = await Action.findById(id);
 
-	action.result = result;
-	action.dieResult = dieResult;
+		action.result = result;
+		action.dieResult = dieResult;
+		action.mechanicalEffect = mechanicalEffect;
+		if (status) {
+			action.status = status;
+		}
 
-	action.status = status;
+		await action.save();
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+		return ({ message : 'Action Result Edit Success', type: 'success' });
+	}
+	catch (err) {
+		return { message : `Error: ${err}`, type: 'error' };
+	}
 
-	await action.save();
-	nexusEvent.emit('respondClient', 'update', [ action ]);
-	return ({ message : 'Action Result Edit Success', type: 'success' });
 }
 
 async function createAction(data) {
 	try {
 		let action = new Action(data);
-		console.log(data);
+		// console.log(data);
 		const docs = await Action.find({ intent: data.intent });
 		if (docs.length < 1) {
 			const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
@@ -192,6 +200,17 @@ async function createAction(data) {
 				character.effort = character.effort - data.effort;
 			}
 			await character.save();
+
+			const { asset1, asset2, asset3 } = data; // find all assets being used for new action and use them
+			const arr = [asset1, asset2, asset3];
+			for (const el of arr) {
+				if (el) {
+					const asset = await Asset.findOne({ name: el });
+					asset.status.used = true;
+					await asset.save();
+				}
+			}
+
 			action = await action.save();
 
 			logger.info(`${action.type} "${action.intent}" created.`);
@@ -226,6 +245,16 @@ async function deleteAction(data) {
 				character.feed = false;
 				await character.save();
 				nexusEvent.emit('respondClient', 'update', [ character ]);
+			}
+
+			const { asset1, asset2, asset3 } = element; // find all assets being used for new action and use them
+			const arr = [asset1, asset2, asset3];
+			for (const el of arr) {
+				if (el) {
+					const asset = await Asset.findOne({ name: el });
+					asset.status.used = false;
+					await asset.save();
+				}
 			}
 
 			element = await Action.findByIdAndDelete(id);

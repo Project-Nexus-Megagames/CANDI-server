@@ -25,7 +25,7 @@ const ActionSchema = new Schema({
 	controlAssigned: { type: String, default: 'None Yet...' },
 	image: { type: String },
 	result: { type: String, default: 'No Result Recorded Yet...' },
-	bonusResult: { type: String, default: 'No Bonus Result Recorded Yet...' }
+	mechanicalEffect: { type: String, default: 'No Mechanical Effect Recorded Yet...' }
 });
 
 const Action = mongoose.model('Action', ActionSchema);
