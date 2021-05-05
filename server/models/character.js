@@ -19,7 +19,6 @@ const CharacterSchema = new Schema({
 	pronouns: { type: String },
 	control: { type: String, default: 'None' },
 	bio: { type: String },
-	icon: { type: String },
 	standingOrders: { type: String },
 	assets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID

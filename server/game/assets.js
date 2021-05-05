@@ -45,7 +45,8 @@ async function addAsset(data) {
 			character.assets.push(newAsset);
 			character = await character.save();
 			newAsset = await newAsset.save();
-			nexusEvent.emit('respondClient', 'update', [ character, newAsset ]);
+			nexusEvent.emit('respondClient', 'create', [ newAsset ]);
+			nexusEvent.emit('respondClient', 'update', [ character ]);
 			return ({ message : `${newAsset.name} created`, type: 'success' });
 		}
 	}

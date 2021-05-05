@@ -239,20 +239,6 @@ const characters = [
 		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/011e1bde2d8893036a182990d70ac95c.jpg',
 		control: 'Gamma Control',
 		wealthLevel: 'Comfortable'
-	},
-	{
-		playerName: 'Zeta Control',
-		pronouns: 'He/Him',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/hoffman2C-the-alchemist-person',
-		characterName:'Hoffman, The Alchemist',
-		tag: 'NPC',
-		email: 'hoffmanthealchemist@gmail.com afterlifecontrol@gmail.com',
-		timeZone: 'PT',
-		bio: 'Definitely not a mad scientist.',
-		username: 'BobtheNinjaMan',
-		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/76ec8aff91da462cb6fdacfa470f9627.jpg',
-		control: 'Zeta Control',
-		wealthLevel: 'Comfortable'
 	}
 ];
 

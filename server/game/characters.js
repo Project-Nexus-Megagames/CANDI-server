@@ -5,40 +5,40 @@ const { logger } = require('../middleware/log/winston');
 
 
 async function modifyCharacter(data) {
-	const { id, effort, email, worldAnvil, tag, standing, control, timeZone, wealth, icon, popsupport, bio, characterName, uses } = data;
-	const character = await Character.findById(id).populate('wealth');
+	const { id, effort, email, worldAnvil, tag, standing, control, timeZone, popsupport, bio, characterName } = data;
+	const character = await Character.findById(id);
 
-	if (character === null) {
-		return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
+	try {
+		if (character === null) {
+			return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
+		}
+		else if (character.length > 1) {
+			return ({ message : `Found multiple characters for id ${id}`, type: 'error' });
+		}
+		else {
+			character.email = email;
+			character.characterName = characterName;
+			character.worldAnvil = worldAnvil;
+			character.tag = tag;
+			character.control = control;
+			character.timeZone = timeZone;
+			character.effort = effort;
+			character.standingOrders = standing;
+
+			character.popsupport = popsupport;
+			character.bio = bio;
+
+			await character.save();
+			nexusEvent.emit('respondClient', 'update', [ character ]);
+			return ({ message : `Character ${character.characterName} edited`, type: 'success' });
+		}
 	}
-	else if (character.length > 1) {
-		return ({ message : `Found multiple characters for id ${id}`, type: 'error' });
-	}
-	else {
-		let wealthAss = await Asset.findById(character.wealth._id);
-
-		character.email = email;
-		character.characterName = characterName;
-		character.worldAnvil = worldAnvil;
-		character.tag = tag;
-		character.control = control;
-		character.timeZone = timeZone;
-		character.effort = effort;
-		character.standingOrders = standing;
-
-		wealthAss.description = wealth;
-		wealthAss.uses = uses;
-
-		character.icon = icon;
-		character.popsupport = popsupport;
-		character.bio = bio;
-
-		wealthAss = wealthAss.save();
-		await character.save();
-		nexusEvent.emit('respondClient', 'update', [ character ]);
-		return ({ message : `Character ${character.characterName} edited`, type: 'success' });
+	catch (err) {
+		logger.error(`message : Server Error: ${err.message}`);
+		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
 	}
 }
+
 
 async function modifySupport(data) {
 	const { id, supporter } = data;
