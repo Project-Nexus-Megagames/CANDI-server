@@ -11,7 +11,7 @@ const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { removeEffort, addEffort } = require('../../game/actions');
 
-let oops = 0;
+// let oops = 0;
 
 // @route   GET api/actions
 // @Desc    Get all actions
@@ -42,14 +42,8 @@ router.get('/:id', async (req, res, next) => {
 	if (req.timedout) {
 		next();
 	}
-	else if (oops < 4) {
-		oops++;
-		console.log('Oopsies ', oops);
-		// res.status(500).send(oops);
-	}
 	else {
 		try {
-			oops = 0;
 			// if the user is a control member send them everything
 			const myCharacter = await Character.findOne({ username });
 			if (!myCharacter) {

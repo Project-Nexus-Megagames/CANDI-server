@@ -195,11 +195,13 @@ async function createAction(data) {
 			const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
 			if (action.type === 'Feed') {
 				character.feed = true;
+				await character.save();
 			}
-			else {
+			else if (action.type === 'Action') {
 				character.effort = character.effort - data.effort;
+				await character.save();
 			}
-			await character.save();
+
 
 			const { asset1, asset2, asset3 } = data; // find all assets being used for new action and use them
 			const arr = [asset1, asset2, asset3];
@@ -224,7 +226,7 @@ async function createAction(data) {
 		}
 	}
 	catch (err) {
-		logger.error(`message : Server Error: ${err.message}`);
+		logger.error(`message : Server Error: ${err}`);
 		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
 	}
 }

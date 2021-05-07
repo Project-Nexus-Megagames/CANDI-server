@@ -17,7 +17,7 @@ const ActionSchema = new Schema({
 	round: { type: Number },
 	description: { type: String, required: true },
 	intent: { type: String, required: true },
-	effort: { type: Number, required: true },
+	effort: { type: Number, required: true, default: 0 },
 	status: { type: String, default: 'Draft', enum: ['Draft', 'Awaiting', 'Ready', 'Published' ] },
 	newsworthy: { type: Boolean, default: false },
 	progress: { type: Number, default: 0 },

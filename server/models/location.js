@@ -13,7 +13,7 @@ const LocationSchema = new Schema({
 	code: { type: String, required: true, unique: true },
 	borough: { type: String, required: true },
 	currentOwner: { type: String, default: 'None' },
-	influence: { type: Number, default: 0, min: 0, max: 10 }
+	influence: { type: Number, default: 0, min: 0, max: 15 }
 });
 
 const Location = mongoose.model('Location', LocationSchema);
