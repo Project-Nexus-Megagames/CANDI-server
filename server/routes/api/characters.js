@@ -10,7 +10,8 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const { Character } = require('../../models/character'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
-const { assets, characters } = require('../../config/startingData');
+const { assets } = require('../../config/startingData');
+const { characters, npcs } = require('../../config/startingCharacters');
 const { Asset } = require('../../models/asset');
 
 // @route   GET api/characters
@@ -161,7 +162,7 @@ router.post('/initCharacters', async function(req, res) {
 			let newCharacter = new Character(char);
 			const wealth = {
 				name: `${newCharacter.characterName}'s Wealth`,
-				description: char.wealthLevel,
+				description: 'A moderate sum of funds, useful for those persuaded by such motivations...',
 				type: 'Wealth',
 				status: {
 					lendable: true
@@ -176,6 +177,20 @@ router.post('/initCharacters', async function(req, res) {
 			if (docs.length < 1) {
 				newCharacter = await newCharacter.save();
 				asset.save();
+				logger.info(`${newCharacter.characterName} created.`);
+			}
+			else {
+				console.log(`${newCharacter.characterName} already exists!\n`);
+			}
+		}
+
+		for (const npc of npcs) {
+			let newCharacter = new Character(npc);
+			//	await newAgent.validateAgent();
+			const docs = await Character.find({ characterName: npc.characterName });
+
+			if (docs.length < 1) {
+				newCharacter = await newCharacter.save();
 				logger.info(`${newCharacter.characterName} created.`);
 			}
 			else {

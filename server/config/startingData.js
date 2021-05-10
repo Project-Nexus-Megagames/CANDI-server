@@ -1,257 +1,364 @@
 const assets = [
 	{
-		type: 'Trait',
-		name: 'Mantle of the First',
-		description: ' You have a limited ability to command the matter of the afterlife itself. Examples of this include  temporarily rearranging the layout of streets and buildings, changing the gloom briefly into day creating short-lived golems out of grave-dirt, changing that dirt into mud or fire (though, of course, you can\'t hurt a shade unless they attack first).',
-		owner: 'The Angel of Judgement'
+		type: 'Power',
+		name: 'Shadow Walk',
+		description: 'You are able to hide and move inside of any shadow or pocket of darkness within your line of sight, although you are vulnerable if that shadow is somehow moved/dissipated by extremely bright lights. When empowered, you are capable of creating shadows and covering an area of up to a 20’ radius in darkness.',
+		owner: 'The Sheriff'
 	},
 	{
-		type: 'Trait',
-		name: 'Cloak of the First',
-		description: 'You can become entirely invisible and/or intangible.',
-		owner: 'The Angel of Dawn'
+		type: 'Bond',
+		name: 'Jeong-Gwon "Johnny" Baek - Warm',
+		description: 'Your contact in the police department. Johnny is not what one would call morally upstanding, but for a pig he has his uses. He’s in the know, and at least understands the value of keeping his mouth shut if needed.',
+		owner: 'The Sheriff'
 	},
 	{
-		type: 'Trait',
-		name: 'Touch of the First',
-		description: 'You are extremely convincing and charismatic… and perhaps have a slight ability to compel. Not to command - you\'re unlikely to convince anyone to do something fundamentally against their nature - but you can give a little nudge.',
-		owner: 'The Demon of Dusk'
+		type: 'Power',
+		name: 'Dream A Little Dream',
+		description: 'You can channel this power to peer into the dreams of humans and manipulate aspects or imagery within (e.g. making it rain money, removing a friend, causing a fire) to subconsciously influence their actions in the waking world. When empowered, you can manipulate the dreams of up to ten others at a time, and may manipulate the dreams of Awakened, although Awakened may realize they are under the effect of a Power when they wake.',
+		owner: 'The Survivor'
 	},
 	{
-		type: 'Trait',
-		name: 'Voice of the First',
-		description: 'You are extremely convincing and charismatic… and perhaps have a slight ability to compel. Not to command - you\'re unlikely to convince anyone to do something fundamentally against their nature - but you can give a little nudge.',
-		owner: 'The Demon of Mercy'
+		type: 'Bond',
+		name: 'Shani Blake - Warm',
+		description: 'There is something about her earnest love of the blooming world that melts the ice and pain around your heart, just a little bit. She reminds you of you, when you were at your happiest, and there is now a gentle bond between you two.',
+		owner: 'The Survivor'
 	},
 	{
-		type: 'Trait',
-		name: 'Cargo Plane',
-		description: 'A small, spectral cargo plane that requires no fuel. It cannot be stolen or used by anyone else. You can cross the River (a storm, to you) freely and carry others with you.',
-		owner: 'The Aviator'
+		type: 'Power',
+		name: 'Three Moves Ahead',
+		description: 'If you channel this power, you can see ten seconds into the future actions of any living or once-living being. This allows you to predict their movements near perfectly, but they must remain within your line of sight. Note that you can only use this power for Actions, not in correspondence. When empowered, you’re able to see over a minute into their future actions.',
+		owner: 'The Pizza Dude'
 	},
 	{
-		type: 'Trait',
-		name: 'Keys to the Kingdom',
-		description: 'You always know a shortcut, a hiding place, a hidden oasis in the Necropolis. There are no secret places you don\'t know about and many you keep secret from everyone else. No door in the Necropolis can hold you… Except the Silent Archive.',
-		owner: 'The Claviger'
+		type: 'Bond',
+		name: 'Dave Busters - Warm',
+		description: 'Your boss and the owner of Count Radula’s House of Pizza. He seems massively relieved that he’s got at least one employee he can talk about being Awakened with, enough that he’s opened up to you more than most bosses would. ',
+		owner: 'The Pizza Dude'
 	},
 	{
-		type: 'Asset',
-		name: 'The Expanse',
-		description: 'You command a workhouse filled with (unsorted) goods and (unrefined) memory fragments in your factories and storerooms. If someone needs something commonplace, well, chances are you\'ve got it lying around somewhere.',
-		owner: 'The Foreman'
-	},
-
-	{
-		type: 'Trait',
-		name: 'Scourge of the Silent King',
-		description: 'Furies are master trackers and hunters, able to sprout wings and nightmarish talons that can leave scars that persist even after a shade dies and reforms. You\'re really very good at tracking, hunting and hurting...but being fast, strong and winged can be useful in other ways.',
-		owner: 'The Avenging Fury'
+		type: 'Power',
+		name: 'Emotional Radio',
+		description: 'You can hear the surface thoughts of humans and ghosts in a heightened emotional state. This includes distress, anger, joy, jealousy, or any other strong strong feeling, and can be turned on and off at will. Once active, you will hear the surface thoughts of any humans and ghosts in a heightened emotional state within three miles of you. It can sometimes be hard to focus on individuals, but the better you know your target or the closer you are to them, the more likely you’ll be able to isolate their emotions. When empowered, your power will extend to the thoughts of the Awakened, the radius of your power will extend to five miles, and you\'re able to filter between the different emotions, as if they’re channels on the radio.',
+		owner: 'The Savior'
 	},
 	{
-		type: 'Trait',
-		name: 'Scourge of the Silent King',
-		description: 'Furies are master trackers and hunters, able to sprout wings and nightmarish talons that can leave scars that persist even after a shade dies and reforms. You\'re really very good at tracking, hunting and hurting...but being fast, strong and winged can be useful in other ways.',
-		owner: 'The Implacable Fury'
+		type: 'Bond',
+		name: 'Your Charity of Choice - Warm',
+		description: 'Less of a large charity and more of a volunteer group, these are hardworking humans who try their best to help others for a good cause.',
+		owner: 'The Savior'
 	},
 	{
-		type: 'Trait',
-		name: 'Question Everything',
-		description: 'You take nothing for granted, and have a tendency to examine things from all angles. You\'re very good at investigating, probing deeper, recognising inconsistencies and getting under the skin of other shades.',
-		owner: 'The Gnostic'
+		type: 'Power',
+		name: 'Barriers Up',
+		description: 'You have the ability to manipulate barriers at will, and can edit their existence in reality. You could lengthen a fence, make a hole in a wall and close it up again, or even fortify their defenses to a small degree. When empowered, you are able to near instantaneously imagine and erect barriers that you can freely manipulate.',
+		owner: 'The Builder'
 	},
 	{
-		type: 'Trait',
-		name: 'Purveyor of Pleasure',
-		description: 'You are the prince of passion, the empress of entertainment. Even if others don\'t know what will please them, you do, and you know who can procure it. This is how you\'ve made your way to the top of the pile after all, diverting the attention of others with amusements, or outright bribing them with experiences they\'ll never forget.',
-		owner: 'The Gourmand'
+		type: 'Bond',
+		name: 'Steven Davies - Warm',
+		description: 'A retiree and former financier who’s surprisingly knowledgeable about how the city works. He’s seen more than his fair share of it, both the good and the bad, and you get a sense he’s much more there than his old man shtick makes it seem.',
+		owner: 'The Builder'
 	},
 	{
-		type: 'Asset',
-		name: 'Obscene Wealth',
-		description: 'The House always has more money, be it extra income from the casino, savings hidden in secret caches and vaults, liquidating assets or just rooting around in their proverbial couch cushions.',
-		owner: 'The House'
+		type: 'Power',
+		name: 'Drawn To Life',
+		description: 'When you draw or paint in the air, you can create still or moving images, illusions, and messages that are only visible to your intended recipient. These can be as cartoonish or as realistic as you wish. When empowered, your ability can be extended to whole crowds of people.',
+		owner: 'The Animator'
 	},
 	{
-		type: 'Trait',
-		name: 'Wild Card',
-		description: 'Your natural charm, jokes and antics amuse people. You\'re very good at getting into places you shouldn\'t, getting information out of people, getting away with things or just making people laugh.',
-		owner: 'The Jester'
+		type: 'Bond',
+		name: 'Your Fanclub - Warm',
+		description: 'A small but dedicated group that love your series, to almost fanatical levels. For the most part their devotion is flattering, although it can get a little intense.',
+		owner: 'The Animator'
 	},
 	{
-		type: 'Asset',
-		name: 'Grey Marchers',
-		description: 'You have a small squad of rangers loyal to you. They were uncommonly independent and inventive even before the Silent King fell. They\'re expert scouts, skilled in stealth and skirmishing, all skills that have uses beyond simply ranging.',
-		owner: 'The Ranger'
+		type: 'Power',
+		name: 'Technobabble',
+		description: 'You can understand the “emotions” of machines as if they were living, breathing beings, something like knowing whether an animal is sad, happy, or worried, as well as what’s causing their distress. You can also communicate with them, although they cannot respond back to you in articulated words or thoughts unless you are empowered. Your mileage may vary. Some machines may be talkative and helpful, and others less so. When empowered, you get more detail and can practically speak with machines, having full conversations and possibly getting video recollections if the technology supports it.',
+		owner: 'The Programmer'
 	},
 	{
-		type: 'Asset',
-		name: 'Friends in Gehennatown',
-		description: 'You are liked and respected by the Shades of Gehennatown for your remorse and devotion to betterment. You can call on the shades there to assist you, so long as it is something they would not disapprove of.',
-		owner: 'The Penitent'
+		type: 'Bond',
+		name: 'Your Personal Phone/Electronic Device - Warm',
+		description: 'When you gained the power to speak to machines, its most obvious and vocal conduit was the little chatterbox you keep in your pocket. For the most part it’s helpful, though it certainly has a mind of its own.',
+		owner: 'The Programmer'
 	},
 	{
-		type: 'Trait',
-		name: 'Genius Intellect',
-		description: 'You digest, extrapolate and apply information at a speed faster than any human brain can. Most likely because you don\'t have one anymore; that meat only ever held you back.',
-		owner: 'The Scholar'
-	},
-
-	{
-		type: 'Trait',
-		name: 'Master Detective',
-		description: 'You\'re a bloodhound, able to sniff out clues, see through bogus alibis and make connections others can\'t even see.',
-		owner: 'The Seeker'
+		type: 'Power',
+		name: 'Shapeshifting',
+		description: 'You can take on the shape of any animal that you have met before, though you can only use this power for a maximum of an hour at a time before needing to rest. If gravely injured while transformed you return back to your original state. When empowered, the duration of this ability triples, and your animal form gains heightened senses and strength beyond what the animal would naturally possess.',
+		owner: 'The Wild Child'
 	},
 	{
-		type: 'Trait',
-		name: 'Voice of the King',
-		description: 'Though many are going rogue or developing personalities detrimental to their role, much of the Silent King\'s former state apparatus still answers to you. ',
-		owner: 'The Seneschal'
+		type: 'Bond',
+		name: 'Lady Helena - Warm',
+		description: 'The Awakened that brought you into this world of darkness, and who seems to have tied her fate to your own. Though powerful and connected in her own right, she currently resides outside of the city, so does not wield the influence she usually would. However, she can still make the right calls to the right people, in order to nudge circumstances in your favour.',
+		owner: 'The Wild Child'
 	},
 	{
-		type: 'Trait',
-		name: 'Knows Where the Bodies Are Buried',
-		description: 'You may not have had much actual power under the King, but you were always close to the action. You know the dirty secrets, habits and interests of half the shades in the city, even secrets they\'ve forgotten. You also know plenty of hidden places in the Palace and beyond (though you know you can\'t compare to the Claviger on that front). ',
-		owner: 'The Steward'
+		type: 'Power',
+		name: 'Celerity',
+		description: 'You’re as fast as an Olympic sprinter; your reflexes and reaction time are almost perfect. When empowered, your top speed becomes truly superhuman, others seeming to move in slow motion. To observers, you appear to move from one side of the room to another in the blink of an eye. However, moving at this speed is tiring, and difficult to maintain for more than a few minutes. ',
+		owner: 'The Dancer'
 	},
 	{
-		type: 'Asset',
-		name: 'The Resistance',
-		description: 'You have a few friends and allies here and there who can help out, and with the state in disarray (and their own minds reawakening) they\'re more useful than ever.',
-		owner: 'The Thorn'
-	},
-
-	{
-		type: 'Trait',
-		name: 'Force of Nature',
-		description: 'You speak and act with such unerring confidence that no one thinks to doubt you. Lies turn to truths when you speak them, requests into orders. In a world of doubt and uncertainty, confidence, surety and audacity can get you very far indeed… Or so you hope. ',
-		owner: 'The Upstart'
+		type: 'Bond',
+		name: 'Letitia Mayhew - Warm',
+		description: 'Dear Letitia was a patron of your world, a socialite who genuinely enjoyed attending the ballet when most simply watched in order to be seen. Your bond with her comes from her genuine respect of dance, and your appreciation of her taste.',
+		owner: 'The Dancer'
 	},
 	{
-		type: 'Trait',
-		name: 'Tactical Brilliance',
-		description: 'Your mastery of tactics and logistics is unsurpassed. While your memories mostly involve warfare, the same skill can apply to almost any situation that involves outmanoeuvring and outplanning; heists, blackmail... even politics. ',
-		owner: 'The Unknown Soldier'
+		type: 'Power',
+		name: 'Corrosive Personality',
+		description: 'You are literally and figuratively toxic. This can take the physical form of smog, poison, or generally corrosive chemicals that can broadly target or be directed down to the molecule. You can also poison a human figuratively, bringing them down and turning them against someone else. When empowered, you can dissolve in a cloud of toxic gas, spreading your emotional influence across an entire room or becoming actual poison vapors.',
+		owner: 'The Extractor'
+	},
+	{
+		type: 'Bond',
+		name: 'Susan Chandler - Warm',
+		description: 'You’ve known her since she was a child, sitting on her daddy\'s lap as the two of you talked business. While you’ve never been close, per say, there is a certain respect between you and she, not least because you happened to be the one to tell her about Awakening.',
+		owner: 'The Extractor'
+	},
+	{
+		type: 'Power',
+		name: 'Voices of the Dead',
+		description: 'You are able to hear and respond to the voices of the dead, able to channel them within your body so that they may speak with those both living and Awakened. While channelling, you are possessed, and the spirit has control over your speech. Stronger spirits may exert even more control over you, temporarily controlling your eyes, facial expression, and gestures. However, you are always cognizant while possessed, and aware of what the dead are doing and saying. While empowered, you retain full control over your body when you channel, with the spirit only taking the wheel as much as you allow. This means that you may be part of the conversation while channeling, both you and the spirit taking turns speaking from the same mouth.',
+		owner: 'The Haunted'
+	},
+	{
+		type: 'Bond',
+		name: 'The Voices of the Dead - Warm',
+		description: 'You can hear them around you, like an endless chorus. For the most part they aren’t malicious and just want to be heard. Listen to them carefully, and they’ll be able to tell you many things you want to know, and many things you wished you hadn’t heard.',
+		owner: 'The Haunted'
+	},
+	{
+		type: 'Power',
+		name: 'Exactly as Calculated',
+		description: 'You’re able to glean the truth of numbers at a glance, instantly solving equations and identifying discrepancies in balance sheets, formulae, and other assortments of numbers on sight. When empowered, you can further see what numbers are and what should and shouldn’t be [e.g. winning lottery numbers, what numbers will have a higher stock market value, or what are the likely combinations to a safe].',
+		owner: 'The Numerologist'
+	},
+	{
+		type: 'Bond',
+		name: 'Sanoh "Sunny" Prasansapakit',
+		description: 'When you first came to the city she didn’t hesitate to haggle you and your belongings down to the last cent, and it has now become a ritual for you to share a back-and-forth on the relative worth of both material and immaterial things. You’re aware she appreciates it when you use her real name, and not the Anglicization she’s forced to have.',
+		owner: 'The Numerologist'
+	},
+	{
+		type: 'Power',
+		name: 'Outside the System',
+		description: 'Barriers that exist for others are mere suggestions for you. Physical limitations to getting to a destination do not bother you, letting you move through locked doors (or even a lack of a door), ignore alarms or tripwires, and generally move through any kind of physical barrier you might encounter. When empowered, you can bring up to 10 people with you, Awakened or not.',
+		owner: 'The Punk'
+	},
+	{
+		type: 'Bond',
+		name: 'Devin Slater - Warm',
+		description: 'When you saw Devin binding essays and making prints, you thought you might have recognized him from a concert you went to. You mentioned it to him once, and it was enough to make him warm up to you immediately.',
+		owner: 'The Punk'
+	},
+	{
+		type: 'Power',
+		name: 'Mirror Image',
+		description: 'You have the power to see through mirrors into the present of people that you know, so long as they happen to be before a reflective surface, as well as appear to others and communicate with them through reflective surfaces. Think of the mirror as a window, not a recording. When empowered, you can use the mirrors as portals to pass all of part of your body through. You may not pass inanimate objects, such as knives or bullets, through a portal, without the rest of your body attached to them. ',
+		owner: 'The Guardian'
+	},
+	{
+		type: 'Bond',
+		name: 'Your Family - Warm',
+		description: 'Naturally, the people you are fighting for. The people who surround you, who make your life feel whole. You haven’t told them about your new… condition. Not yet. You’re sure they would be supportive of you, but you’re still a little wary. Nevertheless, you know that they’re there for you and love you.',
+		owner: 'The Guardian'
+	},
+	{
+		type: 'Power',
+		name: 'Echoes Of What Once Was',
+		description: 'You’re able to see bits and pieces of the past of those you touch, whether they wish to provide it or not. You will receive the memories that have left the strongest impression, the ones that come to the surface first. Memorable and important. When you’re empowered you can dive deeper into the psyche of the person you touch, looking and finding specific pieces of the past. Note that this is a power you can only use during Action Resolution.',
+		owner: 'The Social Worker'
+	},
+	{
+		type: 'Bond',
+		name: 'Alfie Barnes - Warm',
+		description: 'Though you haven’t worked directly with Alfie himself, due to his own little bit of pride and stubbornness, he’s a familiar sight to you. You’ve developed a fondness for the man and his dogs, and he appreciates the good work you’ve been doing helping his fellows return to society.',
+		owner: 'The Social Worker'
+	},
+	{
+		type: 'Power',
+		name: 'Fading Shore',
+		description: 'You have the ability to selectively and precisely remove memories from the Slothful, though you cannot use this on your fellow Awakened. You cannot see the details of the memories that you’re taking, but can see the general shape and emotions of them. Overfeeding lets you witness the actual memories in question, allowing you greater access to information, and ensuring that you remove the right memories. ',
+		owner: 'The Sympathetic'
+	},
+	{
+		type: 'Bond',
+		name: 'Alias - Warm',
+		description: 'This is not a friendship initiated by the tattoo artist, but one you actively pursued in your quest to try and reinvent yourself. Who better to consult with than someone who changes appearances as often as you change clothes? They appreciate you trying to experiment with who and what you are, and at least give the illusion of listening to you.',
+		owner: 'The Sympathetic'
+	},
+	{
+		type: 'Power',
+		name: 'Muscling In',
+		description: 'Awakening has made your body your weapon as much as your mind. No longer weak, you are possessed of extreme strength. When empowered, you are as durable as you are strong, able to run for hours, and your body resists knives like your skin is a kevlar vest.',
+		owner: 'The Philosopher'
+	},
+	{
+		type: 'Bond',
+		name: 'Jennifer Yuen - Warm',
+		description: 'Ms. Yuen, more than most, seems to be willing to give your philosophizing the time of day… or maybe it’s because you make a very good customer. Regardless of the reason, the two of you share a now familiar rapport that has endeared you to her and her bar.',
+		owner: 'The Philosopher'
+	},
+	{
+		type: 'Power',
+		name: 'Encyclopedic Information Processing',
+		description: 'You can process large amounts of information in rapid time, synthesizing solutions that you consciously wouldn’t have thought of yourself. You’re more effective at research, able to peruse and condense a lot of data quickly, and you can strategize on the fly, increasing your adaptability to get yourself out of tight spots or open up unusual doors. When empowered, you reach an almost laserlike focus about where to find the material that you’re looking for, allowing you to much more broadly search out the answer to a question, not needing direction about the best places to find something.',
+		owner: 'The Seeker of Knowledge'
+	},
+	{
+		type: 'Bond',
+		name: 'Alan Monty - Warm',
+		description: 'A professor at the University of Doxley, Alan is intelligent and easy to get along with, in part because of your own lineage. You can go to him for advice or intellectual discussion, though you get the sense that he’s a fair bit smarter than his disorganized professor shtick lets on.',
+		owner: 'The Seeker of Knowledge'
+	},
+	{
+		type: 'Power',
+		name: 'Wings of Justice',
+		description: 'You have four batlike wings on your back that can be used for mundane flight, but can also be used in combat by changing their size, shape, and characteristics (grow really big, really small, be as hard as steel). When empowered, your wings can shapeshift into near any form, though you will have to support the size and weight of whatever you create on your back.',
+		owner: 'The Wanderer'
+	},
+	{
+		type: 'Bond',
+		name: 'Duncan Buchanan - Warm',
+		description: 'You fought hard to impress the hedge knight, and apparently what you showed him was enough to land you a position as a probationary Guardian Angel. It’s not a place to belong yet, but it’s better than having nothing at all. ',
+		owner: 'The Wanderer'
+	},
+	{
+		type: 'Power',
+		name: 'The Map Is Not The Territory',
+		description: 'Maps define reality. You can change the map. Not the reality, but what people think it is. You can make a person get lost in a straight corridor, or make it so nobody can ever find room 17a, or so that there’s citywide gridlock whenever you need it… When empowered you actually can change reality in small ways. Briefly make a trap street real. Create a room or door where one didn’t exist before.',
+		owner: 'The Pathfinder'
+	},
+	{
+		type: 'Bond',
+		name: 'Roger Broom - Warm',
+		description: 'An architect, a creator of worlds far beyond your wildest hopes and dreams. You’re learning a lot from Roger about the world of this century, and the kinds of places that you wish to see.',
+		owner: 'The Pathfinder'
+	},
+	{
+		type: 'Power',
+		name: 'Hyperacusis',
+		description: 'Your hearing, and vibration sense, is incredible. You can hear people from rooms away. Through a wall. You can hear how fast a person’s heart is beating, hell, you can hear that their mitral valve is a little stenosed. You’re more accurate than a polygraph for catching out a liar. When empowered you can control vibrations to create or destroy sounds through destructive interference, create sonic attacks or damaging subsonic vibrations.',
+		owner: 'The Masked Virtuoso'
+	},
+	{
+		type: 'Bond',
+		name: 'Dominik - Warm',
+		description: 'The human bartender at Thirst. Though you’ve done your best not to grow close to anyone, they respect you enough to give you a place to relax and breathe. Sometimes you even feel the urge to take the mask off fully and drink in front of them.',
+		owner: 'The Masked Virtuoso'
+	},
+	{
+		type: 'Power',
+		name: 'Traces of Power',
+		description: 'You are able to trace and detect magical trails, hotspots of power, and other existing sources of "supernatural power" that should or shouldn\'t be there. When empowered, you can siphon and harness this supernatural power to engage in a little magical chaos of your own.',
+		owner: 'The Occultist'
+	},
+	{
+		type: 'Bond',
+		name: 'Bobby Weber - Warm',
+		description: 'An acquaintance who’s the owner of the Doxley Dark supernatural/conspiracy forum, and one you’ve met in person for the first time recently. Of course, you can’t quite tell him your secret, but at least you can talk about anything except what you actually are.',
+		owner: 'The Occultist'
+	},
+	{
+		type: 'Power',
+		name: 'Spinning A Yarn',
+		description: 'Your voice carries a compulsion within it that can lull the Unawakened into trusting you, providing them with a sense of security. When empowered it has a similar, although milder, effect on the Awakened.',
+		owner: 'The Storyteller'
+	},
+	{
+		type: 'Bond',
+		name: 'Gustave - Warm',
+		description: 'Gustave was a childhood fan of your series, and has told you that it brought him warmth and comfort when he was younger. You haven’t pried into his past (Friends should wait for friends!), but he treats you with a little uncharacteristic warmth.',
+		owner: 'The Storyteller'
+	},
+	{
+		type: 'Power',
+		name: 'Ride the Current',
+		description: 'You can sense electrical fields, which lets you detect hidden people and objects a short distance away without the need for sight or hearing, though it can be confused by electronics. More usefully, you can generate or interfere with electricity, increasing and decreasing resistance. You can shock with a touch (be mindful of pacemakers!), fry complex electronics with a glance or just disrupt the power supply for a few minutes. When empowered you can project arcs of electricity, become a living generator or electromagnetic pulse, even summon lightning strikes.',
+		owner: 'The Entrepreneur'
+	},
+	{
+		type: 'Bond',
+		name: 'Your Bar - Warm',
+		description: 'So maybe it isn’t Thirst or the Clover Lounge, prestigious in its clientele and charging 20 dollars a cocktail. So maybe it isn’t the White Hart with its warmth, history, and Doxley local character. So maybe there are a few more roaches, a few more mould stains, and a lot more repairs needed than you’d like. So what? This dive is still your pride and joy, no matter what anybody says.',
+		owner: 'The Entrepreneur'
+	},
+	{
+		type: 'Power',
+		name: 'Predator\'s Mimicry',
+		description: 'You are able to take on comforting traits to make others feel at ease in your presence, make them think you are harmless, to deceive them with before you destroy them. This can be used more actively to make yourself generically appear to be the thing that they’re looking for or passively to make them feel safe with you. When empowered, you are able to even mimic the appearance, vocal tics, and mannerisms of specific people who you have seen and observed.',
+		owner: 'The Hunter'
+	},
+	{
+		type: 'Bond',
+		name: 'Michael "Mike" Tharson - Warm',
+		description: 'An Enforcer in this city, though one who respects your capabilities. He’s keeping an eye out to make sure that you toe the line, but at the same time begrudgingly acknowledges the strength you have worked hard to achieve.',
+		owner: 'The Hunter'
+	},
+	{
+		type: 'Power',
+		name: 'Living Nightmare',
+		description: 'You are a creature of primal terror. You can conjure fear and dread in the living, from a vague feeling of being watched all the way to mortal terror. When empowered you can affect other Awakened, cause humans to die of fright, create bespoke phobias, even cause mild (terrifying) hallucinations.  ',
+		owner: 'The Urban Legend'
+	},
+	{
+		type: 'Bond',
+		name: 'Your Legend - Warm',
+		description: 'Your Bond is unusual; it represents your alter ego. You devote considerable time and effort to the maintenance of your myth, your asset and your legacy. ',
+		owner: 'The Urban Legend'
+	},
+	{
+		type: 'Power',
+		name: 'Seeing Further',
+		description: 'If you know your target\'s true name you can channel this power to see their location through a crystal ball, GPS, or other appropriate medium of your choice. When empowered, you can “rewind” the medium to see where they’ve been up to two hours before, and can feel which way your target is from you and how close they are to you.',
+		owner: 'The Media Mogul'
+	},
+	{
+		type: 'Bond',
+		name: 'Melanie Yeoh - Warm',
+		description: 'A brilliant little weatherwoman and reporter with an ear to the ground, an eye for details and a nose for trouble. It’s hard to not admire, even love, them a little. She’s also probably the biggest potential threat to the Shroud and your personal powerbase, at least that you’re aware of.',
+		owner: 'The Media Mogul'
+	},
+	{
+		type: 'Power',
+		name: 'The Scale',
+		description: 'You can harm and heal with a touch. You can cause wounds to close, diseases to go into remission. However, it must be an equivalent exchange. You must directly transfer these illnesses and injuries into another. It is possible to ‘hold’ a charge of healing or harming for up to a week, though doing so is uncomfortable. If you fail to balance the scale, your work will become undone, and nature will attempt to balance what you had mistakenly taken. You cannot use this power on yourself but it can affect other Awakened. Note that Awakened are essentially immune to most diseases and heal quickly. If empowered you can heal and harm without the need for balance or to actually touch the subject; you can affect anyone in your line of sight. You may even target multiple people at once.',
+		owner: 'The Surgeon'
+	},
+	{
+		type: 'Bond',
+		name: 'Josephine Rosales - Warm',
+		description: 'A nurse you know from the old days, one who’s willing to lend you a helping hand if it means assisting those patients that she can’t always reach. Despite everything that’s happened, she still respects you',
+		owner: 'The Surgeon'
+	},
+	{
+		type: 'Power',
+		name: 'You Are What You Eat',
+		description: 'You temporarily gain the skills/abilities of those you drink. When empowered you can experience their memories or temporarily copy the abilities of other Awakened (provided you’ve had a taste…). You may only copy one person’s memories or abilities at a time. If voluntarily agreed, drinking does not require extra Effort. You last fed from your starting Bond.',
+		owner: 'The Gumshoe'
+	},
+	{
+		type: 'Bond',
+		name: 'Chelsea Hubbard - Warm',
+		description: 'Old mother Hubbard is very well-informed, with connections to what seems to be everyone who is anyone in the city and a skill with the needle you’ve temporarily picked up. She’s also been kind enough to let you feed off her despite your bane, so long as you do an odd job or two for her.',
+		owner: 'The Gumshoe'
+	},
+	{
+		type: 'Power',
+		name: 'The F(r)iend Within',
+		description: 'When you channel this power you black out and dissociate, allowing your body to instinctively complete the task before you to perfection. At this point in your dissociated state you may take actions you wouldn’t have while cognizant, all in the pursuit of doing things “the correct way”. When empowered, your dissociated state can manifest skills and abilities you have seen before but don’t possess yourself, such as knowledge of languages, mechanical skill, and even combat capability.',
+		owner: 'The Perfectionist'
+	},
+	{
+		type: 'Bond',
+		name: 'Alice Palmer - Warm',
+		description: 'The quintessential hostess, and a formidable restaurateur in her own right. Anybody who has made it this far in the business understands the perfection that is demanded of the role, which is why there is mutual respect between you over the culinary and commercial fields.',
+		owner: 'The Perfectionist'
 	}
-];
-
-const characters = [
-	{
-		playerName: 'Kyle',
-		pronouns: 'They/Them',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/arte2C-the-jester---pc-person',
-		characterName: 'The Jester',
-		tag: 'Former Servants',
-		email: 'nomansfool.afterlife@gmail.com',
-		controlEmail: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
-		timeZone: 'GMT+8',
-		bio: 'Life was a joke and so is the afterlife. They held an odd role in the court of the Silent King, their humour mostly just another tool of cruelty (though the Arte was the only person who could ever insult the Silent King and get away with it)… but now they\'re free to become their own comedian. The Jester wears a variety of costumes - changing their face, body and mannerisms to match - for different roles. Their red eye paint reveals the Jester\'s identity.',
-		username: 'PiFace314',
-		icon: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/arte2C-the-jester---pc-person',
-		control: 'Gamma',
-		wealthLevel: 'Comfortable'
-	},
-	{
-		playerName: 'LJ',
-		pronouns: 'She/Her',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-claviger---pc-person',
-		characterName: 'The Claviger',
-		tag: 'Former Servants',
-		email: 'theclaviger@gmail.com',
-		controlEmail: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
-		timeZone: 'EST',
-		bio: 'A quiet and mysterious servant of the Silent King, the keeper of the keys had access to almost everywhere in the city, sealing and unsealing at the King\'s decree. Her motives are currently inscrutable.',
-		username: 'ljtrigirl',
-		icon: '‘https://www.worldanvil.com/media/cache/skyscraper/uploads/images/5f180d4b68aacc09ba428d11b4e7c0da.jpg',
-		control: 'Beta',
-		wealthLevel: 'Comfortable'
-	},
-	{
-		playerName: 'Dan V',
-		pronouns: 'They/Them',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-angel-of-dawn---pc-person',
-		characterName: 'The Angel of Dawn',
-		tag: 'Angels',
-		email: 'daniel.vehslage@gmail.com',
-		controlEmail: 'afterlifedelta@hotmail.com afterlifecontrol@gmail.com',
-		timeZone: 'MST',
-		bio: 'One of the angels active in the Necropolis.',
-		username: 'daniel.vehslage@gmail.com',
-		icon: '',
-		control: 'Game Control',
-		wealthLevel: 'Poor'
-	},
-	{
-		playerName: 'Simo',
-		pronouns: 'He/Him',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-upstart---pc-person-1',
-		characterName: 'The Upstart',
-		tag: 'Misfits',
-		email: 'simo.santeri@gmail.com',
-		controlEmail: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
-		timeZone: 'GMT+2',
-		bio: 'The Upstart was some newly-dead nobody who awakened in the (now unmoving) queue to see She Who Bears The Scale and absconded into the city. They\'ve quickly started to build a powerbase that has more established shades impressed and intimidated.',
-		username: 'Murska',
-		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/f5367489a18742dff8b7ae162e9909ff.png',
-		control: 'Gamma',
-		wealthLevel: 'Poor'
-	},
-	{
-		playerName: 'Game Control',
-		pronouns: 'They/Them',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/the-first-angel--person',
-		characterName: 'The First Angel',
-		tag: 'Angels',
-		email: 'afterlifecontrol@gmail.com',
-		timeZone: 'GMT',
-		bio: 'The leader of the angels has never been seen in the Necropolis. Their aims are unknown beyond their wish that the First Demon be eradicated and for the shades to prosper.',
-		username: 'Game Control',
-		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/ae6f7c79e22998c229b198a655d29734.jpg',
-		control: 'Game Control',
-		wealthLevel: 'Comfortable'
-	},
-	{
-		playerName: 'Alex McK',
-		pronouns: 'He/Him',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/reeve2C-the-steward--pc-person',
-		characterName: 'The Steward',
-		tag: 'Former Servants',
-		email: 'areidgrey@googlemail.com',
-		controlEmail: 'afterlifebeta@gmail.com afterlifecontrol@gmail.com',
-		timeZone: 'GMT',
-		bio: 'The Steward\'s role seemed pointless, vestigial. The Silent King needed no valet or bodyguard, yet the Steward was always close at hand. Reeve seems to have moved on from the King very quickly and is taking an extremely active interest in the pending election.',
-		username: 'Reeve',
-		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/f6b7fa0d51b891f910fc28800b44956d.jpeg',
-		control: 'Beta',
-		wealthLevel: 'Comfortable'
-	},
-	{
-		playerName: 'Gamma Control',
-		pronouns: 'He/Him',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/sam2C-the-barman-person',
-		characterName: 'Sam, the Barman',
-		tag: 'NPC',
-		email: 'afterlifegamma@gmail.com afterlifecontrol@gmail.com',
-		timeZone: 'EST',
-		bio: 'The best barman ever to die.',
-		username: 'Warsprite',
-		icon: 'https://www.worldanvil.com/media/cache/skyscraper/uploads/images/011e1bde2d8893036a182990d70ac95c.jpg',
-		control: 'Gamma Control',
-		wealthLevel: 'Comfortable'
-	},
-	{
-		playerName: 'Zeta Control',
-		pronouns: 'He/Him',
-		worldAnvil: 'https://www.worldanvil.com/w/afterlife3A-a-postmortem-megagame-afterlife-control/a/hoffman2C-the-alchemist-person',
-		characterName:'Hoffman, The Alchemist',
-		tag: 'NPC',
-		email: 'hoffmanthealchemist@gmail.com afterlifecontrol@gmail.com',
-		timeZone: 'PT',
-		bio: 'Definitely not a mad scientist.',
-		username: 'BobtheNinjaMan',
-		control: 'Zeta Control'
-	},
 ];
 
 const locations = [
@@ -400,7 +507,7 @@ const locations = [
 		name: 'The Youth Centre',
 		description: 'The Youth Centre keeps kids off the street and gives them things to do, functioning as an underfunded, dilapidated beacon of hope in some of the poorest parts of the city where antisocial behaviour, and cycles of poverty and crime play out year by year.',
 		borough: 'East',
-		influence: 3,
+		influence: 5,
 		code: 'E2'
 	},
 	{
@@ -414,7 +521,7 @@ const locations = [
 		name: 'Parking Lot',
 		description: 'In the daytime, it\'s used for precisely what you think it\'s used for - Toyotas with scuffed paint and Volvos overburdened with decorative stickers are parked side by side with twenty-year old Saabs and sports cars a little too nice to belong in Doxley. At night, however, it\'s a hotbed for criminal activities. Drug deals, clandestine meetings, underground fights or even a suspicious death or two - all minded by an attendant and security guard who by this point know better than to poke their nose into all this.',
 		borough: 'East',
-		influence: 6,
+		influence: 5,
 		code: 'E4'
 	},
 	{
@@ -449,7 +556,7 @@ const locations = [
 		name: 'The White Hart',
 		description: 'While Doxley has a good number of pubs, the White Hart is perhaps the most infamous. Rowdy, rambunctious and gently dangerous, the owner is trying to soften the pub\'s image (and clientele). Still, if you\'re looking for a good night out amongst people you can probably count as, if not friends, then at least not enemies, the White Hart is the place to be.',
 		borough: 'East',
-		influence: 7,
+		influence: 5,
 		code: 'E9'
 	},
 	{
@@ -624,4 +731,4 @@ const locations = [
 	}
 ];
 
-module.exports = { assets, characters, locations };
+module.exports = { assets, locations };
