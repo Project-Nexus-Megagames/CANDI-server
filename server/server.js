@@ -8,7 +8,7 @@ logger.info('Booting Project Nexus Server...');
 // Boot Processes
 logger.info('Looding start-up processes...');
 const app = express(); // Init for express
-app.use(timeout('12s'));
+app.use(timeout('20s'));
 app.use(haltOnTimedout);
 logger.info('Express Initilized...');
 const server = http.createServer(app); // Creation of an HTTP server
@@ -23,7 +23,7 @@ require('./middleware/production/prod')(app); // Production compression and midd
 
 app.use((err, req, res, next) => {
 	logger.error(`Response Teimout and Terminated: ${err}`);
-	res.status(500).send('Response timeout!!!');
+	// res.status(500).send('Response timeout!!!');
 });
 
 function haltOnTimedout(req, res, next) {

@@ -158,6 +158,7 @@ router.post('/initCharacters', async function(req, res) {
 	logger.info('POST Route: api/character call made...');
 
 	try {
+		let npcCount, charCount, assCount = 0;
 		for (const char of characters) {
 			let newCharacter = new Character(char);
 			const wealth = {
@@ -175,6 +176,8 @@ router.post('/initCharacters', async function(req, res) {
 			const docs = await Character.find({ characterName: char.characterName });
 
 			if (docs.length < 1) {
+				charCount++;
+				assCount++;
 				newCharacter = await newCharacter.save();
 				asset.save();
 				logger.info(`${newCharacter.characterName} created.`);
@@ -191,6 +194,7 @@ router.post('/initCharacters', async function(req, res) {
 
 			if (docs.length < 1) {
 				newCharacter = await newCharacter.save();
+				npcCount++;
 				logger.info(`${newCharacter.characterName} created.`);
 			}
 			else {
@@ -213,6 +217,7 @@ router.post('/initCharacters', async function(req, res) {
 				character.assets.push(newAsset);
 				newAsset.save();
 				character.save();
+				assCount++;
 				logger.info(`${newAsset.name} created.`);
 			}
 			else {
@@ -221,6 +226,7 @@ router.post('/initCharacters', async function(req, res) {
 		}
 
 		nexusEvent.emit('updateCharacters');
+		logger.info(`Created ${charCount} Characters, ${npcCount} NPCs, and ${assCount} Assets.`);
 		res.status(200).send('All done');
 	}
 	catch (err) {

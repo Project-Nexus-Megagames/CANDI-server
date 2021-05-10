@@ -26,7 +26,8 @@ const CharacterSchema = new Schema({
 	popSupport: { type: Number, default: 0 },
 	supporters: [{ type: String }],
 	effort: { type: Number, default: 3, min: 0, max: 6 },
-	feed: { type: Boolean, default: false }
+	feed: { type: Boolean, default: false },
+	color: { type: String, default: 'ffffff' }
 });
 
 const Character = mongoose.model('Character', CharacterSchema);
