@@ -2,6 +2,7 @@ const { Asset } = require('../models/asset');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const { Character } = require('../models/character');
 const { logger } = require('../middleware/log/winston');
+const { default: axios } = require('axios');
 
 
 async function modifyCharacter(data) {
@@ -68,6 +69,37 @@ async function modifySupport(data) {
 	}
 }
 
+async function register(data) {
+	const { character, username, playerName } = data;
+	try {
+		let regChar = await Character.findById(character).populate('assets').populate('lentAssets');
+
+		if (regChar === null) {
+			return ({ message : `Could not find a character for id "${character}"`, type: 'error' });
+		}
+		else {
+			regChar.username = username;
+			regChar.playerName = playerName;
+			regChar = await regChar.save();
+
+			const emailStuff = {
+				from: 'Dusk City Registration',
+				to: regChar.email,
+				subject: 'Dusk City Registration',
+				html: `<p>Dear ${regChar.playerName},</p> <p> You have been successfully registered for the Dusk City CANDI App, and can now log in. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p>Have fun!</p> <p>Your Character: ${data.characterName} </p> https://candi-app.herokuapp.com/home`
+			};
+			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
+		}
+
+		return ({ message : `Player ${username} registered to ${regChar.characterName}`, type: 'success' });
+
+	}
+	catch (err) {
+		logger.error(`message : Server Error: ${err.message}`);
+		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
+	}
+}
+
 async function modifyMemory(data) {
 	const { id, memories } = data;
 	let character = await Character.findById(id);
@@ -131,4 +163,4 @@ async function createCharacter(data) {
 	}
 }
 
-module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter };
+module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register };

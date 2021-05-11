@@ -495,7 +495,13 @@ const locations = [
 		influence: 15,
 		code: 'N9'
 	},
-
+	{
+		name: 'Doxley Museum',
+		description: 'The first building ever built in Doxley City, it used to house the Founder\'s family until a decade ago, when the last remaining descendant moved out. It was then converted into a Museum, boasting Dusk City\'s major cultural artifacts. The Mayor gives speeches there from time to time, and it\'s the site of each inauguration. One of the few cultural preservation landmarks in the city.',
+		borough: 'North',
+		influence: 5,
+		code: 'N10'
+	},
 	{
 		name: 'The Cannery',
 		description: 'This commercial region is based around an old canned goods factory, the Mayhew Cannery. Due in part to it being architectually interesting, the building was preserved after the Cannery was closed for good in the 1980s. The building lay fallow and overgrown over two decades before being refurbished in the late \'00s, old interior spaces made into lots for stores. Though it is still mostly empty, some niche stores and businesses have sprung up attracting a hipster clientele, including a few expensive cafes, boutiques, a street art gallery, an axe-throwing room and a board game cafe.',

@@ -6,7 +6,7 @@ const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
 const { editAction, editResult, createAction, deleteAction } = require('../game/actions');
-const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory } = require('../game/characters');
+const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
 const config = require('config');
@@ -98,6 +98,11 @@ module.exports = function(server) {
 				response = await modifySupport(data);
 				break;
 			}
+			case 'register': {
+				// console.log(data);
+				response = await register(data);
+				break;
+			}
 			case 'delete': {
 				// console.log(data);
 				response = await deleteCharacter(data);
@@ -142,8 +147,8 @@ module.exports = function(server) {
 				break;
 			}
 			default:
-				console.log('Bad characterRequest Request: ', type); // need an error socket to trigger
-				response = { message : `Bad characterRequest Request: ${type}`, type: 'error' };
+				console.log('Bad assetRequest Request: ', type); // need an error socket to trigger
+				response = { message : `Bad assetRequest Request: ${type}`, type: 'error' };
 				break;
 			}
 			logger.info(response);
