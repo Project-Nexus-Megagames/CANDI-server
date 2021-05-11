@@ -116,7 +116,7 @@ router.patch('/deleteAll', async function(req, res) {
 
 setInterval(async () => {
 	const gamestate = await GameState.findOne();
-	if (gamestate.discovered) {
+	if (gamestate && gamestate.discovered) {
 		gamestate.hunger = gamestate.hunger - 13;
 		gamestate.happiness = gamestate.happiness - 13;
 		await gamestate.save();

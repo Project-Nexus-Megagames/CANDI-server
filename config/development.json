@@ -1,6 +1,6 @@
 {
   "jwtPrivateKey": "rawr",
-  "dbName": "nexusTest",
+  "dbName": "duskDB",
   "version": "0.1.x [John CORS]",
 	"clientURL": "http://localhost:3000/",
 	"serverURL": "http://localhost:5000/",

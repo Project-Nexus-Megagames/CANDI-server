@@ -1,4 +1,3 @@
-const { Asset } = require('../models/asset');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const { Character } = require('../models/character');
 const { logger } = require('../middleware/log/winston');
@@ -70,7 +69,7 @@ async function modifySupport(data) {
 }
 
 async function register(data) {
-	const { character, username, playerName } = data;
+	const { character, username, playerName, email } = data;
 	try {
 		let regChar = await Character.findById(character).populate('assets').populate('lentAssets');
 
@@ -81,12 +80,12 @@ async function register(data) {
 			regChar.username = username;
 			regChar.playerName = playerName;
 			regChar = await regChar.save();
-
+			nexusEvent.emit('respondClient', 'update', [ regChar ]);
 			const emailStuff = {
 				from: 'Dusk City Registration',
-				to: regChar.email,
+				to: email,
 				subject: 'Dusk City Registration',
-				html: `<p>Dear ${regChar.playerName},</p> <p> You have been successfully registered for the Dusk City CANDI App, and can now log in. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p>Have fun!</p> <p>Your Character: ${data.characterName} </p> https://candi-app.herokuapp.com/home`
+				html: `<p>Dear ${regChar.playerName},</p> <p> You have been successfully registered for the Dusk City CANDI App, and can now log in. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p>Have fun!</p> <p>Your Character: ${regChar.characterName} </p> https://candi-app.herokuapp.com/home`
 			};
 			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
 		}

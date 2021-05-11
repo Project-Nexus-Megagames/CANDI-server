@@ -440,45 +440,45 @@ const locations = [
 		code: 'N1'
 	},
 	{
-		name: 'Haven Hospital',
-		description: 'Originally Haven Sanitorium, this state-of-the-art hospital still has some dark corners and low-traffic hallways ideal for visits from the Awakened. Feeding couldn’t be easier and deaths are almost always attributed to existing conditions or MRSA.',
-		borough: 'North',
-		influence: 15,
-		code: 'N2'
-	},
-	{
-		name: 'Resurrection Grove Church',
-		description: 'A little place of solace, this House of God is far away from the hustle and bustle of the rest of the city. It serves as a sanctuary for the faithful and unfaithful alike. Its namesake tree grove borders the Old Town Cemetery.',
-		borough: 'North',
-		influence: 5,
-		code: 'N3'
-	},
-	{
 		name: 'The Library',
 		description: 'A place to read, to relax, and to learn. So long as you\'re quiet and respectful, anyone can come here and enjoy walking through the shelves for their next literary friend. The book club meets on the first Tuesday of every month.',
 		borough: 'North',
 		influence: 10,
-		code: 'N4'
+		code: 'N2'
 	},
 	{
 		name: 'Nevermore Bookstore',
 		description: 'Old bookshops have strange geography. Why are there so many staircases? Where do they even go? Though the main floor is a typical "modern" bookstore with bestsellers and local author features, the second story houses an impressive collection of rare books and first edition, complete with that delightful old book smell. ',
 		borough: 'North',
 		influence: 1,
-		code: 'N5'
+		code: 'N3'
 	},
 	{
-		name: 'Peters Street Cinema',
-		description: 'State of the art when it was built 20 years ago, this movie house usually smells like stale popcorn and musty curtains. During the week, it screens whatever the latest blockbuster is to get folks into seats. Thursday Date Night see the latest romance movie and couples refreshment special packages. The weekends are reserved for the owner\'s special events, ranging from series marathons to Quote-A-Longs and more. One of the few cultural preservation landmarks in the city.',
-		borough: 'West',
-		influence: 1,
-		code: 'N6'
+		name: 'Resurrection Grove Church',
+		description: 'A little place of solace, this House of God is far away from the hustle and bustle of the rest of the city. It serves as a sanctuary for the faithful and unfaithful alike. Its namesake tree grove borders the Old Town Cemetery.',
+		borough: 'North',
+		influence: 5,
+		code: 'N4'
 	},
 	{
 		name: 'The Candlewax Club',
 		description: 'A grey yorkstone building marked only by an iron plate, embossed with a candlestick holder. While the first floor is windowless, the second floor, by contrast, is lined with windows. Curtains, however, block prying eyes. The primary entry point is a set of walnut double doors.',
 		borough: 'North',
 		influence: 10,
+		code: 'N5'
+	},
+	{
+		name: 'Haven Hospital',
+		description: 'Originally Haven Sanitorium, this state-of-the-art hospital still has some dark corners and low-traffic hallways ideal for visits from the Awakened. Feeding couldn’t be easier and deaths are almost always attributed to existing conditions or MRSA.',
+		borough: 'North',
+		influence: 15,
+		code: 'N6'
+	},
+	{
+		name: 'Ye Olde Shoppes',
+		description: 'Leaning into the historic nature of Old Town, the original commerce hub of Doxley was restored to a mix of modern day and vintage boutiques. Visit the Ripped Bodice Modiste, World Wide Wonders Tech Store, or All in Bloom Florist.',
+		borough: 'North',
+		influence: 15,
 		code: 'N7'
 	},
 	{
@@ -489,17 +489,17 @@ const locations = [
 		code: 'N8'
 	},
 	{
-		name: 'Ye Olde Shoppes',
-		description: 'Leaning into the historic nature of Old Town, the original commerce hub of Doxley was restored to a mix of modern day and vintage boutiques. Visit the Ripped Bodice Modiste, World Wide Wonders Tech Store, or All in Bloom Florist.',
-		borough: 'North',
-		influence: 15,
-		code: 'N9'
-	},
-	{
 		name: 'Doxley Museum',
 		description: 'The first building ever built in Doxley City, it used to house the Founder\'s family until a decade ago, when the last remaining descendant moved out. It was then converted into a Museum, boasting Dusk City\'s major cultural artifacts. The Mayor gives speeches there from time to time, and it\'s the site of each inauguration. One of the few cultural preservation landmarks in the city.',
 		borough: 'North',
 		influence: 5,
+		code: 'N9'
+	},
+	{
+		name: 'Peters Street Cinema',
+		description: 'State of the art when it was built 20 years ago, this movie house usually smells like stale popcorn and musty curtains. During the week, it screens whatever the latest blockbuster is to get folks into seats. Thursday Date Night see the latest romance movie and couples refreshment special packages. The weekends are reserved for the owner\'s special events, ranging from series marathons to Quote-A-Longs and more. One of the few cultural preservation landmarks in the city.',
+		borough: 'West',
+		influence: 1,
 		code: 'N10'
 	},
 	{
@@ -510,17 +510,17 @@ const locations = [
 		code: 'E1'
 	},
 	{
-		name: 'The Youth Centre',
-		description: 'The Youth Centre keeps kids off the street and gives them things to do, functioning as an underfunded, dilapidated beacon of hope in some of the poorest parts of the city where antisocial behaviour, and cycles of poverty and crime play out year by year.',
+		name: 'The Heights',
+		description: 'While on paper the area is known as Livingstone Quarter, if you used that name around any of the locals they would probably laugh you out. The Heights are so-named not because of the area\'s elevation, but in order to mock former mayor Richard Maddox who claimed that the city\'s less well-off needed to aspire to "the heights of humanity". The Heights are known for, and proud of, their diversity. People from every culture, speaking a hundred different languages, live side by side in an area rich with murals and street art, small businesses, and a wealth of both traditional and "fusion" culinary treats. Unfortunately the area is also quite poor, filled with tenement buildings and weapon surrender bins to try and fight the knife epidemic gripping Britain.',
 		borough: 'East',
-		influence: 5,
+		influence: 10,
 		code: 'E2'
 	},
 	{
-		name: 'The Heights',
-		description: 'While on paper the area is known as Livingstone Quarter, if you used that name around any of the locals they would probably laugh you out. The Heights are so-named not because of the areas elevation, but in order to mock former mayor Richard Maddox who claimed that the city\'s less well-off needed to aspire to "the heights of humanity". The Heights are known for, and proud of, their diversity. People from every culture, speaking a hundred different languages, live side by side in an area rich with murals and street art, small businesses, and a wealth of both traditional and "fusion" culinary treats. Unfortunately the area is also quite poor, filled with tenement buildings and weapon surrender bins to try and fight the knife epidemic gripping Britain.',
+		name: 'The Youth Centre',
+		description: 'The Youth Centre keeps kids off the street and gives them things to do, functioning as an underfunded, dilapidated beacon of hope in some of the poorest parts of the city where antisocial behaviour, and cycles of poverty and crime play out year by year.',
 		borough: 'East',
-		influence: 10,
+		influence: 3,
 		code: 'E3'
 	},
 	{
@@ -581,17 +581,17 @@ const locations = [
 		code: 'W1'
 	},
 	{
-		name: 'Piers',
-		description: 'A beautiful walking street near the river mouth and along the seaside, the area attracts tourists with all sorts of local tastes, street food, performers, little gift shops and cafes. Enterprising fishermen offer tours at sea, old crones peddle herbal remedies and handmade scented candles and you can get your fortune read in any of a dozen ways. In one narrow side-street a shop selling all sorts of trinkets for good fortune and health has a reputation among some of the locals. They say the charms here actually work, though the price is not always paid in money.',
+		name: 'Park of Saints',
+		description: 'The park is a beautiful place, one of the few in the city. It\'s split into north and south, one half on each side of the river, with a bridge in between - the northern side is shadowy with corridors of trees and bushes where children love to play, while the southern side is more sculpted with a fountain, benches and arranged paths. Several times business interests have attempted to wrest control of the land, but the locals have opposed determinedly for one main reason. There is a local story that for a relationship to last, the lovers should swear their vows on the old bridge over the river and carve their initials on one of the trees to the north of it. Whether this actually works, nobody can tell, but it is a beloved tradition to many.',
 		borough: 'West',
 		influence: 5,
 		code: 'W2'
 	},
 	{
-		name: 'Port of Doxley',
-		description: 'The smell of the sea mixes with oil and the constant grind of heavy machinery. The port is the artery of the city, where the real money comes in. Well, nowadays it has been in decline for years as factories and mills have given way to service industry and software engineering. Still, a hefty amount of goods flow in and out daily from smaller cargo vessels that use the facilities to avoid lines and higher fees in larger ports down the coast. Many empty warehouses slowly decay near the river, but some are still in active use and hold the goods of the world ready to be loaded on to trains or trucks and brought to customers all over the nation.',
+		name: 'Inkubator Tattoo Parlor',
+		description: 'The foremost spot for ink in the city, the Inkubator is well-known for the detailed and beautiful designs the owner can create, if in the mood. They\'re considered an eccentric, an "artistic temperament" - words used to hide the uneasiness that their demeanour causes in most customers. Still, the genius and patient skill of their work combined with the difficulty of getting them to actually agree to a job ensure high demand, and with it, high prices.',
 		borough: 'West',
-		influence: 10,
+		influence: 5,
 		code: 'W3'
 	},
 	{
@@ -609,24 +609,24 @@ const locations = [
 		code: 'W5'
 	},
 	{
-		name: 'Inkubator Tattoo Parlor',
-		description: 'The foremost spot for ink in the city, the Inkubator is well-known for the detailed and beautiful designs the owner can create, if in the mood. They\'re considered an eccentric, an "artistic temperament" - words used to hide the uneasiness that their demeanour causes in most customers. Still, the genius and patient skill of their work combined with the difficulty of getting them to actually agree to a job ensure high demand, and with it, high prices.',
+		name: 'Piers',
+		description: 'A beautiful walking street near the river mouth and along the seaside, the area attracts tourists with all sorts of local tastes, street food, performers, little gift shops and cafes. Enterprising fishermen offer tours at sea, old crones peddle herbal remedies and handmade scented candles and you can get your fortune read in any of a dozen ways. In one narrow side-street a shop selling all sorts of trinkets for good fortune and health has a reputation among some of the locals. They say the charms here actually work, though the price is not always paid in money.',
 		borough: 'West',
 		influence: 5,
 		code: 'W6'
 	},
 	{
-		name: 'Doxley Police Department',
-		description: 'The DPD is a modern organization ready to face the demands of a modern era. That\'s what the posters say. In reality, it is an underfunded dead-end job filled by locals who are corrupt more often than not and losers who\'ve been transferred here after pissing off someone in their old precinct. They have long held an understanding with the more organized criminals to keep the city peaceful and the illicit goods flowing through the port.',
+		name: 'Homeless Shelter',
+		description: 'A building donated to a foundation by an unknown philanthropist, this "blight on the neighbourhood" as some residents call it is a shelter for the homeless, providing food and a roof for those most in need. There is never enough space for everyone, but the understaffed volunteers do what they can - presumably out of the kindness of their hearts.',
 		borough: 'West',
-		influence: 10,
+		influence: 5,
 		code: 'W7'
 	},
 	{
-		name: 'Park of Saints',
-		description: 'The park is a beautiful place, one of the few in the city. It\'s split into north and south, one half on each side of the river, with a bridge in between - the northern side is shadowy with corridors of trees and bushes where children love to play, while the southern side is more sculpted with a fountain, benches and arranged paths. Several times business interests have attempted to wrest control of the land, but the locals have opposed determinedly for one main reason. There is a local story that for a relationship to last, the lovers should swear their vows on the old bridge over the river and carve their initials on one of the trees to the north of it. Whether this actually works, nobody can tell, but it is a beloved tradition to many.',
+		name: 'Port of Doxley',
+		description: 'The smell of the sea mixes with oil and the constant grind of heavy machinery. The port is the artery of the city, where the real money comes in. Well, nowadays it has been in decline for years as factories and mills have given way to service industry and software engineering. Still, a hefty amount of goods flow in and out daily from smaller cargo vessels that use the facilities to avoid lines and higher fees in larger ports down the coast. Many empty warehouses slowly decay near the river, but some are still in active use and hold the goods of the world ready to be loaded on to trains or trucks and brought to customers all over the nation.',
 		borough: 'West',
-		influence: 5,
+		influence: 10,
 		code: 'W8'
 	},
 	{
@@ -637,10 +637,10 @@ const locations = [
 		code: 'W9'
 	},
 	{
-		name: 'Homeless Shelter',
-		description: 'A building donated to a foundation by an unknown philanthropist, this "blight on the neighbourhood" as some residents call it is a shelter for the homeless, providing food and a roof for those most in need. There is never enough space for everyone, but the understaffed volunteers do what they can - presumably out of the kindness of their hearts.',
+		name: 'Doxley Police Department',
+		description: 'The DPD is a modern organization ready to face the demands of a modern era. That\'s what the posters say. In reality, it is an underfunded dead-end job filled by locals who are corrupt more often than not and losers who\'ve been transferred here after pissing off someone in their old precinct. They have long held an understanding with the more organized criminals to keep the city peaceful and the illicit goods flowing through the port.',
 		borough: 'West',
-		influence: 5,
+		influence: 10,
 		code: 'W10'
 	},
 	{

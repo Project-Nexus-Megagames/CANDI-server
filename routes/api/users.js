@@ -185,8 +185,8 @@ router.patch('/demote', async function(req, res) {
 });
 
 // game routes
-/**
- * router.post('/reset', async function(req, res) {
+// /**
+router.post('/reset', async function(req, res) {
 	logger.info('POST Route: api/users/reset call made...');
 
 	try {
@@ -204,7 +204,7 @@ router.patch('/demote', async function(req, res) {
 		httpErrorHandler(res, err);
 	}
 });
- */
+// */
 
 
 module.exports = router;
