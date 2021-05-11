@@ -185,7 +185,8 @@ router.patch('/demote', async function(req, res) {
 });
 
 // game routes
-router.post('/reset', async function(req, res) {
+/**
+ * router.post('/reset', async function(req, res) {
 	logger.info('POST Route: api/users/reset call made...');
 
 	try {
@@ -197,13 +198,13 @@ router.post('/reset', async function(req, res) {
 
 		await	axios.post('http://localhost:5000/api/locations/initLocations');
 		await	axios.post('http://localhost:5000/api/characters/initCharacters');
-		/*
-		*/
 		res.status(200).send('All done');
 	}
 	catch (err) {
 		httpErrorHandler(res, err);
 	}
 });
+ */
+
 
 module.exports = router;

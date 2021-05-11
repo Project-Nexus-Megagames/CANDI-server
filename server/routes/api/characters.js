@@ -158,7 +158,7 @@ router.post('/initCharacters', async function(req, res) {
 	logger.info('POST Route: api/character call made...');
 
 	try {
-		let npcCount, charCount, assCount = 0;
+		let { npcCount, charCount, assCount } = 0;
 		for (const char of characters) {
 			let newCharacter = new Character(char);
 			const wealth = {

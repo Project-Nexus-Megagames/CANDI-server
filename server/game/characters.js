@@ -5,8 +5,8 @@ const { logger } = require('../middleware/log/winston');
 
 
 async function modifyCharacter(data) {
-	const { id, effort, email, worldAnvil, tag, standing, control, timeZone, popsupport, bio, characterName } = data;
-	const character = await Character.findById(id);
+	const { id, effort, email, worldAnvil, tag, standing, control, timeZone, popsupport, bio, characterName, color, characterActualName } = data;
+	const character = await Character.findById(id).populate('assets').populate('lent');
 
 	try {
 		if (character === null) {
@@ -28,7 +28,11 @@ async function modifyCharacter(data) {
 			character.popsupport = popsupport;
 			character.bio = bio;
 
+			character.color = color;
+			character.characterActualName = characterActualName;
+
 			await character.save();
+			character.populate('assets').populate('lentAssets');
 			nexusEvent.emit('respondClient', 'update', [ character ]);
 			return ({ message : `Character ${character.characterName} edited`, type: 'success' });
 		}
@@ -42,7 +46,7 @@ async function modifyCharacter(data) {
 
 async function modifySupport(data) {
 	const { id, supporter } = data;
-	let character = await Character.findById(id);
+	let character = await Character.findById(id).populate('assets').populate('lentAssets');
 
 	if (character === null) {
 		return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
@@ -86,7 +90,7 @@ async function modifyMemory(data) {
 async function deleteCharacter(data) {
 	try {
 		const id = data.id;
-		let element = await Character.findById(id);
+		let element = await Character.findById(id).populate('assets').populate('lentAssets');
 		if (element != null) {
 			element = await Character.findByIdAndDelete(id);
 			logger.info(`Character with the id ${id} was deleted via Socket!`);
@@ -110,7 +114,7 @@ async function createCharacter(data) {
 		const docs = await Character.find({ characterName: data.characterName });
 		if (docs.length < 1) {
 			newElement = await newElement.save();
-			const action = await Character.findById(newElement._id).populate('creator');
+			const action = await Character.findById(newElement._id).populate('assets').populate('lentAssets');
 
 			logger.info(`Character "${newElement.characterName}" created.`);
 
