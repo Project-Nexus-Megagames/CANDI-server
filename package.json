@@ -1,7 +1,7 @@
 {
-  "name": "candi_duskcity",
+  "name": "candi_duskcity_server",
   "version": "0.0.1",
-  "description": "The CANDI Server to handle actions in Dusk City Megagame ",
+  "description": "The CANDI Server to handle actions for Dusk City Megagame ",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -19,7 +19,9 @@
     "Coast",
     "Megagames",
     "WCM",
-    "Afterlife"
+    "Dusk City",
+    "Project",
+    "Nexus"
   ],
   "author": "Scott McMann & John T. Cleveland",
   "license": "ISC",
