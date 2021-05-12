@@ -18,7 +18,7 @@ module.exports = function(server) {
 	const io = require('socket.io')(server, {
 		cors: {
 			origin: config.get('socketCORS'),
-			methods: ["GET", "POST"]
+			methods: ['GET', 'POST']
 		}
 	}); // Creation of websocket Server
 	io.use((client, next) => {

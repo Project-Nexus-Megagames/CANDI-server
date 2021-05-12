@@ -6,6 +6,7 @@ const mongoose = require('mongoose'); // Mongo DB object modeling module
 const Schema = mongoose.Schema; // Destructure of Schema
 
 const GameStateSchema = new Schema({
+	model:  { type: String, default: 'GameState' },
 	round: { type: Number, required: true },
 	endTime: { type: String, default: '2021-03-24T17:52:50.969Z' },
 	status: { type: String, enum: ['Active', 'Resolution', 'Down']	},
