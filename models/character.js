@@ -8,13 +8,13 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const CharacterSchema = new Schema({
 	model:  { type: String, default: 'Character' },
-	playerName: { type: String, minlength: 2, maxlength: 50, required: true },
+	playerName: { type: String, minlength: 1, maxlength: 50, required: true },
 	email: { type: String, required: true },
 	controlEmail: { type: String, default: '' },
 	worldAnvil: { type: String, required: true },
-	timeZone: { type: String, required: true },
+	timeZone: { type: String, default: '???' },
 	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
-	characterActualName: { type: String, minlength: 2, maxlength: 50, default: 'None' },
+	characterActualName: { type: String, maxlength: 50, default: 'None' },
 	tag: { type: String, enum: ['PC', 'NPC', 'Brother\'s Wrath', 'Unifiers', 'Sister\'s Wisdom', 'Factionless'], required: true },
 	username: { type: String, minlength: 2, maxlength: 50, required: true },
 	pronouns: { type: String },

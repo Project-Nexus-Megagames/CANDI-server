@@ -37,6 +37,7 @@ module.exports = function(server) {
 				userID: id,
 				username: socket.username
 			});
+			console.log(users)
 		}
 		io.emit('clients', users);
 
@@ -189,7 +190,7 @@ module.exports = function(server) {
 
 		client.on('disconnect', () => {
 			logger.info(`Client disconnecting from update service... ${client.id}`);
-			Clients.delClient(client);
+			// Clients.delClient(client);
 			console.log(`${Clients.connections.length} clients connected`);
 		});
 	});

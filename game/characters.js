@@ -5,7 +5,7 @@ const { default: axios } = require('axios');
 
 
 async function modifyCharacter(data) {
-	const { id, effort, email, worldAnvil, tag, standing, control, timeZone, popsupport, bio, characterName, color, characterActualName } = data;
+	const { id, effort, email, worldAnvil, tag, standing, control, timeZone, popsupport, bio, characterName, color, characterActualName, controlEmail, pronouns } = data;
 	const character = await Character.findById(id).populate('assets').populate('lent');
 
 	try {
@@ -30,6 +30,8 @@ async function modifyCharacter(data) {
 
 			character.color = color;
 			character.characterActualName = characterActualName;
+			character.controlEmail = controlEmail;
+			character.pronouns = pronouns;
 
 			await character.save();
 			character.populate('assets').populate('lentAssets');
@@ -145,11 +147,11 @@ async function createCharacter(data) {
 		const docs = await Character.find({ characterName: data.characterName });
 		if (docs.length < 1) {
 			newElement = await newElement.save();
-			const action = await Character.findById(newElement._id).populate('assets').populate('lentAssets');
+			const charavter = await Character.findById(newElement._id).populate('assets').populate('lentAssets');
 
 			logger.info(`Character "${newElement.characterName}" created.`);
 
-			nexusEvent.emit('respondClient', 'create', [ action ]);
+			nexusEvent.emit('respondClient', 'create', [ charavter ]);
 			return ({ message : 'Character Creation Success', type: 'success' });
 		}
 		else {
