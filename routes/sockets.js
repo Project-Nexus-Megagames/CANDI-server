@@ -10,6 +10,7 @@ const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modify
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
 const config = require('config');
+const { editLocation } = require('../game/locations');
 
 module.exports = function(server) {
 	const Clients = new SocketServer();
@@ -117,6 +118,24 @@ module.exports = function(server) {
 			default:
 				console.log('Bad characterRequest Request: ', type); // need an error socket to trigger
 				response = { message : `Bad characterRequest Request: ${type}`, type: 'error' };
+				break;
+			}
+			client.emit('alert', response);
+		});
+
+		// Character Socket
+		client.on('locationRequest', async (type, data) => {
+			logger.info(`locationRequest triggered: ''${type}''`);
+			let response;
+			switch(type) {
+			case 'modify': {
+				console.log(data);
+				response = await editLocation(data);
+				break;
+			}
+			default:
+				console.log('Bad locationRequest Request: ', type); // need an error socket to trigger
+				response = { message : `Bad locationRequest Request: ${type}`, type: 'error' };
 				break;
 			}
 			client.emit('alert', response);
