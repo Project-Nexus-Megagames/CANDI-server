@@ -38,7 +38,7 @@ module.exports = function(server) {
 				userID: id,
 				username: socket.username
 			});
-			console.log(users)
+			// console.log(users)
 		}
 		io.emit('clients', users);
 

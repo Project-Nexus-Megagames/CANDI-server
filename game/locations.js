@@ -12,7 +12,7 @@ async function editLocation(data) {
 			location.name = name;
 			location.description = description;
 			location.borough = borough;
-			location.currentOwner = currentOwner;
+			currentOwner ? location.currentOwner = currentOwner : location.currentOwner = 'None';
 			location.influence = influence;
 
 			await location.save();
