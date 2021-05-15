@@ -10,11 +10,9 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const { Character } = require('../../models/character'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
-const characters = require('../../config/characterList');
-const assets = require('../../config/startingassets');
+const { assets } = require('../../config/startingData');
+const { characters, npcs } = require('../../config/startingCharacters');
 const { Asset } = require('../../models/asset');
-const { modifyCharacter, modifyMemory, modifySupport } = require('../../game/characters');
-const { addAsset } = require('../../game/assets');
 
 // @route   GET api/characters
 // @Desc    Get all characters
@@ -26,7 +24,7 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const char = await Character.find().populate('assets').populate('traits').populate('wealth').populate('lentAssets');
+			const char = await Character.find().populate('assets').populate('lentAssets');
 			res.status(200).json(char);
 		}
 		catch (err) {
@@ -40,7 +38,7 @@ router.get('/', async function(req, res, next) {
 // @Desc    Get a single Character by ID
 // @access  Public
 router.get('/:id', validateObjectId, async (req, res, next) => {
-	logger.info('GET Route: api/character/:id requested...');	
+	logger.info('GET Route: api/character/:id requested...');
 	if (req.timedout) {
 		next();
 	}
@@ -160,22 +158,43 @@ router.post('/initCharacters', async function(req, res) {
 	logger.info('POST Route: api/character call made...');
 
 	try {
+		let { npcCount, charCount, assCount } = 0;
 		for (const char of characters) {
 			let newCharacter = new Character(char);
 			const wealth = {
 				name: `${newCharacter.characterName}'s Wealth`,
-				description: char.wealthLevel,
-				model: 'Wealth',
+				description: 'A moderate sum of funds, useful for those persuaded by such motivations...',
+				type: 'Wealth',
+				status: {
+					lendable: true
+				},
 				uses: 2
 			};
 			const asset = new Asset(wealth);
-			newCharacter.wealth = asset;
+			newCharacter.assets.push(asset);
 			//	await newAgent.validateAgent();
 			const docs = await Character.find({ characterName: char.characterName });
 
 			if (docs.length < 1) {
+				charCount++;
+				assCount++;
 				newCharacter = await newCharacter.save();
 				asset.save();
+				logger.info(`${newCharacter.characterName} created.`);
+			}
+			else {
+				console.log(`${newCharacter.characterName} already exists!\n`);
+			}
+		}
+
+		for (const npc of npcs) {
+			let newCharacter = new Character(npc);
+			//	await newAgent.validateAgent();
+			const docs = await Character.find({ characterName: npc.characterName });
+
+			if (docs.length < 1) {
+				newCharacter = await newCharacter.save();
+				npcCount++;
 				logger.info(`${newCharacter.characterName} created.`);
 			}
 			else {
@@ -187,9 +206,18 @@ router.post('/initCharacters', async function(req, res) {
 			const character = await Character.findOne({ characterName: ass.owner });
 			if (character) {
 				const newAsset = new Asset(ass);
-				newAsset.model === 'Trait' ? character.traits.push(newAsset) : character.assets.push(newAsset);
+				switch (newAsset.type) {
+				case 'Asset':
+					newAsset.lendable = true;
+					break;
+				default:
+					newAsset.uses = 999;
+					break;
+				}
+				character.assets.push(newAsset);
 				newAsset.save();
 				character.save();
+				assCount++;
 				logger.info(`${newAsset.name} created.`);
 			}
 			else {
@@ -197,173 +225,13 @@ router.post('/initCharacters', async function(req, res) {
 			}
 		}
 
-		// Special Assets for Angels n Deamons
-		const angelAss = new Asset({ model: 'Trait', name: 'Angelic Blessing', description: 'You have a limited ability to command the matter of the afterlife itself. Examples of this include  temporarily rearranging the layout of streets and buildings, changing the gloom briefly into day creating short-lived golems out of grave-dirt, changing that dirt into mud or fire (though, of course, you can\'t hurt a shade unless they attack first).' });
-		let judgementAngel = await Character.findOne({ characterName: 'The Angel of Judgement' });
-		const dawnAngel = await Character.findOne({ characterName: 'The Angel of Dawn' });
-
-		judgementAngel.traits.push(angelAss);
-		dawnAngel.traits.push(angelAss);
-
-		judgementAngel = await judgementAngel.save();
-		dawnAngel.save();
-		angelAss.save();
-
-		const demonAss = new Asset({ model: 'Trait', name: 'Demonic  Blessing', description: 'A tiny extension of the First Demon’s power that might take the form of additional abilities or literal demonic support for the recipient.' });
-		let mercy = await Character.findOne({ characterName: 'The Demon of Mercy' });
-		let dusk = await Character.findOne({ characterName: 'The Demon of Dusk' });
-
-		mercy.traits.push(demonAss);
-		dusk.traits.push(demonAss);
-
-		dusk = await dusk.save();
-		mercy = await mercy.save();
-		demonAss.save();
-
-
 		nexusEvent.emit('updateCharacters');
+		logger.info(`Created ${charCount} Characters, ${npcCount} NPCs, and ${assCount} Assets.`);
 		res.status(200).send('All done');
 	}
 	catch (err) {
 		httpErrorHandler(res, err);
 	}
-});
-
-router.patch('/modify', async (req, res, next) => {
-	logger.info('GET Route: api/characters/modify requested...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { id } = req.body.data;
-		try {
-			const data = await Character.findById(id).populate('wealth');
-
-			if (data === null) {
-				nexusError(`Could not find a character for id "${id}"`, 404);
-			}
-			else if (data.length > 1) {
-				nexusError(`Found multiple characters for id ${id}`, 404);
-			}
-			else {
-				modifyCharacter(data, req.body.data);
-				res.status(200).json(data);
-			}
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-});
-
-router.patch('/support', async (req, res, next) => {
-	logger.info('GET Route: api/characters/support requested...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { id, supporter } = req.body;
-		try {
-			let data = await Character.findById(id);
-			if (data === null) {
-				nexusError(`Could not find a character for id "${id}"`, 404);
-			}
-			else if (data.length > 1) {
-				nexusError(`Found multiple characters for id ${id}`, 404);
-			}
-			else {
-				modifySupport(data, supporter);
-				res.status(200).json(data);
-			}
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-});
-
-router.patch('/memory', async (req, res, next) => {
-	logger.info('GET Route: api/characters/memory requested...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { id, memories } = req.body.data;
-		try {
-			const data = await Character.findById(id);
-			if (data === null) {
-				nexusError(`Could not find a character for id "${id}"`, 404);
-			}
-			else if (data.length > 1) {
-				nexusError(`Found multiple characters for id ${id}`, 404);
-			}
-			else {
-				modifyMemory(data, memories);
-				res.status(200).json(data);
-			}
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-});
-
-router.patch('/newAsset', async (req, res, next) => {
-	logger.info('GET Route: api/characters/newAsset requested...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { id, asset } = req.body.data;
-		try {
-			let data = await Character.findById(id);
-			if (data === null) {
-				nexusError(`Could not find a character for id "${id}"`, 404);
-			}
-			else if (data.length > 1) {
-				nexusError(`Found multiple characters for id ${id}`, 404);
-			}
-			else {
-				let newAsset = new Asset(asset);
-				addAsset(newAsset, data);
-				res.status(200).json(data);
-			}
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-});
-
-router.patch('/standing', async (req, res, next) => {
-	logger.info('GET Route: api/characters/standing requested...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { id, standing } = req.body.data;
-		try {
-			let data = await Character.findById(id).populate('wealth');
-
-			if (data === null) {
-				nexusError(`Could not find a character for id "${id}"`, 404);
-			}
-			else if (data.length > 1) {
-				nexusError(`Found multiple characters for id ${id}`, 404);
-			}
-			else {
-				data.standingOrders = standing;
-
-				data = data.save();
-				nexusEvent.emit('updateCharacters');
-				res.status(200).json(data);
-			}
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-
 });
 
 // register
@@ -396,7 +264,6 @@ router.patch('/register', async (req, res) => {
 		httpErrorHandler(res, err);
 	}
 });
-
 
 router.patch('/scrubAsset', async (req, res) => {
 	logger.info('PATCH Route: api/characters/scrubAsset requested...');
@@ -461,18 +328,7 @@ router.patch('/test', async (req, res, next) => {
 	}
 	else {
 		try {
-			const blessing = await Asset.findById('6004ae5d5c282252cc010d05');
-			const judgement = await Character.findById('6004ae5a5c282252cc010c45');
-			const dawn = await Character.findById('6004ae5a5c282252cc010c48');
-
-			const index2 = dawn.traits.indexOf('6004ae5d5c282252cc010d05');
-			dawn.traits.splice(index2, 1);
-			console.log('index2', index2);
-
-			await judgement.save();
-			await dawn.save();
-
-			res.status(200).json(dawn);
+			console.log('test');
 		}
 		catch (err) {
 			httpErrorHandler(res, err);

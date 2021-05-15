@@ -8,46 +8,26 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const CharacterSchema = new Schema({
 	model:  { type: String, default: 'Character' },
-	playerName: { type: String, minlength: 2, maxlength: 50, required: true },
+	playerName: { type: String, minlength: 1, maxlength: 50, required: true },
 	email: { type: String, required: true },
 	controlEmail: { type: String, default: '' },
 	worldAnvil: { type: String, required: true },
-	timeZone: { type: String, required: true },
+	timeZone: { type: String, default: '???' },
 	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
-	tag: { type: String, enum: ['Former Servants', 'Ferrymen', 'Furies', 'Angels', 'Demons', 'Cold Forges', 'Gehennatown', 'Misfits', 'Chthonians', 'Elysian Fields', 'NPC'], required: true },
+	characterActualName: { type: String, maxlength: 50, default: 'None' },
+	tag: { type: String, enum: ['PC', 'NPC', 'Brother\'s Wrath', 'Unifiers', 'Sister\'s Wisdom', 'Factionless'], required: true },
 	username: { type: String, minlength: 2, maxlength: 50, required: true },
 	pronouns: { type: String },
-	control: { type: String },
+	control: { type: String, default: 'None' },
 	bio: { type: String },
-	icon: { type: String },
 	standingOrders: { type: String },
-	traits: [{ type: ObjectId, ref: 'Asset' }], // change to trait ID
 	assets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	popSupport: { type: Number, default: 0 },
-	wealth: { type: ObjectId, ref: 'Asset', required: true },
-	memories: {
-		first: {
-			trigger: { type: String },
-			recall: { type: String },
-			revealed: { type: Boolean, default: false }
-		},
-		second: {
-			trigger: { type: String },
-			recall: { type: String },
-			revealed: { type: Boolean, default: false }
-		},
-		third: {
-			trigger: { type: String },
-			recall: { type: String },
-			revealed: { type: Boolean, default: false }
-		}
-	},
-	status: {
-		candidate: { type: Boolean, default: false }
-	},
 	supporters: [{ type: String }],
-	effort: { type: Number, default: 3, min: 0, max: 3 }
+	effort: { type: Number, default: 3, min: 0, max: 6 },
+	feed: { type: Boolean, default: false },
+	color: { type: String, default: 'ffffff' }
 });
 
 const Character = mongoose.model('Character', CharacterSchema);

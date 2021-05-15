@@ -1,25 +1,29 @@
 {
-  "name": "project-nexus",
+  "name": "candi_duskcity_server",
   "version": "0.0.1",
-  "description": "Server to handle actions in Afterlife Megagame ",
+  "description": "The CANDI Server to handle actions for Dusk City Megagame ",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "client": "npm run client --prefix ../CANDI-app",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Project-Nexus-Megagames/afterlife-server.git"
+    "url": "git+https://github.com/Project-Nexus-Megagames/CANDI-server.git"
   },
   "keywords": [
     "West",
     "Coast",
     "Megagames",
     "WCM",
-    "Afterlife"
+    "Dusk City",
+    "Project",
+    "Nexus"
   ],
-  "author": "John T. Cleveland and Scott McMann",
+  "author": "Scott McMann & John T. Cleveland",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Project-Nexus-Megagames/afterlife-server/issues"
@@ -39,9 +43,8 @@
     "express-async-errors": "^3.1.1",
     "helmet": "^3.23.3",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.10.9",
-    "newrelic": "^7.1.1",
-    "socket.io": "^2.4.0",
+    "mongoose": "^5.12.7",
+    "socket.io": "^4.0.1",
     "winston": "^3.3.3",
     "winston-mongodb": "^5.0.5"
   },

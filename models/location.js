@@ -6,18 +6,16 @@ const mongoose = require('mongoose'); // Mongo DB object modeling module
 const Schema = mongoose.Schema; // Destructure of Schema
 // const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
-const AssetSchema = new Schema({
-	model:  { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth'] },
+const LocationSchema = new Schema({
+	model:  { type: String, default: 'Location' },
 	name: { type: String, required: true },
 	description: { type: String, required: true },
-	status: {
-		lent: { type: Boolean, default: false },
-		used: { type: Boolean, default: false }
-	},
-	currentHolder: { type: String },
-	uses: { type: Number, default: 999 }
+	code: { type: String, required: true, unique: true },
+	borough: { type: String, required: true },
+	currentOwner: { type: String, default: 'None' },
+	influence: { type: Number, default: 0, min: 0, max: 15 }
 });
 
-const Asset = mongoose.model('Asset', AssetSchema);
+const Location = mongoose.model('Location', LocationSchema);
 
-module.exports = { Asset };
+module.exports = { Location };

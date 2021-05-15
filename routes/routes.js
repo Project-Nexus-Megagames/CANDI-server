@@ -11,6 +11,7 @@ const character = require('./api/characters');
 const action = require('./api/actions');
 const user = require('./api/users');
 const asset = require('./api/assets');
+const location = require('./api/locations');
 const gamestate = require('./api/gamestate');
 const auth = require('./auth');
 
@@ -25,6 +26,7 @@ module.exports = function(app) {
 	app.use('/api/actions', action);
 	app.use('/api/users', user);
 	app.use('/api/assets', asset);
+	app.use('/api/locations', location);
 	app.use('/api/gamestate', gamestate);
 	app.use('/auth', auth);
 

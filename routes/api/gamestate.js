@@ -1,6 +1,5 @@
 const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
-const nexusEvent = require('../../middleware/events/events'); // Local event triggers
 
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
 const validateObjectId = require('../../middleware/util/validateObjectId'); // Middleware that validates object ID's in HTTP perameters
@@ -9,9 +8,6 @@ const nexusError = require('../../middleware/util/throwError'); // Project Nexus
 
 // Mongoose Model Import
 const { GameState } = require('../../models/gamestate');
-const { Asset } = require('../../models/asset'); // Agent Model
-const { Action } = require('../../models/action'); // Agent Model
-const { Character } = require('../../models/character');
 
 // @route   GET /gamestate
 // @Desc    Get all GameStates
@@ -118,106 +114,14 @@ router.patch('/deleteAll', async function(req, res) {
 
 // game routes
 
-router.patch('/modify', async function(req, res, next) {
-	logger.info('GET Route: api/gamestate/modify requested...');
-	if (req.timedout) {
-		next();
+setInterval(async () => {
+	const gamestate = await GameState.findOne();
+	if (gamestate && gamestate.discovered) {
+		gamestate.hunger = gamestate.hunger - 13;
+		gamestate.happiness = gamestate.happiness - 13;
+		await gamestate.save();
+		console.log('hi');
 	}
-	else {
-		const { round, status, endTime } = req.body.data;
-		let data = await GameState.findOne();
-		try {
-			data.round = round;
-			data.status = status;
-			data.endTime = endTime;
-			data = await data.save();
-			console.log(data);
-			nexusEvent.emit('updateGamestate');
-			res.status(200).json(data);
-		}
-		catch (err) {
-			logger.error(err.message, { meta: err.stack });
-			res.status(500).send(err.message);
-		}
-	}
-});
-
-router.patch('/closeRound', async function(req, res, next) {
-	logger.info('GET Route: api/gamestate/closeRound requested...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const data = await GameState.findOne();
-		console.log(data);
-		try {
-			for (const action of await Action.find({ 'status.draft': true })) {
-				action.status.draft = false;
-				action.save();
-			}
-
-			data.status = 'Resolution';
-			await data.save();
-			nexusEvent.emit('updateGamestate');
-			nexusEvent.emit('updateActions');
-			res.status(200).json(data);
-		}
-		catch (err) {
-			logger.error(err.message, { meta: err.stack });
-			res.status(500).send(err.message);
-		}
-	}
-});
-
-router.patch('/nextRound', async function(req, res, next) {
-	logger.info('GET Route: api/gamestate/nextRound requested...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const data = await GameState.findOne();
-		try {
-			for (const asset of await Asset.find({ 'status.lent': true })) {
-				asset.status.lent = false;
-				asset.currentHolder = null;
-				console.log(`Unlending ${asset.name}`);
-				asset.save();
-			}
-
-			for (const asset of await Asset.find({ 'status.used': true })) {
-				asset.status.used = false;
-				console.log(`UnUsing ${asset.name}`);
-				asset.save();
-			}
-
-			for (const character of await Character.find()) {
-				character.lentAssets = [];
-				character.effort = 3;
-				character.save();
-			}
-
-			for (const action of await Action.find({ 'status.ready': true })) {
-				action.status.ready = false;
-				action.status.published = true;
-
-				action.save();
-			}
-
-			data.round = data.round + 1;
-			data.status = 'Active';
-			await data.save();
-			nexusEvent.emit('updateGamestate');
-			nexusEvent.emit('updateActions');
-			nexusEvent.emit('updateCharacters');
-			return res.status(200).send('Gamestate pushed! ');
-		}
-		catch (err) {
-			logger.error(err.message, { meta: err.stack });
-			res.status(500).send(err.message);
-		}
-	}
-
-
-});
+}, 10000);
 
 module.exports = router;

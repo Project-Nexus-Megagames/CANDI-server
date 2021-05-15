@@ -2,16 +2,16 @@ const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
 const nexusEvent = require('../../middleware/events/events'); // Local event triggers
 
-const validateObjectId = require('../../middleware/util/validateObjectId');
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
 
 // Agent Model - Using Mongoose Model
 const { Action } = require('../../models/action'); // Agent Model
 const { Character } = require('../../models/character');
-const { User } = require('../../models/user');
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
-const { removeEffort, addEffort, editAction, editResult } = require('../../game/actions');
+const { removeEffort, addEffort } = require('../../game/actions');
+
+// let oops = 0;
 
 // @route   GET api/actions
 // @Desc    Get all actions
@@ -23,7 +23,7 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const actions = await Action.find().populate('creator');
+			const actions = await Action.find();
 			res.status(200).json(actions);
 		}
 		catch (err) {
@@ -125,8 +125,8 @@ router.delete('/:id', async function(req, res, next) {
 // @route   PATCH api/actions/deleteAll
 // @desc    Delete All actions
 // @access  Public
-/*
-router.patch('/deleteAll', async function(req, res, next) {
+
+router.patch('/deleteAll', async function(req, res) {
 	let delCount = 0;
 	for await (const element of Action.find()) {
 		const id = element.id;
@@ -146,58 +146,9 @@ router.patch('/deleteAll', async function(req, res, next) {
 	nexusEvent.emit('updateActions');
 	return res.status(200).send(`We wiped out ${delCount} Actions`);
 });
-*/
+
 
 // ~~~Game Routes~~~
-// DEPRECIATED
-router.patch('/editAction', async function(req, res, next) {
-	logger.info('POST Route: api/action call made...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { id } = req.body.data;
-		try {
-			const docs = await Action.findById(id);
-
-			if (docs === null) {
-				nexusError('Could not find the action desired, please contact Tech Control', 400);
-			}
-			else {
-
-				editAction(docs, req.body.data);
-				res.status(200).json(docs);
-			}
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-});
-// DEPRECIATED
-router.patch('/editResult', async function(req, res, next) {
-	logger.info('POST Route: api/action/editResult call made...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { id } = req.body.data;
-		try {
-			const docs = await Action.findById(id);
-
-			if (docs === null) {
-				nexusError('Could not find the action desired, please contact Tech Control', 400);
-			}
-			else {
-				editResult(docs, req.body.data);
-				res.status(200).send('Action result successfully edited');
-			}
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-});
 
 router.post('/project', async function(req, res, next) {
 	logger.info('POST Route: api/action/project call made...');
