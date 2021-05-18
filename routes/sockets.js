@@ -1,6 +1,5 @@
 const { logger } = require('../middleware/log/winston');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
-const SocketServer = require('../scripts/socketServer'); // Client Tracking Object
 const { Character } = require('../models/character');
 const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
@@ -13,8 +12,6 @@ const config = require('config');
 const { editLocation } = require('../game/locations');
 
 module.exports = function(server) {
-	const Clients = new SocketServer();
-
 	logger.info('Socket.io servers initialized...');
 	const io = require('socket.io')(server, {
 		cors: {
@@ -32,15 +29,8 @@ module.exports = function(server) {
 
 	io.on('connection', client => {
 		logger.info(`${client.username} connected (${client.id}), ${io.of('/').sockets.size} clients connected.`);
-		const users = [];
-		for (const [id, socket] of io.of('/').sockets) {
-			users.push({
-				userID: id,
-				username: socket.username
-			});
-			console.log(`${users.length} clients connected`);
-		}
-		io.emit('clients', users);
+		client.emit('alert', { type: 'success', message: `${client.username} Connected to CANDI server...` });
+		currentUsers();
 
 		// Action Socket
 		client.on('actionRequest', async (type, data) => {
@@ -207,10 +197,14 @@ module.exports = function(server) {
 			client.emit('alert', response);
 		});
 
+		client.on('disconnecting', reason => {
+			console.log(client.rooms);
+			console.log(reason);
+		});
+
 		client.on('disconnect', () => {
-			logger.info(`Client disconnecting from update service... ${client.id}`);
-			// Clients.delClient(client);
-			console.log(`${users.length} clients connected`);
+			logger.info(`${client.username} (${client.id}) disconnected from update service, ${io.of('/').sockets.size} clients connected.`);
+			currentUsers();
 		});
 	});
 
@@ -251,4 +245,14 @@ module.exports = function(server) {
 		}
 	});
 
+	function currentUsers() {
+		const users = [];
+		for (const [id, socket] of io.of('/').sockets) {
+			users.push({
+				userID: id,
+				username: socket.username
+			});
+		}
+		io.emit('clients', users);
+	}
 };
