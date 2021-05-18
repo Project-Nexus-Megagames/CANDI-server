@@ -4,7 +4,7 @@ const { Character } = require('../models/character');
 const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
-const { editAction, editResult, createAction, deleteAction } = require('../game/actions');
+const { editAction, editResult, createAction, createProject, deleteAction } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
@@ -23,7 +23,6 @@ module.exports = function(server) {
 		const username = client.handshake.auth.username;
 		if (!username) return next(new Error('Invalid Username'));
 		client.username = username;
-
 		next();
 	});
 
@@ -49,7 +48,7 @@ module.exports = function(server) {
 			}
 			case 'createProject': {
 				// console.log(data);
-				response = await deleteAction(data);
+				response = await createProject(data);
 				break;
 			}
 			case 'update': {

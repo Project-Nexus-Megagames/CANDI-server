@@ -13,7 +13,6 @@ const user = require('./api/users');
 const asset = require('./api/assets');
 const location = require('./api/locations');
 const gamestate = require('./api/gamestate');
-const auth = require('./auth');
 
 // Route Function
 module.exports = function(app) {
@@ -28,7 +27,6 @@ module.exports = function(app) {
 	app.use('/api/assets', asset);
 	app.use('/api/locations', location);
 	app.use('/api/gamestate', gamestate);
-	app.use('/auth', auth);
 
 	app.use('/', home);
 };
