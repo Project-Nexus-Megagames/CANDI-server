@@ -7,6 +7,7 @@ const Schema = mongoose.Schema; // Destructure of Schema
 const HistorySchema = new Schema({
 	model: { type: String, default: 'History' },
 	timeStamp: { type: Date },
+	docType: { type: String },
 	action: { type: String },
 	document: { type: Schema.Types.Mixed },
 	user: { type: String },
