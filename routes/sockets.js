@@ -27,7 +27,7 @@ module.exports = function(server) {
 	});
 
 	io.on('connection', client => {
-		logger.info(`${client.username} connected (${client.id}), ${io.of('/').sockets.size} clients connected.`);
+		console.log(`${client.username} connected (${client.id}), ${io.of('/').sockets.size} clients connected.`);
 		client.emit('alert', { type: 'success', message: `${client.username} Connected to CANDI server...` });
 		currentUsers();
 
@@ -196,13 +196,20 @@ module.exports = function(server) {
 			client.emit('alert', response);
 		});
 
+		client.on('logout', () => {
+			console.log(`${client.username} disconnected (${client.id}), ${io.of('/').sockets.size} clients connected.`);
+			client.emit('alert', { type: 'info', message: `${client.username} Logged out...` });
+			client.disconnect();
+			currentUsers();
+		});
+
 		client.on('disconnecting', reason => {
 			console.log(client.rooms);
 			console.log(reason);
 		});
 
 		client.on('disconnect', () => {
-			logger.info(`${client.username} (${client.id}) disconnected from update service, ${io.of('/').sockets.size} clients connected.`);
+			console.log(`${client.username} (${client.id}) disconnected from update service, ${io.of('/').sockets.size} clients connected.`);
 			currentUsers();
 		});
 	});
