@@ -44,7 +44,7 @@ async function editAction(data) {
 			action.intent = intent;
 
 			if (action.type === 'Action') {
-				const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
+				const character = await Character.findOne({ characterName: action.creator }).populate('assets').populate('lentAssets');
 				character.effort = character.effort - (effort - action.effort);
 				await character.save();
 
