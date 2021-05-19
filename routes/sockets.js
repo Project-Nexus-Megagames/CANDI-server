@@ -20,9 +20,11 @@ module.exports = function(server) {
 		}
 	}); // Creation of websocket Server
 	io.use((client, next) => {
-		const username = client.handshake.auth.username;
+		const { username, character, version } = client.handshake.auth;
 		if (!username) return next(new Error('Invalid Username'));
 		client.username = username;
+		client.character = character;
+		client.version = version;
 		next();
 	});
 
@@ -256,7 +258,9 @@ module.exports = function(server) {
 		for (const [id, socket] of io.of('/').sockets) {
 			users.push({
 				userID: id,
-				username: socket.username
+				username: socket.username,
+				character: socket.character ? socket.character : 'Unassigned',
+				clientVersion: socket.version ? socket.version : 'Old Client'
 			});
 		}
 		io.emit('clients', users);
