@@ -10,6 +10,8 @@ const { Asset } = require('../../models/asset'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { Character } = require('../../models/character');
+const { assets } = require('../../config/startingData');
+const { characters } = require('../../config/startingCharacters');
 
 // @route   GET api/assets
 // @Desc    Get all assets
@@ -140,6 +142,77 @@ router.patch('/deleteAll', async function(req, res) {
 	}
 	nexusEvent.emit('updateCharacters');
 	return res.status(200).send(`We wiped out ${delCount} Assets`);
+});
+
+router.patch('/test', async function(req, res, next) {
+	logger.info('PATCH Route: api/asset/test requested...');
+	if (req.timedout) {
+		next();
+	}
+	else {
+		try {
+			for (const ass of assets) {
+				let oldAsset = await Asset.findOne({ name: ass.name });
+				const char = await Character.findOne({ characterName: ass.owner });
+				if (oldAsset) {
+					oldAsset.owner = ass.owner;
+					oldAsset.ownerCharacter = char._id;
+					oldAsset = await oldAsset.save();
+					console.log(`Updated the ${oldAsset.name}`);
+				}
+				else {
+					console.log(`Updated failed on ${ass.name}`);
+				}
+
+			}
+
+			for (const char of characters) {
+				let wealth = await Asset.findOne({ name: `${char.characterName}'s Wealth` });
+				const charObj = await Character.findOne({ characterName: char.characterName });
+				wealth.owner = charObj.characterName;
+				wealth.ownerCharacter = char._id;
+				wealth = await wealth.save();
+			}
+
+			res.status(200).json(assets);
+		}
+		catch (err) {
+			logger.error(err.message, { meta: err.stack });
+			res.status(500).send(err.message);
+		}
+	}
+});
+
+router.patch('/test2', async function(req, res, next) {
+	logger.info('PATCH Route: api/asset/test requested...');
+	if (req.timedout) {
+		next();
+	}
+	else {
+		try {
+			const allCharacters = await Character.find();
+			for (const char of allCharacters) {
+				for (const ass of char.assets) {
+					let oldAsset = await Asset.findById(ass);
+					if (oldAsset) {
+						oldAsset.owner = char.characterName;
+						oldAsset.ownerCharacter = char._id;
+						oldAsset = await oldAsset.save();
+						console.log(`Updated the ${oldAsset.name}`);
+					}
+					else {
+						console.log(`ERROR: Updated failed on ${ass}`);
+					}
+				}
+			}
+			let newAssets = await Asset.find();
+			res.status(200).json(newAssets);
+		}
+		catch (err) {
+			logger.error(err.message, { meta: err.stack });
+			res.status(500).send(err.message);
+		}
+	}
 });
 
 module.exports = router;

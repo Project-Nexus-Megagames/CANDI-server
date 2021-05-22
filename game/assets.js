@@ -4,22 +4,30 @@ const { Asset } = require('../models/asset');
 const { Character } = require('../models/character');
 
 async function modifyAsset(data) {
-	const { id, name, description, uses } = data;
-	const asset = await Asset.findById(id);
+	try {
+		const { id, name, description, uses, used } = data;
+		const asset = await Asset.findById(id);
 
-	if (asset === null) {
-		return ({ message : `Could not find a asset for id "${id}"`, type: 'error' });
-	}
-	else if (asset.length > 1) {
-		return ({ message : `Found multiple assets for id ${id}`, type: 'error' });
-	}
-	else {
-		asset.name = name;
-		asset.description = description;
-		asset.uses = uses;
+		if (asset === null) {
+			return ({ message : `Could not find a asset for id "${id}"`, type: 'error' });
+		}
+		else if (asset.length > 1) {
+			return ({ message : `Found multiple assets for id ${id}`, type: 'error' });
+		}
+		else {
+			asset.name = name;
+			asset.description = description;
+			asset.uses = uses;
+			asset.status.used = used;
 
-		await asset.save();
-		nexusEvent.emit('respondClient', 'update', [ asset ]);
+			await asset.save();
+			nexusEvent.emit('respondClient', 'update', [ asset ]);
+			return ({ message : `${asset.name} edited`, type: 'success' });
+		}
+	}
+	catch (err) {
+		logger.error(err);
+		return ({ message : `ERROR: ${err}`, type: 'error' });
 	}
 
 }

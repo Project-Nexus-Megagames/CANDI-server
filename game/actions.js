@@ -206,24 +206,26 @@ async function createAction(data) {
 		// console.log(data);
 		const docs = await Action.find({ intent: data.intent });
 		if (docs.length < 1) {
-			const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
-			if (action.type === 'Feed') {
-				character.feed = true;
-				await character.save();
-			}
-			else if (action.type === 'Action') {
-				character.effort = character.effort - data.effort;
-				await character.save();
-			}
+			let character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
 
 			const { asset1, asset2, asset3 } = data; // find all assets being used for new action and use them
 			const arr = [asset1, asset2, asset3];
 			for (const el of arr) {
 				if (el) {
-					const asset = await Asset.findOne({ name: el });
+					let asset = await Asset.findOne({ name: el });
 					asset.status.used = true;
-					await asset.save();
+					asset = await asset.save();
+					nexusEvent.emit('respondClient', 'update', [ asset ]);
 				}
+			}
+
+			if (action.type === 'Feed') {
+				character.feed = true;
+				character = await character.save();
+			}
+			else if (action.type === 'Action') {
+				character.effort = character.effort - data.effort;
+				character = await character.save();
 			}
 
 			action = await action.save();
@@ -318,6 +320,7 @@ async function deleteAction(data) {
 					const asset = await Asset.findOne({ name: el });
 					asset.status.used = false;
 					await asset.save();
+					nexusEvent.emit('respondClient', 'update', [ asset ]);
 				}
 			}
 
