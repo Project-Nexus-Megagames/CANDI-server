@@ -116,7 +116,6 @@ async function lendAsset(data) {
 	}
 }
 
-
 async function deleteAsset(data) {
 	try {
 		const id = data.id;
