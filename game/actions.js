@@ -155,13 +155,12 @@ async function editAction(data) {
 			asset3 === undefined ? action.asset3 = '' : action.asset3 = asset3;
 		}
 		else {
-			const { progress, players, image, status } = data;
+			const { progress, players, status } = data;
 			action.status = status;
 			action.description = description;
 			action.intent = intent;
 			action.progress = progress;
 			action.players = players;
-			action.image = image;
 		}
 		// console.log(changed);
 
