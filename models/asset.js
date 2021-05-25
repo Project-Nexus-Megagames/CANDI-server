@@ -4,11 +4,11 @@ const mongoose = require('mongoose'); // Mongo DB object modeling module
 
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
-// const ObjectId = mongoose.ObjectId; // Destructure of Object ID
+const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const AssetSchema = new Schema({
 	model: { type: String, default: 'Asset' },
-	type: { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth', 'Bond', 'Power'] },
+	type: { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth', 'Bond', 'Power', 'Territory'] },
 	name: { type: String, required: true },
 	description: { type: String, required: true },
 	level: { type: String, default: 'Neutral', enum: ['Loathing', 'Unfriendly', 'Neutral', 'Warm', 'Friendly', 'Bonded' ] },
@@ -19,6 +19,8 @@ const AssetSchema = new Schema({
 		lendable: { type: Boolean, default: false },
 		used: { type: Boolean, default: false }
 	},
+	owner: { type: String, default: 'None' },
+	ownerCharacter: { type: ObjectId, ref: 'Character' },
 	currentHolder: { type: String },
 	uses: { type: Number, default: 2 }
 });

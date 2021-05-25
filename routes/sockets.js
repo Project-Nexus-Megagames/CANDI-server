@@ -1,11 +1,10 @@
 const { logger } = require('../middleware/log/winston');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
-const SocketServer = require('../scripts/socketServer'); // Client Tracking Object
 const { Character } = require('../models/character');
 const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
-const { editAction, editResult, createAction, deleteAction } = require('../game/actions');
+const { editAction, editResult, createAction, createProject, deleteAction } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
@@ -13,8 +12,6 @@ const config = require('config');
 const { editLocation } = require('../game/locations');
 
 module.exports = function(server) {
-	const Clients = new SocketServer();
-
 	logger.info('Socket.io servers initialized...');
 	const io = require('socket.io')(server, {
 		cors: {
@@ -23,24 +20,18 @@ module.exports = function(server) {
 		}
 	}); // Creation of websocket Server
 	io.use((client, next) => {
-		const username = client.handshake.auth.username;
+		const { username, character, version } = client.handshake.auth;
 		if (!username) return next(new Error('Invalid Username'));
 		client.username = username;
-
+		client.character = character;
+		client.version = version;
 		next();
 	});
 
 	io.on('connection', client => {
-		logger.info(`${client.username} connected (${client.id}), ${io.of('/').sockets.size} clients connected.`);
-		const users = [];
-		for (const [id, socket] of io.of('/').sockets) {
-			users.push({
-				userID: id,
-				username: socket.username
-			});
-			// console.log(users)
-		}
-		io.emit('clients', users);
+		console.log(`${client.username} connected (${client.id}), ${io.of('/').sockets.size} clients connected.`);
+		client.emit('alert', { type: 'success', message: `${client.username} Connected to CANDI server...` });
+		currentUsers();
 
 		// Action Socket
 		client.on('actionRequest', async (type, data) => {
@@ -50,6 +41,7 @@ module.exports = function(server) {
 			case 'create': {
 				// console.log(data);
 				response = await createAction(data);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'newActionState') : null ;
 				break;
 			}
 			case 'delete': {
@@ -59,7 +51,8 @@ module.exports = function(server) {
 			}
 			case 'createProject': {
 				// console.log(data);
-				response = await deleteAction(data);
+				response = await createProject(data);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'newProjectState') : null ;
 				break;
 			}
 			case 'update': {
@@ -70,6 +63,7 @@ module.exports = function(server) {
 				else {
 					response = await editResult(data);
 				}
+				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionState') : null ;
 				break;
 			}
 			default:
@@ -86,7 +80,6 @@ module.exports = function(server) {
 			let response;
 			switch(type) {
 			case 'modify': {
-				console.log(data);
 				response = await modifyCharacter(data);
 				break;
 			}
@@ -113,6 +106,7 @@ module.exports = function(server) {
 			case 'create': {
 				// console.log(data);
 				response = await createCharacter(data);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'newCharacterState') : null ;
 				break;
 			}
 			default:
@@ -129,8 +123,9 @@ module.exports = function(server) {
 			let response;
 			switch(type) {
 			case 'modify': {
-				console.log(data);
+				// console.log(data);
 				response = await editLocation(data);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'editTerritoryState') : null ;
 				break;
 			}
 			default:
@@ -164,6 +159,7 @@ module.exports = function(server) {
 			case 'create': {
 				// console.log(data);
 				response = await addAsset(data);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'addAssetState') : null ;
 				break;
 			}
 			default:
@@ -207,10 +203,21 @@ module.exports = function(server) {
 			client.emit('alert', response);
 		});
 
+		client.on('logout', () => {
+			console.log(`${client.username} disconnected (${client.id}), ${io.of('/').sockets.size} clients connected.`);
+			client.emit('alert', { type: 'info', message: `${client.username} Logged out...` });
+			client.disconnect();
+			currentUsers();
+		});
+
+		client.on('disconnecting', reason => {
+			console.log(client.rooms);
+			console.log(reason);
+		});
+
 		client.on('disconnect', () => {
-			logger.info(`Client disconnecting from update service... ${client.id}`);
-			// Clients.delClient(client);
-			console.log(`${Clients.connections.length} clients connected`);
+			console.log(`${client.username} (${client.id}) disconnected from update service, ${io.of('/').sockets.size} clients connected.`);
+			currentUsers();
 		});
 	});
 
@@ -251,4 +258,16 @@ module.exports = function(server) {
 		}
 	});
 
+	function currentUsers() {
+		const users = [];
+		for (const [id, socket] of io.of('/').sockets) {
+			users.push({
+				userID: id,
+				username: socket.username,
+				character: socket.character ? socket.character : 'Unassigned',
+				clientVersion: socket.version ? socket.version : 'Old Client'
+			});
+		}
+		io.emit('clients', users);
+	}
 };

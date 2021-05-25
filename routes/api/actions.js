@@ -49,7 +49,8 @@ router.get('/:id', async (req, res, next) => {
 			if (!myCharacter) {
 				res.status(404).send('No Character Found');
 			}
-			const actions = await Action.find({ creator: myCharacter._id }).populate('creator');
+			const actions = await Action.find({ creator: myCharacter.characterName });
+			console.log(actions);
 			res.status(200).json(actions);
 		}
 		catch (err) {

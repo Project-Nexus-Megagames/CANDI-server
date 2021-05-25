@@ -2,8 +2,9 @@ const express = require('express'); // Import of EXPRESS to create routing app
 const http = require('http'); // Import of the NODE HTTP module to create the http server
 const { logger } = require('./middleware/log/winston'); // Import of winston for error logging
 const timeout = require('connect-timeout');
+const config = require('config');
 
-logger.info('Booting Project Nexus Server...');
+console.log(`Booting Project Nexus CANDI Server - Version ${config.get('version')}...`);
 
 // Boot Processes
 logger.info('Looding start-up processes...');
