@@ -5,7 +5,7 @@ const { Character } = require('../models/character');
 
 async function modifyAsset(data) {
 	try {
-		const { id, name, description, uses, used } = data;
+		const { id, name, description, uses, used, owner, hidden } = data;
 		const asset = await Asset.findById(id);
 
 		if (asset === null) {
@@ -18,7 +18,10 @@ async function modifyAsset(data) {
 			asset.name = name;
 			asset.description = description;
 			asset.uses = uses;
+			asset.owner = owner;
 			asset.status.used = used;
+			asset.status.hidden = hidden;
+
 
 			await asset.save();
 			nexusEvent.emit('respondClient', 'update', [ asset ]);
