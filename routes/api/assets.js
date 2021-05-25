@@ -194,9 +194,8 @@ router.patch('/test2', async function(req, res, next) {
 			for (const char of allCharacters) {
 				for (const ass of char.assets) {
 					let oldAsset = await Asset.findById(ass);
-					if (oldAsset) {
-						oldAsset.owner = char.characterName;
-						oldAsset.ownerCharacter = char._id;
+					if (oldAsset && oldAsset.type === 'Asset') {
+						oldAsset.status.lendable = true;
 						oldAsset = await oldAsset.save();
 						console.log(`Updated the ${oldAsset.name}`);
 					}
