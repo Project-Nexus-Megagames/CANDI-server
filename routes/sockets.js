@@ -41,6 +41,7 @@ module.exports = function(server) {
 			case 'create': {
 				// console.log(data);
 				response = await createAction(data);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'newActionState') : null ;
 				break;
 			}
 			case 'delete': {
@@ -51,6 +52,7 @@ module.exports = function(server) {
 			case 'createProject': {
 				// console.log(data);
 				response = await createProject(data);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'newProjectState') : null ;
 				break;
 			}
 			case 'update': {
@@ -61,6 +63,7 @@ module.exports = function(server) {
 				else {
 					response = await editResult(data);
 				}
+				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionState') : null ;
 				break;
 			}
 			default:
@@ -77,7 +80,6 @@ module.exports = function(server) {
 			let response;
 			switch(type) {
 			case 'modify': {
-				console.log(data);
 				response = await modifyCharacter(data);
 				break;
 			}
@@ -104,6 +106,7 @@ module.exports = function(server) {
 			case 'create': {
 				// console.log(data);
 				response = await createCharacter(data);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'newCharacterState') : null ;
 				break;
 			}
 			default:
@@ -120,8 +123,9 @@ module.exports = function(server) {
 			let response;
 			switch(type) {
 			case 'modify': {
-				console.log(data);
+				// console.log(data);
 				response = await editLocation(data);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'editTerritoryState') : null ;
 				break;
 			}
 			default:
@@ -155,6 +159,7 @@ module.exports = function(server) {
 			case 'create': {
 				// console.log(data);
 				response = await addAsset(data);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'addAssetState') : null ;
 				break;
 			}
 			default:
