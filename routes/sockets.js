@@ -1,14 +1,16 @@
 const { logger } = require('../middleware/log/winston');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
+const config = require('config');
+
 const { Character } = require('../models/character');
 const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
+
 const { editAction, editResult, createAction, createProject, deleteAction } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
-const config = require('config');
 const { editLocation } = require('../game/locations');
 
 module.exports = function(server) {
