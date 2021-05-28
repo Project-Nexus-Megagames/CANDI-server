@@ -50,8 +50,9 @@ router.get('/:id', async (req, res, next) => {
 				res.status(404).send('No Character Found');
 			}
 			const actions = await Action.find({ creator: myCharacter.characterName });
-			console.log(actions);
-			res.status(200).json(actions);
+			const projects = await Action.find({ players: { $in: [myCharacter.characterName ] } });
+			// console.log(projects);
+			res.status(200).json([ ...actions, ...projects ]);
 		}
 		catch (err) {
 			logger.error(err.message, { meta: err.stack });

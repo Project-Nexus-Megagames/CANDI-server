@@ -120,6 +120,7 @@ async function nextRound() {
 
 		for (const character of await Character.find()) {
 			character.lentAssets = [];
+			character.feed;
 			character.effort = 3;
 			character.save();
 		}

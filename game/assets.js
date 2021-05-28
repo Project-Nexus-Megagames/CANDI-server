@@ -5,7 +5,7 @@ const { Character } = require('../models/character');
 
 async function modifyAsset(data) {
 	try {
-		const { id, name, description, uses, used } = data;
+		const { id, name, description, uses, used, owner, hidden, lendable } = data;
 		const asset = await Asset.findById(id);
 
 		if (asset === null) {
@@ -18,7 +18,11 @@ async function modifyAsset(data) {
 			asset.name = name;
 			asset.description = description;
 			asset.uses = uses;
+			asset.owner = owner;
 			asset.status.used = used;
+			asset.status.hidden = hidden;
+			asset.status.lendable = lendable;
+
 
 			await asset.save();
 			nexusEvent.emit('respondClient', 'update', [ asset ]);
@@ -44,7 +48,7 @@ async function addAsset(data) {
 			let newAsset = new Asset(asset);
 			switch (newAsset.type) {
 			case 'Asset':
-				newAsset.lendable = true;
+				newAsset.status.lendable = true;
 				break;
 			default:
 				newAsset.uses = 999;
@@ -90,12 +94,12 @@ async function lendAsset(data) {
 
 				if (lendingBoolean) { // if the asset is being lent
 					char.lentAssets.push(asset);
-					asset.currentHolder = char.characteracterName;
-
+					asset.currentHolder = char.characterName;
 				}
 				else {
 					const index = char.lentAssets.indexOf(asset);
 					char.lentAssets.splice(index, 1);
+					asset.currentHolder = asset.owner;
 				}
 				asset.status.lent = lendingBoolean;
 				assetOwner.assets[index2] = asset;
