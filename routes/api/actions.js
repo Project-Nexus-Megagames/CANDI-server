@@ -51,7 +51,7 @@ router.get('/:id', async (req, res, next) => {
 			}
 			const actions = await Action.find({ creator: myCharacter.characterName });
 			const projects = await Action.find({ players: { $in: [myCharacter.characterName ] } });
-			console.log(projects);
+			// console.log(projects);
 			res.status(200).json([ ...actions, ...projects ]);
 		}
 		catch (err) {
