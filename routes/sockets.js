@@ -7,7 +7,7 @@ const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
 
-const { editAction, editResult, createAction, createProject, deleteAction } = require('../game/actions');
+const { editAction, editResult, createAction, createProject, deleteAction, controlOverride } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
@@ -66,6 +66,11 @@ module.exports = function(server) {
 					response = await editResult(data);
 				}
 				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionState') : null ;
+				break;
+			}
+			case 'controlReject': {
+				console.log(data);
+				response = await controlOverride(data);
 				break;
 			}
 			default:
