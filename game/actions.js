@@ -340,4 +340,27 @@ async function deleteAction(data) {
 	}
 }
 
-module.exports = { removeEffort, addEffort, editAction, editResult, createAction, createProject, deleteAction };
+async function controlOverride(data) {
+	try {
+		const { id, asset } = data;
+		let element = await Action.findById(id);
+
+		if (element != null) {
+			element[asset] = '';
+			element = await element.save();
+
+			logger.info(`Asset ${asset} removed`);
+			nexusEvent.emit('respondClient', 'update', [ element ]);
+			return ({ message : `Asset ${asset} removed`, type: 'success' });
+		}
+		else {
+			return ({ message : `No action with the id ${id} exists!`, type: 'error' });
+		}
+	}
+	catch (err) {
+		logger.error(`message : Server Error: ${err.message}`);
+		return ({ message : `Server Error: ${err.message}`, type: 'error' });
+	}
+}
+
+module.exports = { removeEffort, addEffort, editAction, editResult, createAction, createProject, deleteAction, controlOverride };
