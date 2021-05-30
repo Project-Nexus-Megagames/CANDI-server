@@ -6,7 +6,7 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const HistorySchema = new Schema({
 	model: { type: String, default: 'History' },
-	timeStamp: { type: Date },
+	timestamp: { type: Date },
 	docType: { type: String },
 	action: { type: String },
 	function: { type: String },
