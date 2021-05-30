@@ -25,6 +25,22 @@ const AssetSchema = new Schema({
 	uses: { type: Number, default: 2 }
 });
 
+AssetSchema.methods.use = async function() {
+	this.used = true;
+	const asset = await this.save();
+	console.log(`${asset.name} has been used.`);
+	return asset;
+};
+
+AssetSchema.methods.unuse = async function() {
+	this.used = false;
+	const asset = await this.save();
+	console.log(`${asset.name} has been unused.`);
+	return asset;
+};
+
+
 const Asset = mongoose.model('Asset', AssetSchema);
+
 
 module.exports = { Asset };

@@ -1,6 +1,6 @@
 const { Character } = require('../models/character');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
-const { Action, FeedAction } = require('../models/action');
+const { Action } = require('../models/action');
 const { logger } = require('../middleware/log/winston');
 const { Asset } = require('../models/asset');
 const { History } = require('../models/history');
@@ -25,7 +25,7 @@ async function addEffort(data) {
 	return character;
 }
 
-async function editAction(data) {
+async function editAction(data, user) {
 	console.log(data);
 	try {
 		const { id, description, intent, effort, asset1, asset2, asset3 } = data;
@@ -33,10 +33,10 @@ async function editAction(data) {
 		const action = await Action.findById(id);
 
 		const log = new History({
-			timestamp: new Date(),
 			docType: 'action',
 			action: 'edit',
-			function: 'editAction'
+			function: 'editAction',
+			user
 		});
 
 		if (action.type === 'Action' || action.type === 'Feed') {
@@ -47,9 +47,6 @@ async function editAction(data) {
 				const character = await Character.findOne({ characterName: action.creator }).populate('assets').populate('lentAssets');
 				character.effort = character.effort - (effort - action.effort);
 				await character.save();
-
-				log.character = character._id;
-				log.user = character.username;
 				nexusEvent.emit('respondClient', 'update', [ character ]);
 			}
 			action.effort = effort;
@@ -177,7 +174,7 @@ async function editAction(data) {
 
 }
 
-async function editResult(data) {
+async function editResult(data, user) {
 	const { id, result, status, dieResult, mechanicalEffect } = data;
 	try {
 		const action = await Action.findById(id);
@@ -190,6 +187,16 @@ async function editResult(data) {
 		}
 
 		await action.save();
+
+		const log = new History({
+			docType: 'action',
+			action: 'edit',
+			function: 'editResult',
+			document: action,
+			user
+		});
+
+		await log.save();
 		nexusEvent.emit('respondClient', 'update', [ action ]);
 		return ({ message : 'Action Result Edit Success', type: 'success' });
 	}
@@ -199,7 +206,7 @@ async function editResult(data) {
 
 }
 
-async function createAction(data) {
+async function createAction(data, user) {
 	try {
 		let action = new Action(data);
 		// console.log(data);
@@ -230,12 +237,11 @@ async function createAction(data) {
 			action = await action.save();
 
 			const log = new History({
-				timestamp: new Date(),
 				docType: 'action',
 				action: 'create',
 				function: 'createAction',
 				document: action,
-				user: character.username,
+				user,
 				character: character._id
 			});
 
@@ -257,7 +263,7 @@ async function createAction(data) {
 	}
 }
 
-async function createProject(data) {
+async function createProject(data, user) {
 	// TODO Scott review that this is what you want projects to do....
 	// TODO how is character information passed for projects?
 	let action = new Action(data);
@@ -267,11 +273,11 @@ async function createProject(data) {
 	action = await action.save();
 
 	const log = new History({
-		timestamp: new Date(),
 		docType: 'action',
 		action: 'create',
 		function: 'createProject',
-		document: action
+		document: action,
+		user
 	});
 
 	await log.save();
@@ -281,27 +287,17 @@ async function createProject(data) {
 	return ({ message : `${action.type} Creation Success`, type: 'success' });
 }
 
-async function deleteAction(data) {
+async function deleteAction(data, user) {
 	try {
 		const id = data.id;
 		let element = await Action.findById(id);
 
 		if (element != null) {
 
-			const log = new History({
-				timestamp: new Date(),
-				docType: 'action',
-				action: 'delete',
-				function: 'deleteAction',
-				document: element
-			});
-
 			if (element.type === 'Action') {
 				const character = await addEffort(element);
 				character.populate('assets').populate('lentAssets');
 				nexusEvent.emit('respondClient', 'update', [ character ]);
-				log.character = character;
-				log.user = character.username;
 			}
 			else{
 				const character = await Character.findOne({ characterName: element.creator }).populate('assets').populate('lentAssets');
@@ -323,6 +319,14 @@ async function deleteAction(data) {
 				}
 			}
 
+			const log = new History({
+				docType: 'action',
+				action: 'delete',
+				function: 'deleteAction',
+				document: element,
+				user
+			});
+
 			element = await Action.findByIdAndDelete(id);
 			await log.save();
 
@@ -340,7 +344,7 @@ async function deleteAction(data) {
 	}
 }
 
-async function controlOverride(data) {
+async function controlOverride(data, user) {
 	try {
 		const { id, asset } = data;
 		let element = await Action.findById(id);
@@ -349,9 +353,21 @@ async function controlOverride(data) {
 			element[asset] = '';
 			element = await element.save();
 
+			const log = new History({
+				docType: 'action',
+				action: 'override',
+				function: 'controlOverride',
+				document: element,
+				user
+			});
+
+			await log.save();
+
 			logger.info(`Asset ${asset} removed`);
 			nexusEvent.emit('respondClient', 'update', [ element ]);
 			return ({ message : `Asset ${asset} removed`, type: 'success' });
+
+
 		}
 		else {
 			return ({ message : `No action with the id ${id} exists!`, type: 'error' });

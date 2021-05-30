@@ -2,8 +2,9 @@ const nexusEvent = require('../middleware/events/events'); // Local event trigge
 const { logger } = require('../middleware/log/winston');
 const { Asset } = require('../models/asset');
 const { Character } = require('../models/character');
+const { History } = require('../models/history');
 
-async function modifyAsset(data) {
+async function modifyAsset(data, user) {
 	try {
 		const { id, name, description, uses, used, owner, hidden, lendable } = data;
 		const asset = await Asset.findById(id);
@@ -23,8 +24,16 @@ async function modifyAsset(data) {
 			asset.status.hidden = hidden;
 			asset.status.lendable = lendable;
 
-
 			await asset.save();
+			const log = new History({
+				docType: 'asset',
+				action: 'modify',
+				function: 'modifyAsset',
+				document: asset,
+				user
+			});
+			await log.save();
+
 			nexusEvent.emit('respondClient', 'update', [ asset ]);
 			return ({ message : `${asset.name} edited`, type: 'success' });
 		}
@@ -36,7 +45,7 @@ async function modifyAsset(data) {
 
 }
 
-async function addAsset(data) {
+async function addAsset(data, user) {
 	try {
 		const { id, asset } = data;
 		let character = await Character.findById(id).populate('assets').populate('lentAssets');
@@ -59,6 +68,19 @@ async function addAsset(data) {
 			newAsset = await newAsset.save();
 			nexusEvent.emit('respondClient', 'create', [ newAsset ]);
 			nexusEvent.emit('respondClient', 'update', [ character ]);
+
+			await asset.save();
+
+			const log = new History({
+				docType: 'asset',
+				action: 'add',
+				function: 'addAsset',
+				document: newAsset,
+				user
+			});
+
+			await log.save();
+
 			return ({ message : `${newAsset.name} created`, type: 'success' });
 		}
 	}
@@ -68,10 +90,17 @@ async function addAsset(data) {
 	}
 }
 
-async function lendAsset(data) {
+async function lendAsset(data, user) {
 	const { id, target, lendingBoolean, owner } = data;
 	try {
 		let asset = await Asset.findById(id);
+
+		const log = new History({
+			docType: 'asset',
+			action: 'lend',
+			function: 'lendAsset',
+			user
+		});
 
 		if (asset === null) {
 			return ({ message : `Could not find a asset for id "${id}"`, type: 'error' });
@@ -108,6 +137,10 @@ async function lendAsset(data) {
 				asset = await asset.save();
 				assetOwner = await assetOwner.save();
 
+				log.document = asset;
+
+				await log.save();
+
 				logger.info(`${asset.name} Lent to ${char.characterName}.`);
 				nexusEvent.emit('respondClient', 'update', [ char, asset, assetOwner ]);
 				return ({ message : `${asset.name} lent to ${char.characterName}`, type: 'success' });
@@ -120,13 +153,22 @@ async function lendAsset(data) {
 	}
 }
 
-async function deleteAsset(data) {
+async function deleteAsset(data, user) {
 	try {
 		const id = data.id;
 		let element = await Asset.findById(id);
 		if (element != null) {
+			const log = new History({
+				docType: 'asset',
+				action: 'delete',
+				function: 'deleteAsset',
+				document: element,
+				user
+			});
 			element = await Asset.findByIdAndDelete(id);
 			logger.info(`Asset with the id ${id} was deleted via Socket!`);
+
+			await log.save();
 
 			nexusEvent.emit('respondClient', 'delete', [ { type: 'asset', id } ]);
 			return ({ message : 'Asset Delete Success', type: 'success' });

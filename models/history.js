@@ -6,14 +6,13 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const HistorySchema = new Schema({
 	model: { type: String, default: 'History' },
-	timeStamp: { type: Date },
 	docType: { type: String },
 	action: { type: String },
 	function: { type: String },
 	document: { type: Schema.Types.Mixed },
 	user: { type: String },
 	character: { type: ObjectId, ref: 'Character' }
-});
+}, { timestamps: true });
 
 const History = mongoose.model('History', HistorySchema);
 
