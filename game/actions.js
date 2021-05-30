@@ -190,8 +190,8 @@ async function editResult(data, user) {
 
 		const log = new History({
 			docType: 'action',
-			action: 'results',
-			function: 'editResults',
+			action: 'edit',
+			function: 'editResult',
 			document: action,
 			user
 		});
