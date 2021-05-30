@@ -184,7 +184,7 @@ module.exports = function(server) {
 			switch(type) {
 			case 'modify': {
 				// console.log(data);
-				response = await modifyGameState(data);
+				response = await modifyGameState(data, client.username);
 				break;
 			}
 			case 'closeRound': {

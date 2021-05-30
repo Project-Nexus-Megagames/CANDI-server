@@ -4,10 +4,11 @@ const { Action } = require('../models/action');
 const { Asset } = require('../models/asset');
 const { Character } = require('../models/character');
 const { GameState } = require('../models/gamestate');
+const { History } = require('../models/history');
 const { d10, d8, d6, d4 } = require('../scripts/util/dice');
 
 
-async function modifyGameState(data) {
+async function modifyGameState(data, user) {
 	const { round, status, endTime } = data;
 	let gamestate = await GameState.findOne();
 	try {
@@ -15,6 +16,16 @@ async function modifyGameState(data) {
 		gamestate.status = status;
 		gamestate.endTime = endTime;
 		gamestate = await gamestate.save();
+
+		const log = new History({
+			docType: 'GameState',
+			action: 'modify',
+			function: 'modifyGameState',
+			document: gamestate,
+			user
+		});
+
+		await log.save();
 
 		nexusEvent.emit('respondClient', 'update', [ gamestate ]);
 		return ({ message : 'Gamestate edit Success', type: 'success' });
