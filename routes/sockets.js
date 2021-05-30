@@ -42,35 +42,35 @@ module.exports = function(server) {
 			switch(type) {
 			case 'create': {
 				// console.log(data);
-				response = await createAction(data);
+				response = await createAction(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'newActionState') : null ;
 				break;
 			}
 			case 'delete': {
 				// console.log(data);
-				response = await deleteAction(data);
+				response = await deleteAction(data, client.username);
 				break;
 			}
 			case 'createProject': {
 				// console.log(data);
-				response = await createProject(data);
+				response = await createProject(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'newProjectState') : null ;
 				break;
 			}
 			case 'update': {
 				// console.log(data);
 				if (data.playerBoolean) {
-					response = await editAction(data);
+					response = await editAction(data, client.username);
 				}
 				else {
-					response = await editResult(data);
+					response = await editResult(data, client.username);
 				}
 				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionState') : null ;
 				break;
 			}
 			case 'controlReject': {
 				console.log(data);
-				response = await controlOverride(data);
+				response = await controlOverride(data, client.username);
 				break;
 			}
 			default:
@@ -150,22 +150,22 @@ module.exports = function(server) {
 			switch(type) {
 			case 'modify': {
 				// console.log(data);
-				response = await modifyAsset(data);
+				response = await modifyAsset(data, client.username);
 				break;
 			}
 			case 'lend': {
 				// console.log(data);
-				response = await lendAsset(data);
+				response = await lendAsset(data, client.username);
 				break;
 			}
 			case 'delete': {
 				// console.log(data);
-				response = await deleteAsset(data);
+				response = await deleteAsset(data, client.username);
 				break;
 			}
 			case 'create': {
 				// console.log(data);
-				response = await addAsset(data);
+				response = await addAsset(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'addAssetState') : null ;
 				break;
 			}
