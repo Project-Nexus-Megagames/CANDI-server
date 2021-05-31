@@ -109,22 +109,24 @@ async function nextRound() {
 		for (const asset of await Asset.find({ 'status.lent': true })) {
 			asset.status.lent = false;
 			asset.currentHolder = null;
-			console.log(`Unlending ${asset.name}`);
 			await asset.save();
+			console.log(`Unlending ${asset.name}`);
 			assets.push(asset);
 		}
 
+		/*
 		for (const asset of await Asset.find({ 'status.used': true })) {
 			asset.status.used = false;
 			console.log(`Un-Using ${asset.name}`);
 			await asset.save();
 			assets.push(asset);
 		}
+		*/
 
 		for (const asset of await Asset.find({ 'status.hidden': true })) {
 			asset.status.hidden = false;
-			console.log(`Un-Hiding ${asset.name}`);
 			await asset.save();
+			console.log(`Un-Hiding ${asset.name}`);
 			assets.push(asset);
 		}
 
@@ -134,10 +136,31 @@ async function nextRound() {
 			character.feed;
 			character.effort = 3;
 			character.save();
+			console.log(`Restoring effort of  ${character.characterName}`);
 		}
 
 		for (const action of await Action.find({ 'status': 'Ready' })) {
 			action.status = 'Published';
+
+			const { asset1, asset2, asset3 } = action; // find all assets being used for new action and use them
+			const arr = [asset1, asset2, asset3];
+			for (const el of arr) {
+				if (el) {
+					let asset = await Asset.findOne({ name: el });
+					asset.status.used = false;
+					console.log(`Un-Using ${asset.name}`);
+
+					if ((asset.type === 'Asset' || asset.type === 'Wealth') && (asset.uses !== 999 || asset.uses <= 0)) {
+						console.log(`BEFORE ${asset.name} uses: ${asset.uses}`);
+						asset.uses = asset.uses - 1;
+						console.log(`AFTER ${asset.name} uses: ${asset.uses}`);
+					}
+
+					asset = await asset.save();
+					nexusEvent.emit('respondClient', 'update', [ asset ]);
+				}
+			}
+
 			await action.save();
 			actions.push(action);
 		}

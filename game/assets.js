@@ -69,7 +69,7 @@ async function addAsset(data, user) {
 			nexusEvent.emit('respondClient', 'create', [ newAsset ]);
 			nexusEvent.emit('respondClient', 'update', [ character ]);
 
-			await asset.save();
+			await newAsset.save();
 
 			const log = new History({
 				docType: 'asset',

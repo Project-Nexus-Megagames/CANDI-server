@@ -293,6 +293,13 @@ async function deleteAction(data, user) {
 		let element = await Action.findById(id);
 
 		if (element != null) {
+			const log = new History({
+				docType: 'action',
+				action: 'delete',
+				function: 'deleteAction',
+				document: element,
+				user
+			});
 
 			if (element.type === 'Action') {
 				const character = await addEffort(element);
@@ -318,14 +325,6 @@ async function deleteAction(data, user) {
 					nexusEvent.emit('respondClient', 'update', [ asset ]);
 				}
 			}
-
-			const log = new History({
-				docType: 'action',
-				action: 'delete',
-				function: 'deleteAction',
-				document: element,
-				user
-			});
 
 			element = await Action.findByIdAndDelete(id);
 			await log.save();
