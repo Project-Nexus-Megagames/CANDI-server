@@ -150,7 +150,7 @@ async function nextRound() {
 					asset.status.used = false;
 					console.log(`Un-Using ${asset.name}`);
 
-					if (asset.type === 'Asset' || asset.type === 'Wealth') {
+					if ((asset.type === 'Asset' || asset.type === 'Wealth') && (asset.uses !== 999 || asset.uses <= 0)) {
 						console.log(`BEFORE ${asset.name} uses: ${asset.uses}`);
 						asset.uses = asset.uses - 1;
 						console.log(`AFTER ${asset.name} uses: ${asset.uses}`);
