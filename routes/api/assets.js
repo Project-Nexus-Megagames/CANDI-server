@@ -12,6 +12,7 @@ const nexusError = require('../../middleware/util/throwError');
 const { Character } = require('../../models/character');
 const { assets } = require('../../config/startingData');
 const { characters } = require('../../config/startingCharacters');
+const { Action } = require('../../models/action');
 
 // @route   GET api/assets
 // @Desc    Get all assets
@@ -151,14 +152,13 @@ router.patch('/test2', async function(req, res, next) {
 	}
 	else {
 		try {
-			const allCharacters = await Character.find();
-			for (const char of allCharacters) {
-				console.log(`Un-feeding ${char.characterName}`);
+			for (const char of await Character.find()) {
 				char.feed = false;
 				await char.save();
 			}
-			let newAssets = await Character.find();
-			res.status(200).json(newAssets);
+
+			const act = await Character.find();
+			res.status(200).json(act);
 		}
 		catch (err) {
 			logger.error(err.message, { meta: err.stack });
