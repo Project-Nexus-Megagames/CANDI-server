@@ -133,7 +133,7 @@ async function nextRound() {
 
 		for (const character of await Character.find()) {
 			character.lentAssets = [];
-			character.feed;
+			character.feed = false;
 			character.effort = 3;
 			character.save();
 			console.log(`Restoring effort of  ${character.characterName}`);
