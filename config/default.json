@@ -1,7 +1,7 @@
 {
   "jwtPrivateKey": "spooky",
   "dbName": "duskDB",
-  "version": "1.06",
+  "version": "1.08",
   "clientURL": "https://candi-app.herokuapp.com/",
 	"serverURL": "https://candi-server.herokuapp.com/",
   "socketCORS": "https://candi-app.herokuapp.com"
