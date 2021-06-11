@@ -16,6 +16,12 @@ async function modifyCharacter(data) {
 			return ({ message : `Found multiple characters for id ${id}`, type: 'error' });
 		}
 		else {
+			for (const el in data) {
+				if (data[el] && data[el] !== '') {
+					character[el] = data[el];
+				}
+			}
+			/*
 			character.email = email;
 			character.characterName = characterName;
 			character.worldAnvil = worldAnvil;
@@ -30,8 +36,10 @@ async function modifyCharacter(data) {
 
 			character.color = color;
 			character.characterActualName = characterActualName;
-			character.controlEmail = controlEmail;
+			if (controlEmail && controlEmail !== '') character.controlEmail = controlEmail;
 			character.pronouns = pronouns;
+			*/
+
 
 			await character.save();
 			character.populate('assets').populate('lentAssets');

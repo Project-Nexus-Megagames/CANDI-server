@@ -10,7 +10,7 @@ const CharacterSchema = new Schema({
 	model:  { type: String, default: 'Character' },
 	playerName: { type: String, minlength: 1, maxlength: 50, required: true },
 	email: { type: String, required: true },
-	controlEmail: { type: String, default: '' },
+	controlEmail: { type: String },
 	worldAnvil: { type: String, required: true },
 	timeZone: { type: String, default: '???' },
 	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
