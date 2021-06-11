@@ -101,7 +101,7 @@ const characters = [
 		worldAnvil: 'https://www.worldanvil.com/w/dusk-city-by-night-afterlife-control/a/the-punk-person',
 		characterName:'The Punk',
 		tag: 'Unifiers',
-		controlEmail: 'stuart.pbem@gmail.com duskcontrolnorth@gmail.com duskcitycontrol@gmail.com',
+		controlEmail: 'stuart.pbem@gmail.com; duskcontrolnorth@gmail.com; duskcitycontrol@gmail.com;',
 		email: 'no email yet',
 		timeZone: 'EST',
 		bio: 'A stone cold renegade looking for a brand new start.',
