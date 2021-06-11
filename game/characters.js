@@ -20,6 +20,9 @@ async function modifyCharacter(data) {
 				if (data[el] && data[el] !== '') {
 					character[el] = data[el];
 				}
+				else {
+					console.log(`Detected invalid edit: ${el} is ${data[el]}`);
+				}
 			}
 			/*
 			character.email = email;
