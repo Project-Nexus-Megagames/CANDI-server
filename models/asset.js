@@ -26,16 +26,16 @@ const AssetSchema = new Schema({
 });
 
 AssetSchema.methods.use = async function() {
-	this.used = true;
+	this.status.used = true;
 	const asset = await this.save();
-	console.log(`${asset.name} has been used.`);
+	console.log(`${asset.name} owned by ${asset.owner} has been used`);
 	return asset;
 };
 
 AssetSchema.methods.unuse = async function() {
-	this.used = false;
+	this.status.used = false;
 	const asset = await this.save();
-	console.log(`${asset.name} has been unused.`);
+	console.log(`${asset.name} owned by ${asset.owner} has been unused.`);
 	return asset;
 };
 
