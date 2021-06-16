@@ -17,7 +17,7 @@ async function modifyCharacter(data) {
 		}
 		else {
 			for (const el in data) {
-				if (data[el] && data[el] !== '') {
+				if (data[el] && data[el] !== '' && el !== 'id' && el !== 'characterName') {
 					character[el] = data[el];
 				}
 				else {
@@ -139,7 +139,7 @@ async function deleteCharacter(data) {
 			element = await Character.findByIdAndDelete(id);
 			logger.info(`Character with the id ${id} was deleted via Socket!`);
 
-			nexusEvent.emit('respondClient', 'delete', [ { type: 'character', id } ]);
+			nexusEvent.emit('respondClient', 'delete', [ { model: 'character', id } ]);
 			return ({ message : 'Character Delete Success', type: 'success' });
 		}
 		else {

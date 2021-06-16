@@ -321,14 +321,27 @@ router.patch('/cleanSupporters', async (req, res, next) => {
 	}
 });
 
-router.patch('/test', async (req, res, next) => {
+router.patch('/test/', async (req, res, next) => {
 	logger.info('PATCH Route: api/characters/test requested...');
 	if (req.timedout) {
 		next();
 	}
 	else {
 		try {
-			console.log('test');
+			const changed = [];
+			for (const asset of await Asset.find({ type: 'Territory' })) {
+				if (asset) {
+					asset.status.lendable = true;
+					await asset.save();
+					console.log(`Lendable: ${asset.name}`);
+					changed.push(asset);
+				}
+				else {
+					console.log(`Failed test: ${asset}`);
+				}
+			}
+			nexusEvent.emit('respondClient', 'update', [ changed ]);
+			res.status(200).send(`All done`);
 		}
 		catch (err) {
 			httpErrorHandler(res, err);

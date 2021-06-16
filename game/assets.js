@@ -6,7 +6,7 @@ const { History } = require('../models/history');
 
 async function modifyAsset(data, user) {
 	try {
-		const { id, name, description, uses, used, owner, hidden, lendable } = data;
+		const { id, name, description, uses, used, owner, hidden, lendable, level } = data;
 		const asset = await Asset.findById(id);
 
 		if (asset === null) {
@@ -19,6 +19,7 @@ async function modifyAsset(data, user) {
 			asset.name = name;
 			asset.description = description;
 			asset.uses = uses;
+			asset.level = level;
 			asset.owner = owner;
 			asset.status.used = used;
 			asset.status.hidden = hidden;
@@ -58,6 +59,10 @@ async function addAsset(data, user) {
 			switch (newAsset.type) {
 			case 'Asset':
 				newAsset.status.lendable = true;
+				break;
+			case 'Territory':
+				newAsset.status.lendable = true;
+				newAsset.uses = 999;
 				break;
 			default:
 				newAsset.uses = 999;
@@ -170,7 +175,7 @@ async function deleteAsset(data, user) {
 
 			await log.save();
 
-			nexusEvent.emit('respondClient', 'delete', [ { type: 'asset', id } ]);
+			nexusEvent.emit('respondClient', 'delete', [ { model: 'asset', id } ]);
 			return ({ message : 'Asset Delete Success', type: 'success' });
 		}
 		else {

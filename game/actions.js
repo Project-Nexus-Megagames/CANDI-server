@@ -25,155 +25,6 @@ async function addEffort(data) {
 	return character;
 }
 
-async function editAction(data, user) {
-	console.log(data);
-	try {
-		const { id, description, intent, effort, asset1, asset2, asset3 } = data;
-		const changed = [];
-		const action = await Action.findById(id);
-
-		const log = new History({
-			docType: 'action',
-			action: 'edit',
-			function: 'editAction',
-			user
-		});
-
-		if (action.type === 'Action' || action.type === 'Feed') {
-			action.description = description;
-			action.intent = intent;
-
-			if (action.type === 'Action') {
-				const character = await Character.findOne({ characterName: action.creator }).populate('assets').populate('lentAssets');
-				character.effort = character.effort - (effort - action.effort);
-				await character.save();
-				nexusEvent.emit('respondClient', 'update', [ character ]);
-			}
-			action.effort = effort;
-
-			// asset1 === undefined ? action.asset1 = '' : action.asset1 = asset1;
-			if (asset1 === undefined || !asset1) { // if we are overwriting with null
-				if (action.asset1) {
-					const oldAsset = await Asset.findOne({ name: action.asset1 });
-					oldAsset.status.used = false;
-					await oldAsset.save();
-					changed.push(oldAsset);
-				}
-				action.asset1 = null;
-			}
-			else if (asset1 === action.asset1) { // if nothing is being changed
-				console.log('hi');
-			}
-			else if (asset1 && action.asset1) {
-				const oldAsset = await Asset.findOne({ name: action.asset1 });
-				oldAsset.status.used = false;
-				await oldAsset.save();
-
-				const newAsset = await Asset.findOne({ name: asset1 });
-				newAsset.status.used = true;
-				await newAsset.save();
-
-				changed.push(oldAsset);
-				changed.push(newAsset);
-			}
-			else { // if a new asset is being added to a slot
-				const newAsset = await Asset.findOne({ name: asset1 });
-				newAsset.status.used = true;
-				await newAsset.save();
-				action.asset1 = asset1;
-				changed.push(newAsset);
-			}
-
-			// asset2 === undefined ? action.asset2 = '' : action.asset2 = asset2;
-			if (asset2 === undefined || !asset2) { // if we are overwriting with null
-				if (action.asset2) {
-					const oldAsset = await Asset.findOne({ name: action.asset2 });
-					oldAsset.status.used = false;
-					await oldAsset.save();
-					changed.push(oldAsset);
-				}
-				action.asset2 = null;
-			}
-			else if (asset2 === action.asset2) { // if nothing is being changed
-				console.log('hi');
-			}
-			else if (asset2 && action.asset2) {
-				const oldAsset = await Asset.findOne({ name: action.asset2 });
-				oldAsset.status.used = false;
-				await oldAsset.save();
-
-				const newAsset = await Asset.findOne({ name: asset2 });
-				newAsset.status.used = true;
-				await newAsset.save();
-
-				changed.push(oldAsset);
-				changed.push(newAsset);
-			}
-			else { // if a new asset is being added to a slot
-				const newAsset = await Asset.findOne({ name: asset2 });
-				newAsset.status.used = true;
-				await newAsset.save();
-				action.asset2 = asset2;
-				changed.push(newAsset);
-			}
-
-			// asset1 === undefined ? action.asset1 = '' : action.asset1 = asset1;
-			if (asset3 === undefined || !asset3) { // if we are overwriting with null
-				if (action.asset3) {
-					const oldAsset = await Asset.findOne({ name: action.asset3 });
-					oldAsset.status.used = false;
-					await oldAsset.save();
-					changed.push(oldAsset);
-				}
-				action.asset3 = null;
-			}
-			else if (asset3 === action.asset3) { // if nothing is being changed
-				console.log('hi');
-			}
-			else if (asset3 && action.asset3) {
-				const oldAsset = await Asset.findOne({ name: action.asset3 });
-				oldAsset.status.used = false;
-				await oldAsset.save();
-
-				const newAsset = await Asset.findOne({ name: asset3 });
-				newAsset.status.used = true;
-				await newAsset.save();
-
-				changed.push(oldAsset);
-				changed.push(newAsset);
-			}
-			else { // if a new asset is being added to a slot
-				const newAsset = await Asset.findOne({ name: asset3 });
-				newAsset.status.used = true;
-				await newAsset.save();
-				action.asset3 = asset3;
-				changed.push(newAsset);
-			}
-			asset3 === undefined ? action.asset3 = '' : action.asset3 = asset3;
-		}
-		else {
-			const { progress, players, status } = data;
-			action.status = status;
-			action.description = description;
-			action.intent = intent;
-			action.progress = progress;
-			action.players = players;
-		}
-		// console.log(changed);
-
-		await action.save();
-		log.document = action;
-		await log.save(); // Saves history log
-		nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
-		logger.info(`${action.type} "${action.intent}" edited.`);
-		return { message : `${action.type} Edit Success`, type: 'success' };
-	}
-	catch (err) {
-		return { message : err, type: 'error' };
-	}
-
-}
-
 async function editResult(data, user) {
 	const { id, result, status, dieResult, mechanicalEffect } = data;
 	try {
@@ -209,53 +60,57 @@ async function editResult(data, user) {
 async function createAction(data, user) {
 	try {
 		let action = new Action(data);
+		const changed = [];
 		// console.log(data);
-		const docs = await Action.find({ intent: data.intent });
-		if (docs.length < 1) {
-			let character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
+		let character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
 
-			const { asset1, asset2, asset3 } = data; // find all assets being used for new action and use them
-			const arr = [asset1, asset2, asset3];
-			for (const el of arr) {
-				if (el) {
-					let asset = await Asset.findOne({ name: el });
-					asset.status.used = true;
-					asset = await asset.save();
-					nexusEvent.emit('respondClient', 'update', [ asset ]);
-				}
+		// const { asset1, asset2, asset3 } = data; // find all assets being used for new action and use them
+		// const arr = [asset1, asset2, asset3];
+		// for (const el of arr) {
+		// 	if (el) {
+		// 		let asset = await Asset.findOne({ name: el });
+		// 		asset.status.used = true;
+		// 		asset = await asset.save();
+		// 		nexusEvent.emit('respondClient', 'update', [ asset ]);
+		// 	}
+		// }
+
+		for (let i = 1; i < 4; i++) {
+			if (action[`asset${i}`]) {
+				let asset = await Asset.findOne({ name: action[`asset${i}`] });
+				asset = await asset.use();
+				changed.push(asset);
 			}
-
-			if (action.type === 'Feed') {
-				character.feed = true;
-				character = await character.save();
-			}
-			else if (action.type === 'Action') {
-				character.effort = character.effort - data.effort;
-				character = await character.save();
-			}
-
-			action = await action.save();
-
-			const log = new History({
-				docType: 'action',
-				action: 'create',
-				function: 'createAction',
-				document: action,
-				user,
-				character: character._id
-			});
-
-			await log.save();
-
-			logger.info(`${action.type} "${action.intent}" created.`);
-
-			nexusEvent.emit('respondClient', 'update', [ character ]);
-			nexusEvent.emit('respondClient', 'create', [ action ]);
-			return ({ message : `${action.type} Creation Success`, type: 'success' });
 		}
-		else {
-			return ({ message : `This ${action.type} Already Exists!`, type: 'error' });
+
+		if (action.type === 'Feed') {
+			character.feed = true;
+			character = await character.save();
 		}
+		else if (action.type === 'Action') {
+			character.effort = character.effort - data.effort;
+			character = await character.save();
+		}
+
+		action = await action.save();
+
+		const log = new History({
+			docType: 'action',
+			action: 'create',
+			function: 'createAction',
+			document: action,
+			user,
+			character: character._id
+		});
+
+		await log.save();
+
+		logger.info(`${action.type} "${action.intent}" created.`);
+
+		nexusEvent.emit('respondClient', 'update', [ character, ...changed ]);
+		nexusEvent.emit('respondClient', 'create', [ action ]);
+		return ({ message : `${action.type} Creation Success`, type: 'success' });
+
 	}
 	catch (err) {
 		logger.error(`message : Server Error: ${err}`);
@@ -291,7 +146,8 @@ async function deleteAction(data, user) {
 	try {
 		const id = data.id;
 		let element = await Action.findById(id);
-
+		const changed = [];
+		
 		if (element != null) {
 			const log = new History({
 				docType: 'action',
@@ -315,22 +171,31 @@ async function deleteAction(data, user) {
 				log.user = character.username;
 			}
 
-			const { asset1, asset2, asset3 } = element; // find all assets being used for new action and use them
-			const arr = [asset1, asset2, asset3];
-			for (const el of arr) {
-				if (el) {
-					const asset = await Asset.findOne({ name: el });
-					asset.status.used = false;
-					await asset.save();
-					nexusEvent.emit('respondClient', 'update', [ asset ]);
+			for (let i = 1; i < 4; i++) {
+				if (element[`asset${i}`]) { // CASE 1: An old asset slot is getting removed
+					let asset = await Asset.findOne({ name: element[`asset${i}`] });
+					asset = await asset.unuse();
+					changed.push(asset);
 				}
 			}
+
+			// const { asset1, asset2, asset3 } = element; // find all assets being used for new action and use them
+			// const arr = [asset1, asset2, asset3];
+			// for (const el of arr) {
+			// 	if (el) {
+			// 		const asset = await Asset.findOne({ name: el });
+			// 		asset.status.used = false;
+			// 		await asset.save();
+			// 		nexusEvent.emit('respondClient', 'update', [ asset ]);
+			// 	}
+			// }
 
 			element = await Action.findByIdAndDelete(id);
 			await log.save();
 
 			logger.info(`Action with the id ${id} was deleted via Socket!`);
-			nexusEvent.emit('respondClient', 'delete', [ { type: 'action', id } ]);
+			nexusEvent.emit('respondClient', 'delete', [ { model: 'action', id } ]);
+			nexusEvent.emit('respondClient', 'update', [ changed ]);
 			return ({ message : 'Action Delete Success', type: 'success' });
 		}
 		else {
@@ -378,4 +243,47 @@ async function controlOverride(data, user) {
 	}
 }
 
-module.exports = { removeEffort, addEffort, editAction, editResult, createAction, createProject, deleteAction, controlOverride };
+async function newEditAction(data, user) {
+	const { id } = data;
+	const changed = [];
+	const oldAction = await Action.findById(id);
+	const action = await Action.findByIdAndUpdate(id, data, { new: true });
+
+	const log = new History({
+		docType: 'action',
+		action: 'edit',
+		function: 'editAction',
+		user,
+		document: action
+	});
+
+	for (let i = 1; i < 4; i++) {
+		if (oldAction[`asset${i}`] && action[`asset${i}`] !== oldAction[`asset${i}`]) { // CASE 1: An old asset slot is getting removed
+			let asset = await Asset.findOne({ name: oldAction[`asset${i}`] });
+			asset = await asset.unuse();
+			changed.push(asset);
+		}
+		if (action[`asset${i}`] && action[`asset${i}`] !== oldAction[`asset${i}`]) {
+			let asset = await Asset.findOne({ name: action[`asset${i}`] });
+			asset = await asset.use();
+			changed.push(asset);
+		}
+	}
+
+	await log.save(); // Saves history log
+	nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
+	logger.info(`${action.type} "${action.intent}" edited.`);
+	return { message : `${action.type} Edit Success`, type: 'success' };
+
+	// let { asset1, asset2, asset3 } = action;
+	// const arr = [asset1, asset2, asset3];
+	// for (const el of arr) {
+	// 	const asset = await Asset.findOne({ name: el });
+	// 	if (asset) {
+	// 		asset.unuse();
+	// 		changed.push(asset);
+	// 	}
+	// }
+}
+
+module.exports = { removeEffort, addEffort, editResult, createAction, createProject, deleteAction, controlOverride, newEditAction };
