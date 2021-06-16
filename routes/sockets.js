@@ -7,7 +7,7 @@ const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
 
-const { editAction, editResult, createAction, createProject, deleteAction, controlOverride } = require('../game/actions');
+const { editResult, createAction, createProject, deleteAction, controlOverride, newEditAction } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
@@ -60,7 +60,7 @@ module.exports = function(server) {
 			case 'update': {
 				// console.log(data);
 				if (data.playerBoolean) {
-					response = await editAction(data, client.username);
+					response = await newEditAction(data, client.username);
 				}
 				else {
 					response = await editResult(data, client.username);
@@ -149,7 +149,7 @@ module.exports = function(server) {
 			let response;
 			switch(type) {
 			case 'modify': {
-				// console.log(data);
+				console.log(data);
 				response = await modifyAsset(data, client.username);
 				break;
 			}
