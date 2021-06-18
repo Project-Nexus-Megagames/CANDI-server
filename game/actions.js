@@ -252,7 +252,7 @@ async function newEditAction(data, user) {
 	const log = new History({
 		docType: 'action',
 		action: 'edit',
-		function: 'editAction',
+		function: 'newEditAction',
 		user,
 		document: action
 	});
