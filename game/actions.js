@@ -147,7 +147,7 @@ async function deleteAction(data, user) {
 		const id = data.id;
 		let element = await Action.findById(id);
 		const changed = [];
-		
+
 		if (element != null) {
 			const log = new History({
 				docType: 'action',
@@ -244,10 +244,20 @@ async function controlOverride(data, user) {
 }
 
 async function newEditAction(data, user) {
-	const { id } = data;
+	const { id, effort } = data;
 	const changed = [];
 	const oldAction = await Action.findById(id);
 	const action = await Action.findByIdAndUpdate(id, data, { new: true });
+
+	const character = await Character.findOne({ characterName: action.creator }).populate('lentAssets').populate('assets');
+
+	console.log(character.effort);
+	character.effort = character.effort - (action.effort - oldAction.effort);
+
+	console.log(effort)
+
+	await character.save();
+	console.log(character.effort);
 
 	const log = new History({
 		docType: 'action',
@@ -271,7 +281,7 @@ async function newEditAction(data, user) {
 	}
 
 	await log.save(); // Saves history log
-	nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
+	nexusEvent.emit('respondClient', 'update', [ action, ...changed, character ]);
 	logger.info(`${action.type} "${action.intent}" edited.`);
 	return { message : `${action.type} Edit Success`, type: 'success' };
 
