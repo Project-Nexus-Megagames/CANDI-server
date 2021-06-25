@@ -114,15 +114,6 @@ async function nextRound() {
 			assets.push(asset);
 		}
 
-		/*
-		for (const asset of await Asset.find({ 'status.used': true })) {
-			asset.status.used = false;
-			console.log(`Un-Using ${asset.name}`);
-			await asset.save();
-			assets.push(asset);
-		}
-		*/
-
 		for (const asset of await Asset.find({ 'status.hidden': true })) {
 			asset.status.hidden = false;
 			await asset.save();
@@ -145,25 +136,38 @@ async function nextRound() {
 			const { asset1, asset2, asset3 } = action; // find all assets being used for new action and use them
 			const arr = [asset1, asset2, asset3];
 			for (const el of arr) {
-				if (el) {
-					let asset = await Asset.findOne({ name: el });
-					asset.status.used = false;
-					console.log(`Un-Using ${asset.name}`);
+				if (el !== null || el !== undefined) {
+					let asset = el ? await Asset.findOne({ name: el }) : undefined;
+					if (asset) {
+						asset.status.used = false;
+						console.log(`Un-Using ${asset.name}`);
 
-					if ((asset.type === 'Asset' || asset.type === 'Wealth') && (asset.uses !== 999 || asset.uses <= 0)) {
-						console.log(`BEFORE ${asset.name} uses: ${asset.uses}`);
-						asset.uses = asset.uses - 1;
-						console.log(`AFTER ${asset.name} uses: ${asset.uses}`);
+						if ((asset.type === 'Asset' || asset.type === 'Wealth') && (asset.uses !== 999 || asset.uses <= 0)) {
+							console.log(`BEFORE ${asset.name} uses: ${asset.uses}`);
+							asset.uses = asset.uses - 1;
+							console.log(`AFTER ${asset.name} uses: ${asset.uses}`);
+						}
+
+						asset = await asset.save();
+						nexusEvent.emit('respondClient', 'update', [ asset ]);
 					}
-
-					asset = await asset.save();
-					nexusEvent.emit('respondClient', 'update', [ asset ]);
+					else {
+						console.log(`ERROR could not Un-Use for ${el}`);
+					}
 				}
 			}
 
 			await action.save();
 			actions.push(action);
 		}
+
+		for (const asset of await Asset.find({ 'status.used': true })) {
+			asset.status.used = false;
+			console.log(`Un-Using ${asset.name}`);
+			await asset.save();
+			assets.push(asset);
+		}
+
 
 		gamestate.status = 'Active';
 		gamestate.round = gamestate.round + 1;

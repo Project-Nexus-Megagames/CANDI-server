@@ -250,14 +250,9 @@ async function newEditAction(data, user) {
 	const action = await Action.findByIdAndUpdate(id, data, { new: true });
 
 	const character = await Character.findOne({ characterName: action.creator }).populate('lentAssets').populate('assets');
-
-	console.log(character.effort);
 	character.effort = character.effort - (action.effort - oldAction.effort);
 
-	console.log(effort)
-
 	await character.save();
-	console.log(character.effort);
 
 	const log = new History({
 		docType: 'action',
@@ -270,12 +265,12 @@ async function newEditAction(data, user) {
 	for (let i = 1; i < 4; i++) {
 		if (oldAction[`asset${i}`] && action[`asset${i}`] !== oldAction[`asset${i}`]) { // CASE 1: An old asset slot is getting removed
 			let asset = await Asset.findOne({ name: oldAction[`asset${i}`] });
-			asset = await asset.unuse();
+			asset ? asset = await asset.unuse() : console.log('Avoided un-using a thing!');
 			changed.push(asset);
 		}
 		if (action[`asset${i}`] && action[`asset${i}`] !== oldAction[`asset${i}`]) {
 			let asset = await Asset.findOne({ name: action[`asset${i}`] });
-			asset = await asset.use();
+			asset ? asset = await asset.use() : console.log('Avoided using a thing!');
 			changed.push(asset);
 		}
 	}
