@@ -147,7 +147,7 @@ async function deleteAction(data, user) {
 		const id = data.id;
 		let element = await Action.findById(id);
 		const changed = [];
-		
+
 		if (element != null) {
 			const log = new History({
 				docType: 'action',
@@ -244,15 +244,20 @@ async function controlOverride(data, user) {
 }
 
 async function newEditAction(data, user) {
-	const { id } = data;
+	const { id, effort } = data;
 	const changed = [];
 	const oldAction = await Action.findById(id);
 	const action = await Action.findByIdAndUpdate(id, data, { new: true });
 
+	const character = await Character.findOne({ characterName: action.creator }).populate('lentAssets').populate('assets');
+	character.effort = character.effort - (action.effort - oldAction.effort);
+
+	await character.save();
+
 	const log = new History({
 		docType: 'action',
 		action: 'edit',
-		function: 'editAction',
+		function: 'newEditAction',
 		user,
 		document: action
 	});
@@ -260,18 +265,18 @@ async function newEditAction(data, user) {
 	for (let i = 1; i < 4; i++) {
 		if (oldAction[`asset${i}`] && action[`asset${i}`] !== oldAction[`asset${i}`]) { // CASE 1: An old asset slot is getting removed
 			let asset = await Asset.findOne({ name: oldAction[`asset${i}`] });
-			asset = await asset.unuse();
+			asset ? asset = await asset.unuse() : console.log('Avoided un-using a thing!');
 			changed.push(asset);
 		}
 		if (action[`asset${i}`] && action[`asset${i}`] !== oldAction[`asset${i}`]) {
 			let asset = await Asset.findOne({ name: action[`asset${i}`] });
-			asset = await asset.use();
+			asset ? asset = await asset.use() : console.log('Avoided using a thing!');
 			changed.push(asset);
 		}
 	}
 
 	await log.save(); // Saves history log
-	nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
+	nexusEvent.emit('respondClient', 'update', [ action, ...changed, character ]);
 	logger.info(`${action.type} "${action.intent}" edited.`);
 	return { message : `${action.type} Edit Success`, type: 'success' };
 
