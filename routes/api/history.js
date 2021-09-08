@@ -1,27 +1,26 @@
 const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
-// const nexusEvent = require('../../middleware/events/events'); // Local event triggers
 
-// const validateObjectId = require('../../middleware/util/validateObjectId');
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
+const validateObjectId = require('../../middleware/util/validateObjectId'); // Middleware that validates object ID's in HTTP perameters
+const httpErrorHandler = require('../../middleware/util/httpError'); // Middleware that parses errors and status for Express responses
+const nexusError = require('../../middleware/util/throwError'); // Project Nexus middleware for error handling
 
-// History Model - Using Mongoose Model
-// const httpErrorHandler = require('../../middleware/util/httpError');
-// const nexusError = require('../../middleware/util/throwError');
+// Mongoose Model Import
 const { History } = require('../../models/history');
 
-// @route   GET api/history
-// @Desc    Get all history
+// @route   GET /history
+// @Desc    Get all Historys
 // @access  Public
 router.get('/', async function(req, res, next) {
-	logger.info('GET Route: api/History requested...');
+	logger.info('GET Route: api/history requested...');
 	if (req.timedout) {
 		next();
 	}
 	else {
 		try {
-			const document = await History.find();
-			res.status(200).json(document);
+			const historys = await History.findOne();
+			res.status(200).json(historys);
 		}
 		catch (err) {
 			logger.error(err.message, { meta: err.stack });
@@ -30,138 +29,98 @@ router.get('/', async function(req, res, next) {
 	}
 });
 
-// // @route   GET api/asset/:id
-// // @Desc    Get a single asset by ID
-// // @access  Public
-// router.get('/:id', validateObjectId, async (req, res) => {
-// 	logger.info('GET Route: api/asset/:id requested...');
-// 	const id = req.params.id;
-// 	try {
-// 		const asset = await Asset.findById(id);
-// 		if (asset != null) {
-// 			res.status(200).json(asset);
-// 		}
-// 		else {
-// 			nexusError(`The asset with the ID ${id} was not found!`, 404);
-// 		}
-// 	}
-// 	catch (err) {
-// 		httpErrorHandler(res, err);
-// 	}
-// });
+// @route   GET /history/:id
+// @Desc    Get historys by id
+// @access  Public
+router.get('/:id', validateObjectId, async function(req, res) {
+	logger.info('GET Route: api/history/:id requested...');
+	const id = req.params.id;
 
-// // @route   POST api/assets
-// // @Desc    Post a new asset
-// // @access  Public
-// router.post('/', async function(req, res, next) {
-// 	logger.info('POST Route: api/asset call made...');
-// 	if (req.timedout) {
-// 		next();
-// 	}
-// 	else {
-// 		try {
-// 			let newElement = new Asset(req.body);
+	try {
+		const history = await History.findById(req.history._id);
 
-// 			//	await newAgent.validateAgent();
-// 			const docs = await Asset.find({ name: req.body.name });
+		if (history != null) {
+			logger.info(`Verifying ${history.historyname}`);
+			res.status(200).json(history);
+		}
+		else {
+			nexusError(`The history with the ID ${id} was not found!`, 404);
+		}
+	}
+	catch (err) {
+		logger.error(err.message, { meta: err.stack });
+		res.status(500).send(err.message);
+	}
+});
 
-// 			if (docs.length < 1) {
-// 				newElement = newElement.save();
-// 				logger.info(`${newElement.name} created.`);
-// 				res.status(200).json(newElement);
-// 				nexusEvent.emit('updateCharacters');
-// 				nexusEvent.emit('updateAssets');
-// 			}
-// 			else {
-// 				nexusError(`An Asset with name ${newElement.name} already exists!`, 400);
-// 			}
-// 		}
-// 		catch (err) {
-// 			httpErrorHandler(res, err);
-// 		}
-// 	}
-// });
+// @route   POST /history
+// @Desc    Post a new History
+// @access  Public
+router.post('/', async function(req, res) {
+	logger.info('POST Route: api/history call made...');
+	let newHistory = new History(req.body);
+	const { tag } = req.body;
 
-// // @route   DELETE api/assets/:id
-// // @Desc    Delete an asset
-// // @access  Public
-// router.delete('/:id', async function(req, res, next) {
-// 	logger.info('DEL Route: Asset api/delete:id call made...');
-// 	if (req.timedout) {
-// 		next();
-// 	}
-// 	else {
-// 		try {
-// 			const id = req.params.id;
-// 			let element = await Asset.findById(id);
-// 			if (element != null) {
-// 				element = await Asset.findByIdAndDelete(id);
-// 				logger.info(`Asset with the id ${id} was deleted!`);
-// 				nexusEvent.emit('updateCharacters');
-// 				nexusEvent.emit('updateAssets');
-// 				res.status(200).send(`Asset with the id ${id} was deleted!`);
-// 			}
-// 			else {
-// 				nexusError(`No asset with the id ${id} exists!`, 400);
-// 			}
-// 		}
-// 		catch (err) {
-// 			httpErrorHandler(res, err);
-// 		}
-// 	}
-// });
+	try {
+		const docs = await History.find({ tag });
 
-// // @route   PATCH api/assets/deleteAll
-// // @desc    Delete All assets
-// // @access  Public
-// router.patch('/deleteAll', async function(req, res) {
-// 	let delCount = 0;
-// 	for await (const element of Asset.find()) {
-// 		const id = element.id;
-// 		try {
-// 			const elementDel = await Asset.findByIdAndRemove(id);
-// 			if (elementDel == null) {
-// 				res.status(404).send(`The Asset with the ID ${id} was not found!`);
-// 			}
-// 			else {
-// 				delCount += 1;
-// 			}
-// 		}
-// 		catch (err) {
-// 			nexusError(`${err.message}`, 500);
-// 		}
-// 	}
+		if (docs.length < 1) {
+			newHistory = await newHistory.save();
 
-// 	for await (const character of Character.find()) {
-// 		character.assets = [];
-// 		character.traits = [];
-// 		character.lentAssets = [];
-// 	}
-// 	nexusEvent.emit('updateCharacters');
-// 	return res.status(200).send(`We wiped out ${delCount} Assets`);
-// });
+			logger.info(`History ${tag} created...`);
+			res.status(200).json(newHistory);
+		}
+		else {
+			logger.info(`History with the tag: ${tag} already registered...`);
+			nexusError(`History with the tag: ${tag} already registered...`, 400);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
 
-// router.patch('/test2', async function(req, res, next) {
-// 	logger.info('PATCH Route: api/asset/test requested...');
-// 	if (req.timedout) {
-// 		next();
+// @route   DELETE api/history/:id
+// @Desc    Delete one history
+// @access  Public
+router.delete('/:id', validateObjectId, async (req, res) => {
+	logger.info('DEL Route: api/history/:id call made...');
+	const id = req.params.id;
+
+	try {
+		const history = await History.findByIdAndRemove(id);
+
+		if (history != null) {
+			logger.info(`The history with the id ${id} was deleted!`);
+			res.status(200).json(history);
+		}
+		else {
+			nexusError(`The history with the ID ${id} was not found!`, 404);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
+// @route   PATCH /historys/deleteAll
+// @desc    Delete All Historys
+// @access  Public
+router.patch('/deleteAll', async function(req, res) {
+	const data = await History.deleteMany();
+	console.log(data);
+	return res.status(200).send(`We wiped out ${data.deletedCount} Historys!`);
+});
+
+// This was for Bitsy. RIP Bitsy, you were too good for this world
+// setInterval(async () => {
+// 	const history = await History.findOne();
+// 	if (history && history.discovered) {
+// 		history.hunger = history.hunger - 13;
+// 		history.happiness = history.happiness - 13;
+// 		await history.save();
+// 		console.log('hi');
 // 	}
-// 	else {
-// 		try {
-// 			const allCharacters = await Character.find();
-// 			for (const char of allCharacters) {
-// 				console.log(`Un-feeding ${char.characterName}`);
-// 				char.feed = false;
-// 				await char.save();
-// 			}
-// 			let newAssets = await Character.find();
-// 			res.status(200).json(newAssets);
-// 		}
-// 		catch (err) {
-// 			logger.error(err.message, { meta: err.stack });
-// 			res.status(500).send(err.message);
-// 		}
-// 	}
-// });
+// }, 10000);
 
 module.exports = router;

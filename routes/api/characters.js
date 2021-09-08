@@ -10,7 +10,6 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const { Character } = require('../../models/character'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
-const { assets } = require('../../config/startingData');
 const { characters, npcs } = require('../../config/startingCharacters');
 const { Asset } = require('../../models/asset');
 
@@ -154,32 +153,19 @@ router.patch('/deleteAll', async function(req, res) {
 });
 
 // game routes
-router.post('/initCharacters', async function(req, res) {
+router.post('/initCharacters', async function(req, res) { // initializes characters based on /config/startingCharacters.js.
 	logger.info('POST Route: api/character call made...');
 
 	try {
-		let { npcCount, charCount, assCount } = 0;
+		let npcCount = 0;
+		let charCount = 0;
 		for (const char of characters) {
 			let newCharacter = new Character(char);
-			const wealth = {
-				name: `${newCharacter.characterName}'s Wealth`,
-				description: 'A moderate sum of funds, useful for those persuaded by such motivations...',
-				type: 'Wealth',
-				status: {
-					lendable: true
-				},
-				uses: 2
-			};
-			const asset = new Asset(wealth);
-			newCharacter.assets.push(asset);
-			//	await newAgent.validateAgent();
 			const docs = await Character.find({ characterName: char.characterName });
 
 			if (docs.length < 1) {
 				charCount++;
-				assCount++;
 				newCharacter = await newCharacter.save();
-				asset.save();
 				logger.info(`${newCharacter.characterName} created.`);
 			}
 			else {
@@ -202,31 +188,8 @@ router.post('/initCharacters', async function(req, res) {
 			}
 		}
 
-		for (const ass of assets) {
-			const character = await Character.findOne({ characterName: ass.owner });
-			if (character) {
-				const newAsset = new Asset(ass);
-				switch (newAsset.type) {
-				case 'Asset':
-					newAsset.lendable = true;
-					break;
-				default:
-					newAsset.uses = 999;
-					break;
-				}
-				character.assets.push(newAsset);
-				newAsset.save();
-				character.save();
-				assCount++;
-				logger.info(`${newAsset.name} created.`);
-			}
-			else {
-				console.log(`Could not find ${ass.owner}!\n`);
-			}
-		}
-
 		nexusEvent.emit('updateCharacters');
-		logger.info(`Created ${charCount} Characters, ${npcCount} NPCs, and ${assCount} Assets.`);
+		logger.info(`Created ${charCount} Characters and ${npcCount} NPCs.`);
 		res.status(200).send('All done');
 	}
 	catch (err) {
@@ -259,35 +222,6 @@ router.patch('/register', async (req, res) => {
 			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
 		}
 
-	}
-	catch (err) {
-		httpErrorHandler(res, err);
-	}
-});
-
-router.patch('/scrubAsset', async (req, res) => {
-	logger.info('PATCH Route: api/characters/scrubAsset requested...');
-	try {
-		let mercy = await Character.findOne({ characterName: 'The Demon of Mercy' });
-		let dusk = await Character.findOne({ characterName: 'The Demon of Dusk' });
-		const demonAss = new Asset({
-			name: 'Demonic  Blessing',
-			description: 'A tiny extension of the First Demon’s power that might take the form of additional abilities or literal demonic support for the recipient.',
-			uses: 999,
-			model: 'Asset'
-		});
-		dusk.traits = [];
-		mercy.traits = [];
-
-		dusk.assets.push(demonAss);
-		mercy.assets.push(demonAss);
-		dusk = await dusk.save();
-		mercy = await mercy.save();
-
-		await demonAss.save();
-
-		nexusEvent.emit('updateCharacters');
-		res.status(200).send('All done');
 	}
 	catch (err) {
 		httpErrorHandler(res, err);
@@ -341,7 +275,7 @@ router.patch('/test/', async (req, res, next) => {
 				}
 			}
 			nexusEvent.emit('respondClient', 'update', [ changed ]);
-			res.status(200).send(`All done`);
+			res.status(200).send('All done');
 		}
 		catch (err) {
 			httpErrorHandler(res, err);
