@@ -1,2 +1,2 @@
-# Afterlife
-Server for the Afterlife Game
+# CANDI-Serverr
+Server for CANDI
