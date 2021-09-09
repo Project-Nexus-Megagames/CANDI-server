@@ -5,44 +5,25 @@ const { default: axios } = require('axios');
 
 
 async function modifyCharacter(data) {
-	const { id, effort, email, worldAnvil, tag, standing, control, timeZone, popsupport, bio, characterName, color, characterActualName, controlEmail, pronouns } = data;
-	const character = await Character.findById(id).populate('assets').populate('lent');
+	const { _id } = data;
+	const character = await Character.findById(_id);
 
 	try {
 		if (character === null) {
-			return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
+			return ({ message : `Could not find a character for _id "${_id}"`, type: 'error' });
 		}
 		else if (character.length > 1) {
-			return ({ message : `Found multiple characters for id ${id}`, type: 'error' });
+			return ({ message : `Found multiple characters for _id ${_id}`, type: 'error' });
 		}
 		else {
 			for (const el in data) {
-				if (data[el] && data[el] !== '' && el !== 'id' && el !== 'characterName') {
+				if (data[el] && data[el] !== '' && el !== '_id' && el !== 'model') {
 					character[el] = data[el];
 				}
 				else {
 					console.log(`Detected invalid edit: ${el} is ${data[el]}`);
 				}
 			}
-			/*
-			character.email = email;
-			character.characterName = characterName;
-			character.worldAnvil = worldAnvil;
-			character.tag = tag;
-			character.control = control;
-			character.timeZone = timeZone;
-			character.effort = effort;
-			character.standingOrders = standing;
-
-			character.popsupport = popsupport;
-			character.bio = bio;
-
-			character.color = color;
-			character.characterActualName = characterActualName;
-			if (controlEmail && controlEmail !== '') character.controlEmail = controlEmail;
-			character.pronouns = pronouns;
-			*/
-
 
 			await character.save();
 			character.populate('assets').populate('lentAssets');

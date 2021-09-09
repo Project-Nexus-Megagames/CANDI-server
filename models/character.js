@@ -15,7 +15,7 @@ const CharacterSchema = new Schema({
 	timeZone: { type: String, default: '???' },
 	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
 	characterActualName: { type: String, maxlength: 50, default: 'None' },
-	tag: { type: String, enum: ['PC', 'NPC', 'Brother\'s Wrath', 'Unifiers', 'Sister\'s Wisdom', 'Factionless'], required: true },
+	tag: [{ type: String }],
 	username: { type: String, minlength: 2, maxlength: 50, required: true },
 	pronouns: { type: String },
 	control: { type: String, default: 'None' },
@@ -25,9 +25,8 @@ const CharacterSchema = new Schema({
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	popSupport: { type: Number, default: 0 },
 	supporters: [{ type: String }],
-	effort: { type: Number, default: 3, min: 0, max: 6 },
-	feed: { type: Boolean, default: false },
-	color: { type: String, default: 'ffffff' }
+	effort: { type: Number, default: 2, min: 0, max: 6 },
+	// color: { type: String, default: 'ffffff' }
 });
 
 const Character = mongoose.model('Character', CharacterSchema);
