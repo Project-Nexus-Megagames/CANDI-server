@@ -60,18 +60,14 @@ ActionSchema.methods.submit = async function(submission) {
 	if (!submission.description) throw Error('A submission must have a description...');
 	if (!submission.intent) throw Error('You must have an intent for an action...');
 
-	if (!this.status.some(el => el === 'Published')) this.status.push('Published');
-	if (this.status.some(el => el === 'Draft')) {
-		const i = this.status.findIndex(el => el === 'Draft');
-		if (i > -1) this.status.splice(i, 1);
-	}
+	if (!this.status.some(el => el === 'Draft')) this.status.push('Draft');
 	this.markModified('status');
 
 	this.submission = submission;
 
 	const changed = [];
 
-	for (let id in submission.assets) {
+	for (const id in submission.assets) {
 		let asset = await Asset.findById(id);
 		asset = await asset.use();
 		changed.push(asset);
