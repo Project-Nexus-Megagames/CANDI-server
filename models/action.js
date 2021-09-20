@@ -89,6 +89,24 @@ ActionSchema.methods.submit = async function(submission) {
 	return ({ message : `${action.type} Submission Success`, type: 'success' });
 };
 
+ActionSchema.methods.postResult = async function(result) {
+	// Expects { result, dice: { type, amount, roll } }
+	try {
+		if (!result.description) throw Error('Results must have a description..');
+		if (!result.dice) throw Error('Results must have dice information attched..');
+		else if (!result.dice.roll) throw Error('Result must have final dice roll...');
+		this.result = result;
+
+		const action = await this.save();
+
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+		return ({ message : 'Action Result Edit Success', type: 'success' });
+	}
+	catch (err) {
+		return { message : `Error: ${err}`, type: 'error' };
+	}
+};
+
 const Action = mongoose.model('Action', ActionSchema);
 
 module.exports = { Action };
