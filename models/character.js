@@ -43,9 +43,38 @@ const CharacterSchema = new Schema({
 	Scholarship: { type: Number, default: 0 },
 	Pugilism : { type: Number, default: 0 },
 	supporters: [{ type: String }], // legacy
-	effort: { type: Number, default: 2, min: 0, max: 6 },
+	effort: { type: Number, default: 2, min: 0, max: 6 }
 	// color: { type: String, default: 'ffffff' }
 });
+
+CharacterSchema.methods.expendEffort = async function(amount) {
+	try {
+		this.effort = this.effort - amount;
+		const character = await character.save();
+		character.populate('assets').populate('lentAssets');
+
+		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
+		return character;
+	}
+	catch (err) {
+		console.log(err) // Add proper error handling for CANDI
+	}
+};
+
+CharacterSchema.methods.restoreEffort = async function(amount) {
+	try {
+		this.effort = this.effort + amount;
+		if (this.effort > 3) this.effort = 3;
+		const character = await character.save();
+		character.populate('assets').populate('lentAssets');
+
+		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
+		return character;
+	}
+	catch (err) {
+		console.log(err) // Add proper error handling for CANDI
+	}
+};
 
 const Character = mongoose.model('Character', CharacterSchema);
 
