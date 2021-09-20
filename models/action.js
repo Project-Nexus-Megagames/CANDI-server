@@ -10,7 +10,8 @@ const nexusEvent = require('../middleware/events/events'); // Local event trigge
 // MODEL Imports
 const { Character } = require('./character');
 const { Asset } = require('./asset');
-const { History } = require('./history');
+// const { Comment } = require('./comment');
+// const { History } = require('./history');
 
 const submissionSchema = new Schema({
 	description: { type: String, required: true }, // Description of the ACTION
@@ -51,6 +52,7 @@ const ActionSchema = new Schema({
 	tags: [{ Type: String }], // Any tags added by control
 	image: { type: String }, // URL for an image associated with this ACTION
 	submission: submissionSchema, // Player submission that created the ACTION
+	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
 	result: resultSchema, // Controller generated result of the ACTION
 	effects: [effectSchema] // Mechanical effects of the ACTION
 }, { timestamps: true });
@@ -63,23 +65,29 @@ ActionSchema.methods.submit = async function(submission) {
 	if (!this.status.some(el => el === 'Draft')) this.status.push('Draft');
 	this.markModified('status');
 
-	this.submission = submission;
+	const { description, intent, effort } = submission;
+
+	this.submission = {
+		description, intent, effort
+	};
 
 	const changed = [];
 
-	for (const id in submission.assets) {
+	for (const id of submission.assets) {
+		this.submission.assets.push(id);
 		let asset = await Asset.findById(id);
 		asset = await asset.use();
 		changed.push(asset);
 	}
 
-	let character = await Character.findById(this.creator).populate('assets').populate('lentAssets');
+	this.markModified('submission.assets');
+
+	const character = await Character.findById(this.creator).populate('assets').populate('lentAssets');
 	if (this.submission.effort > 0) {
-		character.expendEffort(this.submission.effort);
-		character = await character.save();
+		await character.expendEffort(this.submission.effort);
 	}
 
-	const action = await action.save();
+	const action = await this.save();
 
 	nexusEvent.emit('respondClient', 'update', [ action, character, ...changed ]);
 	return ({ message : `${action.type} Submission Success`, type: 'success' });
