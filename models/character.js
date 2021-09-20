@@ -61,7 +61,7 @@ CharacterSchema.methods.expendEffort = async function(amount) {
 	}
 };
 
-CharacterSchema.methods.restoreEffort = async function(amount) {
+CharacterSchema.methods.restoreEffort = async function(amount = 3) {
 	try {
 		this.effort = this.effort + amount;
 		if (this.effort > 3) this.effort = 3;
