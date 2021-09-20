@@ -16,7 +16,7 @@ const submissionSchema = new Schema({
 	description: { type: String, required: true }, // Description of the ACTION
 	intent: { type: String, required: true }, // Intended result of the ACTION
 	effort: { type: Number, required: true, default: 0 }, // Initial effort allocated
-	assets: { type: ObjectId, ref: 'Asset' }, // ASSETS used to facilitate this ACTION
+	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }] // Characters involved in the ACTION
 }, { timestamps: true });
 
@@ -44,7 +44,7 @@ const ActionSchema = new Schema({
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
 	controllers: [{ type: String }], // Controllers assigned to handle this ACTION
-	assets: { type: ObjectId, ref: 'Asset' }, // ASSETS used to facilitate this ACTION
+	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	progress: { type: Number, default: 0, min: 0, max: 100 }, // % of compleation | Goes to 100% automatically when control posts a RESULT
 	effort: { type: Number, required: true, default: 0 }, // Current effort assigned to the ACTION
 	status: [{ type: String, enum: ['Draft', 'Awaiting', 'Ready', 'Published' ] }], // Any current STATUS of this ACTION
@@ -54,6 +54,40 @@ const ActionSchema = new Schema({
 	result: resultSchema, // Controller generated result of the ACTION
 	effects: [effectSchema] // Mechanical effects of the ACTION
 }, { timestamps: true });
+
+ActionSchema.methods.submit = async function(submission) {
+	// Expects description, intent, effort, assets, collaborators
+	if (!submission.description) throw Error('A submission must have a description...');
+	if (!submission.intent) throw Error('You must have an intent for an action...');
+
+	if (!this.status.some(el => el === 'Published')) this.status.push('Published');
+	if (this.status.some(el => el === 'Draft')) {
+		const i = this.status.findIndex(el => el === 'Draft');
+		if (i > -1) this.status.splice(i, 1);
+	}
+	this.markModified('status');
+
+	this.submission = submission;
+
+	const changed = [];
+
+	for (let id in submission.assets) {
+		let asset = await Asset.findById(id);
+		asset = await asset.use();
+		changed.push(asset);
+	}
+
+	let character = await Character.findById(this.creator).populate('assets').populate('lentAssets');
+	if (this.submission.effort > 0) {
+		character.expendEffort(this.submission.effort);
+		character = await character.save();
+	}
+
+	const action = await action.save();
+
+	nexusEvent.emit('respondClient', 'update', [ action, character, ...changed ]);
+	return ({ message : `${action.type} Submission Success`, type: 'success' });
+};
 
 const Action = mongoose.model('Action', ActionSchema);
 
