@@ -101,7 +101,7 @@ ActionSchema.methods.finalize = async function() {
 	}
 	this.markModified('status');
 
-	const action = await action.save();
+	const action = await this.save();
 
 	nexusEvent.emit('respondClient', 'update', [ action ]);
 };
