@@ -85,6 +85,19 @@ ActionSchema.methods.submit = async function(submission) {
 	return ({ message : `${action.type} Submission Success`, type: 'success' });
 };
 
+ActionSchema.methods.finalize = async function() {
+	if (!this.status.some(el => el === 'Published')) this.status.push('Published');
+	if (this.status.some(el => el === 'Draft')) {
+		const i = this.status.findIndex(el => el === 'Draft');
+		if (i > -1) this.status.splice(i, 1);
+	}
+	this.markModified('status');
+
+	const action = await action.save();
+
+	nexusEvent.emit('respondClient', 'update', [ action ]);
+};
+
 ActionSchema.methods.postResult = async function(result) {
 	// Expects { result, dice: { type, amount, roll } }
 	try {
