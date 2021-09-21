@@ -14,6 +14,7 @@ const { Asset } = require('./asset');
 // const { History } = require('./history');
 
 const submissionSchema = new Schema({
+	model: { type: String, default: 'Submission' },
 	description: { type: String, required: true }, // Description of the ACTION
 	intent: { type: String, required: true }, // Intended result of the ACTION
 	effort: { type: Number, required: true, default: 0 }, // Initial effort allocated
@@ -22,6 +23,7 @@ const submissionSchema = new Schema({
 }, { timestamps: true });
 
 const resultSchema = new Schema({
+	model: { type: String, default: 'Result' },
 	description: { type: String, default: 'None yet...', required: true }, // Description of the result
 	dice: {
 		amount: { type: Number, default: 1 }, // Amount of dice rolled
@@ -31,6 +33,7 @@ const resultSchema = new Schema({
 }, { timestamps: true });
 
 const effectSchema = new Schema({
+	model: { type: String, default: 'Effect' },
 	description: { type: String, default: 'It did a thing...', required: true }, // Description of the result
 	type: { type: String, enum: ['Asset', 'Action', 'Other'] }, // Type of effect
 	action: { type: ObjectId, ref: 'Action' }, // Ref to any ACTION created by this ACTION
