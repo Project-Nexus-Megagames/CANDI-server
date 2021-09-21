@@ -27,12 +27,12 @@ async function createAction(data, user) {
 	// Expecting -  round, creator <<character_id>>, controllers <<Array>>, submission <<submissionSchema>>
 	try {
 		// Data check errors!
-		if (!data.type) new Error('New actions require a type...');
-		if (!data.round) new Error('New actions require a round...');
-		if (!data.creator) new Error('New actions must have a character _id for creator...');
-		// Add check of the submission
-		if (!data.controllers) new Error('New actions must have a controllers array...');
-		else if (data.controllers.length < 1) new Error('New actions must at least 1 controller assigned to it...');
+		if (!data.type) throw Error('New actions require a type...');
+		if (!data.round) throw Error('New actions require a round...');
+		if (!data.creator) throw Error('New actions must have a character _id for creator...');
+		if (!data.submission) throw Error('You must include a submission...');
+		if (!data.controllers) throw Error('New actions must have a controllers array...');
+		else if (data.controllers.length < 1) throw Error('New actions must at least 1 controller assigned to it...');
 
 		const { type, round, creator, controllers } = data;
 
@@ -57,29 +57,6 @@ async function createAction(data, user) {
 		nexusEvent.emit('respondClient', 'create', [ action ]);
 		return ({ message : `${action.type} Creation Success`, type: 'success' });
 
-	}
-	catch (err) {
-		logger.error(`message : Server Error: ${err}`);
-		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
-	}
-}
-
-async function submitAction(data, user) {
-	const action = await Action.findById(data.id);
-	try {
-		const response = await action.submit(data.submission);
-
-		const log = new History({
-			docType: 'action',
-			action: 'submit',
-			function: 'submitAction',
-			document: action,
-			user,
-			character: action.creator
-		});
-
-		await log.save();
-		return response;
 	}
 	catch (err) {
 		logger.error(`message : Server Error: ${err}`);
@@ -255,4 +232,4 @@ async function editAction(data, user) {
 	return { message : `${action.type} Edit Success`, type: 'success' };
 }
 
-module.exports = { removeEffort, addEffort, createAction, submitAction, editResult, deleteAction, controlOverride, editAction };
+module.exports = { removeEffort, addEffort, createAction, editResult, deleteAction, controlOverride, editAction };
