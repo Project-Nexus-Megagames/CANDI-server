@@ -24,7 +24,7 @@ async function addEffort(data) {
 }
 
 async function createAction(data, user) {
-	// Expecting - type, round, creator <<character_id>>, controllers <<Array>>, submission <<submissionSchema>>
+	// Expecting -  round, creator <<character_id>>, controllers <<Array>>, submission <<submissionSchema>>
 	try {
 		// Data check errors!
 		if (!data.type) new Error('New actions require a type...');
@@ -39,6 +39,7 @@ async function createAction(data, user) {
 		let action = new Action({ type, round, creator, controllers, status: ['Draft'] });
 
 		action = await action.save();
+		await action.submit(data.submission);
 
 		const log = new History({
 			docType: 'action',

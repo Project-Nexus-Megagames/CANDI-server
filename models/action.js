@@ -44,6 +44,7 @@ const effectSchema = new Schema({
 const ActionSchema = new Schema({
 	model:  { type: String, default: 'Action' }, // Model for the DOC
 	type: { type: String, default: 'Action', enum: ['Action', 'Project', 'Feed' ] }, // Likely depreciated by the TAGS Array
+	name: { type: String },
 	round: { type: Number }, // Round Number for the ACTION
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
@@ -56,7 +57,7 @@ const ActionSchema = new Schema({
 	image: { type: String }, // URL for an image associated with this ACTION
 	submission: submissionSchema, // Player submission that created the ACTION
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
-	result: resultSchema, // Controller generated result of the ACTION
+	results: [resultSchema], // Controller generated result of the ACTION
 	effects: [effectSchema] // Mechanical effects of the ACTION
 }, { timestamps: true });
 
@@ -107,6 +108,10 @@ ActionSchema.methods.finalize = async function() {
 	const action = await this.save();
 
 	nexusEvent.emit('respondClient', 'update', [ action ]);
+};
+
+ActionSchema.methods.edit = async function() {
+	return;
 };
 
 ActionSchema.methods.postResult = async function(result) {
