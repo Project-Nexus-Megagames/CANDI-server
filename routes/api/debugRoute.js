@@ -5,6 +5,11 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const httpErrorHandler = require('../../middleware/util/httpError'); // Middleware that parses errors and status for Express responses
 const { default: axios } = require('axios');
 
+const { Character } = require('../../models/character');
+
+const { editResult, createAction, submitAction, deleteAction, controlOverride, editAction } = require('../../game/actions');
+const { Action } = require('../../models/action');
+
 // Mongoose Model Import
 
 router.post('/reset', async function(req, res) {
@@ -29,4 +34,71 @@ router.post('/reset', async function(req, res) {
 	}
 });
 
+router.post('/makeAction', async function(req, res) {
+	try {
+		const { data, username } = req.body;
+		const response = await createAction(data, username);
+		res.status(200).send(response);
+	}
+	catch (err) {
+		res.status(500).send(err);
+	}
+});
+
+router.post('/submit', async function(req, res) {
+	try {
+		const { data, username } = req.body;
+		const response = await submitAction(data, username);
+		res.status(200).send(response);
+	}
+	catch (err) {
+		res.status(500).send(err);
+	}
+});
+
+router.put('/edit', async function(req, res) {
+	try {
+		const { data, username } = req.body;
+		const response = await editAction(data, username);
+		res.status(200).send(response);
+	}
+	catch (err) {
+		res.status(500).send(err);
+	}
+});
+
+router.patch('/finalize', async function(req, res) {
+	try {
+		const { id } = req.body;
+		const action = await Action.findById(id);
+		await action.finalize();
+		res.status(200).send('Action finalized...');
+	}
+	catch (err) {
+		res.status(500).send(err);
+	}
+});
+
+
+router.patch('/restore', async function(req, res) {
+	try {
+		const character = await Character.findById(req.body.id);
+		await character.restoreEffort();
+		res.status(200).send(`${character.characterName} reset....`);
+	}
+	catch (err) {
+		res.status(500).send(err);
+	}
+});
+
+router.delete('/delete', async function(req, res) {
+	try {
+		await deleteAction(req.body.data, req.body.username);
+
+		res.status(200).send('Action deleted....');
+	}
+	catch (err) {
+		res.status(500).send(err);
+	}
+});
 module.exports = router;
