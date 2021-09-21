@@ -7,7 +7,7 @@ const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
 
-const { editResult, createAction, createProject, deleteAction, controlOverride, newEditAction } = require('../game/actions');
+const { editResult, createAction, deleteAction, controlOverride, editAction } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
@@ -51,16 +51,16 @@ module.exports = function(server) {
 				response = await deleteAction(data, client.username);
 				break;
 			}
-			case 'createProject': {
-				// console.log(data);
-				response = await createProject(data, client.username);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'newProjectState') : null ;
-				break;
-			}
+			// case 'createProject': {
+			// 	// console.log(data);
+			// 	response = await createProject(data, client.username);
+			// 	response.type === 'success' ? client.emit('clearLocalStorage', 'newProjectState') : null ;
+			// 	break;
+			// }
 			case 'update': {
 				// console.log(data);
 				if (data.playerBoolean) {
-					response = await newEditAction(data, client.username);
+					response = await editAction(data, client.username);
 				}
 				else {
 					response = await editResult(data, client.username);
