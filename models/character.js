@@ -50,14 +50,13 @@ const CharacterSchema = new Schema({
 CharacterSchema.methods.expendEffort = async function(amount) {
 	try {
 		this.effort = this.effort - amount;
-		const character = await character.save();
-		character.populate('assets').populate('lentAssets');
+		const character = await this.save();
 
 		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
 		return character;
 	}
 	catch (err) {
-		console.log(err) // Add proper error handling for CANDI
+		console.log(err); // Add proper error handling for CANDI
 	}
 };
 
@@ -65,14 +64,13 @@ CharacterSchema.methods.restoreEffort = async function(amount = 3) {
 	try {
 		this.effort = this.effort + amount;
 		if (this.effort > 3) this.effort = 3;
-		const character = await character.save();
-		character.populate('assets').populate('lentAssets');
+		const character = await this.save();
 
 		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
 		return character;
 	}
 	catch (err) {
-		console.log(err) // Add proper error handling for CANDI
+		console.log(err); // Add proper error handling for CANDI
 	}
 };
 
