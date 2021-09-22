@@ -27,8 +27,8 @@ async function createAction(data, user) {
 	// Expecting -  round, creator <<character_id>>, controllers <<Array>>, submission <<submissionSchema>>
 	try {
 		// Data check errors!
-		if (!data.type) throw Error('New actions require a type...');
-		if (!data.round) throw Error('New actions require a round...');
+		// if (!data.type) throw Error('New actions require a type...');
+		if (data.round === undefined) throw Error('New actions require a round...');
 		if (!data.creator) throw Error('New actions must have a character _id for creator...');
 		if (!data.submission) throw Error('You must include a submission...');
 		if (!data.controllers) throw Error('New actions must have a controllers array...');
