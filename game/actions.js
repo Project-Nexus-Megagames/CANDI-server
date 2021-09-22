@@ -36,7 +36,10 @@ async function createAction(data, user) {
 
 		const { type, round, creator, controllers } = data;
 
-		let action = new Action({ type, round, creator, controllers, status: ['Draft'] });
+		const character = await Character.findById(creator);
+		const actions = await Action.find({ creator });
+
+		let action = new Action({ type, name: `${character.playerName} action ${actions.length + 1}`, round, creator, controllers, status: ['Draft'] });
 
 		action = await action.save();
 		await action.submit(data.submission);
@@ -59,6 +62,7 @@ async function createAction(data, user) {
 
 	}
 	catch (err) {
+		console.log(err);
 		logger.error(`message : Server Error: ${err}`);
 		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
 	}
