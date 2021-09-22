@@ -100,7 +100,7 @@ ActionSchema.methods.submit = async function(submission) {
 ActionSchema.methods.comment = async function(comment) {
 	// Expects body, author, type
 	if (!comment.body) throw Error('A comment must have a body...');
-	if (!comment.author) throw Error('A comment must have an author...');
+	if (!comment.commentor) throw Error('A comment must have an commentor...');
 
 	let post = new Comment(comment);
 
