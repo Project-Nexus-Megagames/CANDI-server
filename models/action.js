@@ -10,7 +10,7 @@ const nexusEvent = require('../middleware/events/events'); // Local event trigge
 // MODEL Imports
 const { Character } = require('./character');
 const { Asset } = require('./asset');
-// const { Comment } = require('./comment');
+const { Comment } = require('./comment');
 // const { History } = require('./history');
 
 const submissionSchema = new Schema({
@@ -97,6 +97,25 @@ ActionSchema.methods.submit = async function(submission) {
 	return ({ message : `${action.type} Submission Success`, type: 'success' });
 };
 
+ActionSchema.methods.comment = async function(comment) {
+	// Expects body, author, type
+	if (!comment.body) throw Error('A comment must have a body...');
+	if (!comment.author) throw Error('A comment must have an author...');
+
+	let post = new Comment(comment);
+
+	post = await post.save();
+	this.comments.push(post._id);
+	this.markModified('comments');
+
+	const action = await this.save();
+
+	await action.populateMe();
+
+	nexusEvent.emit('respondClient', 'update', [ action ]);
+	return ({ message : `${action.type} Comment Success`, type: 'success' });
+};
+
 ActionSchema.methods.finalize = async function() {
 	if (!this.status.some(el => el === 'Published')) this.status.push('Published');
 	if (this.status.some(el => el === 'Draft')) {
@@ -130,6 +149,12 @@ ActionSchema.methods.postResult = async function(result) {
 	catch (err) {
 		return { message : `Error: ${err}`, type: 'error' };
 	}
+};
+
+ActionSchema.methods.populateMe = function() {
+	return this
+		.populate('comments')
+		.execPopulate();
 };
 
 const Action = mongoose.model('Action', ActionSchema);
