@@ -156,6 +156,8 @@ router.patch('/deleteAll', async function(req, res) {
 router.post('/initCharacters', async function(req, res) { // initializes characters based on /config/startingCharacters.js.
 	logger.info('POST Route: api/character call made...');
 
+	const arr = ['Asset', 'Trait', 'Wealth', 'Bond', 'Power', 'Territory'];
+
 	try {
 		let npcCount = 0;
 		let charCount = 0;
@@ -166,6 +168,18 @@ router.post('/initCharacters', async function(req, res) { // initializes charact
 			if (docs.length < 1) {
 				charCount++;
 				newCharacter = await newCharacter.save();
+
+				for (const el of arr) {
+					console.log(el);
+					let ass = new Asset({
+						name: `${newCharacter.character}'s' ${el}`,
+						description: `${newCharacter.character}'s' ${el}`,
+						type: el,
+						ownerCharacter: newCharacter._id
+					});
+					ass = await ass.save();
+				}
+
 				logger.info(`${newCharacter.characterName} created.`);
 			}
 			else {

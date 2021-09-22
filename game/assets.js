@@ -68,11 +68,11 @@ async function addAsset(data, user) {
 				newAsset.uses = 999;
 				break;
 			}
-			character.assets.push(newAsset);
-			character = await character.save();
+			// character.assets.push(newAsset);
+			// character = await character.save();
 			newAsset = await newAsset.save();
 			nexusEvent.emit('respondClient', 'create', [ newAsset ]);
-			nexusEvent.emit('respondClient', 'update', [ character ]);
+			// nexusEvent.emit('respondClient', 'update', [ character ]);
 
 			await newAsset.save();
 
