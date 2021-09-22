@@ -17,7 +17,7 @@ async function modifyCharacter(data) {
 		}
 		else {
 			for (const el in data) {
-				if (data[el] && data[el] !== '' && el !== '_id' && el !== 'model') {
+				if (data[el] !== undefined && data[el] !== '' && el !== '_id' && el !== 'model') {
 					character[el] = data[el];
 				}
 				else {

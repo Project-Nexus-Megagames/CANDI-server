@@ -7,10 +7,10 @@ const validateObjectId = require('../../middleware/util/validateObjectId');
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
 
 // Agent Model - Using Mongoose Model
-const { Character } = require('../../models/character'); // Agent Model
+const { Character, God } = require('../../models/character'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
-const { characters, npcs } = require('../../config/startingCharacters');
+const { characters, npcs, gods } = require('../../config/startingCharacters');
 const { Asset } = require('../../models/asset');
 
 // @route   GET api/characters
@@ -170,10 +170,9 @@ router.post('/initCharacters', async function(req, res) { // initializes charact
 				newCharacter = await newCharacter.save();
 
 				for (const el of arr) {
-					console.log(el);
 					let ass = new Asset({
-						name: `${newCharacter.character}'s' ${el}`,
-						description: `${newCharacter.character}'s' ${el}`,
+						name: `${newCharacter.characterName}'s' ${el}`,
+						description: `${newCharacter.characterName}'s' ${el}`,
 						type: el,
 						ownerCharacter: newCharacter._id
 					});
@@ -191,6 +190,21 @@ router.post('/initCharacters', async function(req, res) { // initializes charact
 			let newCharacter = new Character(npc);
 			//	await newAgent.validateAgent();
 			const docs = await Character.find({ characterName: npc.characterName });
+
+			if (docs.length < 1) {
+				newCharacter = await newCharacter.save();
+				npcCount++;
+				logger.info(`${newCharacter.characterName} created.`);
+			}
+			else {
+				console.log(`${newCharacter.characterName} already exists!\n`);
+			}
+		}
+
+		for (const god of gods) {
+			let newCharacter = new God(god);
+			//	await newAgent.validateAgent();
+			const docs = await Character.find({ characterName: god.characterName });
 
 			if (docs.length < 1) {
 				newCharacter = await newCharacter.save();
