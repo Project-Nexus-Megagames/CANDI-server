@@ -47,6 +47,18 @@ module.exports = function(server) {
 				response.type === 'success' ? client.emit('clearLocalStorage', 'newActionState') : null ;
 				break;
 			}
+			case 'comment': {
+				console.log(data);
+				const action = await Action.findById(data.id);
+				response = await action.comment(data.comment);
+				break;
+			}
+			case 'result': {
+				console.log(data);
+				const action = await Action.findById(data.id);
+				response = await action.postResult(data.result);
+				break;
+			}
 			case 'delete': {
 				// console.log(data);
 				response = await deleteAction(data, client.username);
@@ -72,12 +84,6 @@ module.exports = function(server) {
 			case 'controlReject': {
 				console.log(data);
 				response = await controlOverride(data, client.username);
-				break;
-			}
-			case 'comment': {
-				console.log(data);
-				const action = await Action.findById(data.id);
-				response = await action.comment(data.comment);
 				break;
 			}
 			default:
