@@ -7,7 +7,7 @@ const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
 
-const { editResult, createAction, deleteAction, controlOverride, editAction } = require('../game/actions');
+const { createAction, deleteAction, controlOverride, editAction } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
@@ -83,13 +83,8 @@ module.exports = function(server) {
 			// 	break;
 			// }
 			case 'update': {
-				// console.log(data);
-				if (data.playerBoolean) {
-					response = await editAction(data, client.username);
-				}
-				else {
-					response = await editResult(data, client.username);
-				}
+				// Expects data to be a Action object with edits
+				response = await editAction(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionState') : null ;
 				break;
 			}
