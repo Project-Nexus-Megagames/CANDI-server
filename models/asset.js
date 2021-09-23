@@ -10,6 +10,7 @@ const AssetSchema = new Schema({
 	model: { type: String, default: 'Asset' },
 	type: { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth', 'Bond', 'Power', 'Territory'] },
 	name: { type: String, required: true },
+	dice: { type: String, required: true, default: 'd6' },
 	description: { type: String, required: true },
 	level: { type: String, default: 'Neutral', enum: ['Loathing', 'Unfriendly', 'Neutral', 'Warm', 'Friendly', 'Bonded' ] },
 	status: {

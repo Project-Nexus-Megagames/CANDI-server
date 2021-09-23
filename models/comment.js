@@ -8,7 +8,7 @@ const CommentSchema = new Schema({
 	type: { type: String, default: 'Comment', enum: ['Comment', 'Info'] },
 	status: { type: String, default: 'Public', enum: ['Public', 'Private'] },
 	body: { type: String, required: true },
-	author: { type: String, required: true }
+	commentor: { type: String, required: true }
 }, { timestamps: true });
 
 const Comment = mongoose.model('Comment', CommentSchema);

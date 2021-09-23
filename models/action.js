@@ -24,12 +24,14 @@ const submissionSchema = new Schema({
 
 const resultSchema = new Schema({
 	model: { type: String, default: 'Result' },
+	resolver: { type: String, required: true },
 	description: { type: String, default: 'None yet...', required: true }, // Description of the result
-	dice: {
-		amount: { type: Number, default: 1 }, // Amount of dice rolled
-		type: { type: String, enum: ['d6', 'd8', 'd10', 'd12', 'd20', 'd100'] }, // Type of dice rolled
-		roll: { type: String, default: 'None yet...', required: true } // Result of roll
-	}
+	dice: { type: String, default: 'None' }
+	// dice: {
+	// 	amount: { type: Number, default: 1 }, // Amount of dice rolled
+	// 	type: { type: String, enum: ['d6', 'd8', 'd10', 'd12', 'd20', 'd100'] }, // Type of dice rolled
+	// 	roll: { type: String, default: 'None yet...', required: true } // Result of roll
+	// }
 }, { timestamps: true });
 
 const effectSchema = new Schema({
@@ -138,8 +140,8 @@ ActionSchema.methods.postResult = async function(result) {
 	try {
 		if (!result.description) throw Error('Results must have a description..');
 		if (!result.dice) throw Error('Results must have dice information attched..');
-		else if (!result.dice.roll) throw Error('Result must have final dice roll...');
-		this.result = result;
+		// else if (!result.dice.roll) throw Error('Result must have final dice roll...');
+		this.results.push(result);
 
 		const action = await this.save();
 
