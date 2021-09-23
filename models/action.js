@@ -142,11 +142,32 @@ ActionSchema.methods.postResult = async function(result) {
 		if (!result.dice) throw Error('Results must have dice information attched..');
 		// else if (!result.dice.roll) throw Error('Result must have final dice roll...');
 		this.results.push(result);
+		this.markModified('results');
 
 		const action = await this.save();
 
 		nexusEvent.emit('respondClient', 'update', [ action ]);
-		return ({ message : 'Action Result Edit Success', type: 'success' });
+		return ({ message : `Result Successfully added to ${this.name}`, type: 'success' });
+	}
+	catch (err) {
+		return { message : `Error: ${err}`, type: 'error' };
+	}
+};
+
+ActionSchema.methods.addEffect = async function(effect) {
+	// Expects effect: { description, type, asset <<Asset ref>>, action <<Action ref>>, other }
+	try {
+		if (!effect.description) throw Error('Effects must have a description..');
+		if (!effect.type) throw Error('Effects must have type attched..');
+		if (!effect[effect.type.toLowerCase()]) throw Error(`${effect.type} effects must have ${effect.type.toLowerCase()} attached...`);
+
+		this.effects.push(effect);
+		this.markModified('effects');
+
+		const action = await this.save();
+
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+		return ({ message : `Effect Successfully added to ${this.name}`, type: 'success' });
 	}
 	catch (err) {
 		return { message : `Error: ${err}`, type: 'error' };
