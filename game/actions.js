@@ -43,6 +43,7 @@ async function createAction(data, user) {
 
 		action = await action.save();
 		await action.submit(data.submission);
+		await action.populateMe();
 
 		const log = new History({
 			docType: 'action',
@@ -158,20 +159,23 @@ async function editAction(data, user) {
 	const changed = [];
 	const oldAction = await Action.findById(id);
 
-	let action = await Action.findByIdAndUpdate(id, data, { new: true });
+	if (!id) throw Error('Actions must have an _id...');
+	if (oldAction === undefined) throw Error('Could not find oldAction');
 
-	const character = await Character.findOne({ characterName: action.creator }).populate('lentAssets').populate('assets');
+	let action = await Action.findByIdAndUpdate(id, data, { new: true }).populate('creator');
+
+	const character = await Character.findById(action.creator._id).populate('lentAssets');
 	await character.expendEffort(action.effort - oldAction.effort);
 
-	let comment = new Comment({
-		body: `${user} edited this action...`,
-		author: user,
-		type: 'Info'
-	});
-	comment = await comment.save(); // Saves comment
+	// let comment = new Comment({
+	// 	body: `${user} edited this action...`,
+	// 	author: user,
+	// 	type: 'Info'
+	// });
+	// comment = await comment.save(); // Saves comment
 
-	action.comments.push(comment._id);
-	action.markModified('comments');
+	// action.comments.push(comment._id);
+	// action.markModified('comments');
 
 	action = await action.save();
 	await action.populateMe();

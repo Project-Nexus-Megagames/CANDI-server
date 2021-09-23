@@ -84,6 +84,7 @@ module.exports = function(server) {
 			// }
 			case 'update': {
 				// Expects data to be a Action object with edits
+				console.log(data);
 				response = await editAction(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionState') : null ;
 				break;

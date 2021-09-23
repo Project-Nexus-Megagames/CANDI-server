@@ -177,6 +177,7 @@ ActionSchema.methods.addEffect = async function(effect) {
 ActionSchema.methods.populateMe = function() {
 	return this
 		.populate('comments')
+		.populate('creator')
 		.execPopulate();
 };
 
