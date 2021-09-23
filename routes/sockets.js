@@ -7,7 +7,7 @@ const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
 
-const { editResult, createAction, deleteAction, submitAction, controlOverride, editAction } = require('../game/actions');
+const { editResult, createAction, deleteAction, controlOverride, editAction } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
@@ -48,15 +48,27 @@ module.exports = function(server) {
 				break;
 			}
 			case 'comment': {
+				// Expects data.id <<Action ref>>
+				// Expects data.comment <<Comment object>> { body, commentor, type, status }
 				console.log(data);
 				const action = await Action.findById(data.id);
 				action ? response = await action.comment(data.comment) : response = ({ message : `Could not find Action for ${data.id}`, type: 'error' });
 				break;
 			}
 			case 'result': {
+				// Expects data.id <<Action ref>>
+				// Expects data.result <<Result object>> { description, resolver, dice }
 				// console.log(data);
 				const action = await Action.findById(data.id);
 				response = await action.postResult(data.result);
+				break;
+			}
+			case 'effect': {
+				// Expects data.id <<Action ref>>
+				// Expects data.effect <<Effect object>> { description, type, asset <<Asset ref>>, action <<Action ref>>, other }
+				// console.log(data);
+				const action = await Action.findById(data.id);
+				response = await action.addEffect(data.effect);
 				break;
 			}
 			case 'delete': {
