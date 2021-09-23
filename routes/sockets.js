@@ -50,11 +50,11 @@ module.exports = function(server) {
 			case 'comment': {
 				console.log(data);
 				const action = await Action.findById(data.id);
-				response = await action.comment(data.comment);
+				action ? response = await action.comment(data.comment) : response = ({ message : `Could not find Action for ${data.id}`, type: 'error' });
 				break;
 			}
 			case 'result': {
-				console.log(data);
+				// console.log(data);
 				const action = await Action.findById(data.id);
 				response = await action.postResult(data.result);
 				break;
