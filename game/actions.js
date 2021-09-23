@@ -68,37 +68,6 @@ async function createAction(data, user) {
 	}
 }
 
-async function editResult(data, user) {
-	const { id, result, status, dieResult, mechanicalEffect } = data;
-	try {
-		const action = await Action.findById(id);
-
-		action.result = result;
-		action.dieResult = dieResult;
-		action.mechanicalEffect = mechanicalEffect;
-		if (status) {
-			action.status = status;
-		}
-
-		await action.save();
-
-		const log = new History({
-			docType: 'action',
-			action: 'edit',
-			function: 'editResult',
-			document: action,
-			user
-		});
-
-		await log.save();
-		nexusEvent.emit('respondClient', 'update', [ action ]);
-		return ({ message : 'Action Result Edit Success', type: 'success' });
-	}
-	catch (err) {
-		return { message : `Error: ${err}`, type: 'error' };
-	}
-}
-
 async function deleteAction(data, user) {
 	try {
 		const id = data.id;
@@ -205,6 +174,7 @@ async function editAction(data, user) {
 	action.markModified('comments');
 
 	action = await action.save();
+	await action.populateMe();
 
 	const log = new History({
 		docType: 'action',
@@ -232,8 +202,8 @@ async function editAction(data, user) {
 
 	await log.save(); // Saves history log
 	nexusEvent.emit('respondClient', 'update', [ action, ...changed, character ]);
-	console.log(`${action.type} "${action.intent}" edited.`);
+	console.log(`${action.type} "${action.name}" edited.`);
 	return { message : `${action.type} Edit Success`, type: 'success' };
 }
 
-module.exports = { removeEffort, addEffort, createAction, editResult, deleteAction, controlOverride, editAction };
+module.exports = { removeEffort, addEffort, createAction, deleteAction, controlOverride, editAction };
