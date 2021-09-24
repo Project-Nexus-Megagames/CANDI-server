@@ -145,6 +145,7 @@ ActionSchema.methods.postResult = async function(result) {
 		this.markModified('results');
 
 		const action = await this.save();
+		await action.populateMe();
 
 		nexusEvent.emit('respondClient', 'update', [ action ]);
 		return ({ message : `Result Successfully added to ${this.name}`, type: 'success' });
@@ -165,6 +166,7 @@ ActionSchema.methods.addEffect = async function(effect) {
 		this.markModified('effects');
 
 		const action = await this.save();
+		await action.populateMe();
 
 		nexusEvent.emit('respondClient', 'update', [ action ]);
 		return ({ message : `Effect Successfully added to ${this.name}`, type: 'success' });

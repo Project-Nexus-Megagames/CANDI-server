@@ -69,6 +69,45 @@ async function createAction(data, user) {
 	}
 }
 
+async function deleteSubObject(data, user) {
+	const id = data.id;
+	let action = await Action.findById(id);
+	if (action != null && data.result) {
+		const log = new History({
+			docType: 'action',
+			action: 'delete',
+			function: 'deleteResult',
+			document: action,
+			user
+		});
+		const result = action.results.findIndex(el => el._id.toHexString() === data.result); // results are populated,
+		action.results.splice(result, 1);
+		action = await action.save();
+		await action.populateMe();
+
+		await log.save();
+		logger.info(`Result with the id ${id} was deleted via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+	} // if
+	else if (action != null && data.comment) {
+		const log = new History({
+			docType: 'action',
+			action: 'delete',
+			function: 'deleteComment',
+			document: action,
+			user
+		});
+		const comment = action.comments.findIndex(el => el.toHexString() === data.comment); // comments are not populated,
+		action.comments.splice(comment, 1);
+		action = await action.save();
+		await action.populateMe();
+
+		await log.save();
+		logger.info(`Comment with the id ${id} was deleted via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+	} // if
+}
+
 async function deleteAction(data, user) {
 	try {
 		const id = data.id;
@@ -210,4 +249,4 @@ async function editAction(data, user) {
 	return { message : `${action.type} Edit Success`, type: 'success' };
 }
 
-module.exports = { removeEffort, addEffort, createAction, deleteAction, controlOverride, editAction };
+module.exports = { removeEffort, addEffort, createAction, deleteAction, controlOverride, editAction, deleteSubObject };
