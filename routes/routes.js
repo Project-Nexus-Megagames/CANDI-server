@@ -14,6 +14,7 @@ const asset = require('./api/assets');
 const location = require('./api/locations');
 const gamestate = require('./api/gamestate');
 const history = require('./api/history');
+const comment = require('./api/comment');
 const debugRoute = require('./api/debugRoute');
 
 // Route Function
@@ -30,6 +31,7 @@ module.exports = function(app) {
 	app.use('/api/locations', location);
 	app.use('/api/gamestate', gamestate);
 	app.use('/api/history', history);
+	app.use('/api/comment', comment);
 	app.use('/api/debugRoute', debugRoute);
 
 	app.use('/', home);

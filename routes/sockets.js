@@ -7,7 +7,7 @@ const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
 
-const { createAction, deleteAction, controlOverride, editAction, deleteSubObject } = require('../game/actions');
+const { createAction, deleteAction, controlOverride, editAction, deleteSubObject, editSubObject } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
@@ -86,19 +86,26 @@ module.exports = function(server) {
 			// }
 			case 'update': {
 				// Expects data to be a Action object with edits
-				console.log(data);
+				// console.log(data);
 				response = await editAction(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionState') : null ;
 				break;
 			}
 			case 'controlReject': {
-				console.log(data);
+				// console.log(data);
 				response = await controlOverride(data, client.username);
 				break;
 			}
 			case 'deleteSubObject': {
-				console.log(data);
+				// console.log(data);
 				response = await deleteSubObject(data, client.username);
+				break;
+			}
+			case 'updateSubObject': {
+				// console.log(data);
+				response = await editSubObject(data, client.username);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'EditComment') : null ;
+				response.type === 'success' ? client.emit('clearLocalStorage', 'EditResult') : null ;
 				break;
 			}
 			default:
