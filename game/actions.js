@@ -119,16 +119,25 @@ async function editSubObject(data, user) {
 			document: action,
 			user
 		});
-		const result = action.results.findIndex(el => el._id.toHexString() === data.result._id); // results are populated,
-		console.log(result);
-		// action.results.splice(result, 1);
-		// action = await action.save();
-		// await action.populateMe();
+		const result = action.results.findIndex(el => el._id.toHexString() === data.result.id); // results are populated,
+		let thing = action.results[result];
 
-		// await log.save();
-		// logger.info(`Result with the id ${id} was edited via Socket!`);
-		// nexusEvent.emit('respondClient', 'update', [ action ]);
-		// return ({ message : `Comment with the id ${id} was deleted via Socket!`, type: 'success' });
+		for (const el in data.result) {
+			if (data.result[el] !== undefined && data.result[el] !== '' && el !== '_id' && el !== 'model') {
+				thing[el] = data.result[el];
+			}
+			else {
+				console.log(`Detected invalid edit: ${el} is ${data.result[el]}`);
+			}
+		}
+
+		action = await action.save();
+		await action.populateMe();
+
+		await log.save();
+		logger.info(`Result with the id ${id} was edited via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+		return ({ message : `Result with the id ${id} was edited via Socket!`, type: 'success' });
 	} // if
 	else if (action != null && data.comment) {
 		const log = new History({
