@@ -156,7 +156,7 @@ router.patch('/deleteAll', async function(req, res) {
 router.post('/initCharacters', async function(req, res) { // initializes characters based on /config/startingCharacters.js.
 	logger.info('POST Route: api/character call made...');
 
-	const arr = ['Asset', 'Trait', 'Wealth', 'Bond', 'Power', 'Territory'];
+	const arr = ['Asset', 'Trait', 'Wealth', 'Power'];
 
 	try {
 		let npcCount = 0;

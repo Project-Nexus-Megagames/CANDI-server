@@ -20,11 +20,10 @@ const CharacterSchema = new Schema({
 	model:  { type: String, default: 'Character' },
 	playerName: { type: String, minlength: 1, maxlength: 50, required: true },
 	email: { type: String, required: true },
-	controllers: { type: String },
-	worldAnvil: { type: String },
+	wiki: { type: String, default: '' },
 	timeZone: { type: String, default: '???' },
 	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
-	characterActualName: { type: String, maxlength: 50, default: 'None' },
+	characterTitle: { type: String, maxlength: 50, default: 'None' },
 	tags: [{ type: String }],
 	username: { type: String, minlength: 2, maxlength: 50, required: true },
 	pronouns: { type: String },
@@ -42,6 +41,7 @@ const CharacterSchema = new Schema({
 	Fabrication: { type: Number, default: 0 },
 	Scholarship: { type: Number, default: 0 },
 	Pugilism : { type: Number, default: 0 },
+	Glory: { type: Number, default: 0 },
 	supporters: [{ type: String }], // legacy
 	effort: { type: Number, default: 2, min: 0, max: 6 }
 	// color: { type: String, default: 'ffffff' }
@@ -85,6 +85,13 @@ const Mortal = Character.discriminator(
 );
 
 
+const God = Character.discriminator(
+	'God',
+	new Schema({
+		type: { type: String, default: 'God' },
+		relationships: [ GodRelationshipSchema ]
+	})
+);
 
 
 module.exports = { Character, Mortal, God };

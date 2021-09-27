@@ -8,11 +8,10 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const AssetSchema = new Schema({
 	model: { type: String, default: 'Asset' },
-	type: { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth', 'Bond', 'Power', 'Territory'] },
+	type: { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth', 'Power', 'Territory', 'GodBond', 'MortalBond'] },
 	name: { type: String, required: true },
 	dice: { type: String, required: true, default: 'd6' },
 	description: { type: String, required: true },
-	level: { type: String, default: 'Neutral', enum: ['Loathing', 'Unfriendly', 'Neutral', 'Warm', 'Friendly', 'Bonded' ] },
 	status: {
 		hidden: { type: Boolean, default: false },
 		lent: { type: Boolean, default: false },
@@ -46,20 +45,17 @@ const Asset = mongoose.model('Asset', AssetSchema);
 const GodBond = Asset.discriminator(
 	'GodBond',
 	new Schema({
-		type: { type: String, default: 'GodBond' },
-		with: { type: ObjectId, ref: 'Character' },
-		level: { type: String, enum: ['Neutral', 'Preferred', 'Favoured', 'Blessed' ] }
+		with: { type: ObjectId, ref: 'Character', required: true },
+		level: { type: String, enum: ['Loathing', 'Unfriendly', 'Neutral', 'Preferred', 'Favoured', 'Blessed' ] }
 	})
 );
 
 const MortalBond = Asset.discriminator(
 	'MortalBond',
 	new Schema({
-		type: { type: String, default: 'MortalBond' },
-		with: { type: ObjectId, ref: 'Character' },
-		level: { type: String, enum: ['Neutral', 'Warm', 'Friendly', 'Bonded' ] }	})
+		with: { type: ObjectId, ref: 'Character', required: true },
+		level: { type: String, enum: ['Loathing', 'Unfriendly', 'Neutral', 'Warm', 'Friendly', 'Bonded' ] }	})
 );
-
 
 
 module.exports = { Asset, GodBond, MortalBond };

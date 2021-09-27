@@ -199,7 +199,7 @@ module.exports = function(server) {
 				break;
 			}
 			case 'create': {
-				// console.log(data);
+				console.log(data);
 				response = await addAsset(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'addAssetState') : null ;
 				break;

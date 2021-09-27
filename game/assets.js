@@ -1,6 +1,6 @@
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const { logger } = require('../middleware/log/winston');
-const { Asset } = require('../models/asset');
+const { Asset, GodBond } = require('../models/asset');
 const { Character } = require('../models/character');
 const { History } = require('../models/history');
 
@@ -55,21 +55,26 @@ async function addAsset(data, user) {
 			return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
 		}
 		else {
-			let newAsset = new Asset(asset);
-			switch (newAsset.type) {
+			let newAsset;
+			switch (data.asset.type) {
 			case 'Asset':
+				newAsset = new Asset(asset);
 				newAsset.status.lendable = true;
 				break;
 			case 'Territory':
+				newAsset = new Asset(asset);
 				newAsset.status.lendable = true;
 				newAsset.uses = 999;
 				break;
-			default:
+			case 'GodBond':
+				newAsset = new GodBond(asset);
+				newAsset.status.lendable = false;
 				newAsset.uses = 999;
 				break;
+			default:
+				throw Error(`${data.type} is Invalid!`);
 			}
-			// character.assets.push(newAsset);
-			// character = await character.save();
+
 			newAsset = await newAsset.save();
 			nexusEvent.emit('respondClient', 'create', [ newAsset ]);
 			// nexusEvent.emit('respondClient', 'update', [ character ]);
@@ -86,7 +91,7 @@ async function addAsset(data, user) {
 
 			await log.save();
 
-			return ({ message : `${newAsset.name} created`, type: 'success' });
+			return ({ message : `${newAsset.type} ${newAsset.name} created`, type: 'success' });
 		}
 	}
 	catch (err) {
