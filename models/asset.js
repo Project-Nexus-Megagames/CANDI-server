@@ -26,6 +26,7 @@ const AssetSchema = new Schema({
 	uses: { type: Number, default: 2 }
 });
 
+
 AssetSchema.methods.use = async function() {
 	this.status.used = true;
 	const asset = await this.save();
@@ -40,8 +41,25 @@ AssetSchema.methods.unuse = async function() {
 	return asset;
 };
 
-
 const Asset = mongoose.model('Asset', AssetSchema);
 
+const GodBond = Asset.discriminator(
+	'GodBond',
+	new Schema({
+		type: { type: String, default: 'GodBond' },
+		with: { type: ObjectId, ref: 'Character' },
+		level: { type: String, enum: ['Neutral', 'Preferred', 'Favoured', 'Blessed' ] }
+	})
+);
 
-module.exports = { Asset };
+const MortalBond = Asset.discriminator(
+	'MortalBond',
+	new Schema({
+		type: { type: String, default: 'MortalBond' },
+		with: { type: ObjectId, ref: 'Character' },
+		level: { type: String, enum: ['Neutral', 'Warm', 'Friendly', 'Bonded' ] }	})
+);
+
+
+
+module.exports = { Asset, GodBond, MortalBond };

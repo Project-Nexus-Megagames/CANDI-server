@@ -84,13 +84,7 @@ const Mortal = Character.discriminator(
 	})
 );
 
-const God = Character.discriminator(
-	'God',
-	new Schema({
-		type: { type: String, default: 'God' },
-		relationships: [ GodRelationshipSchema ]
-	})
-);
+
 
 
 module.exports = { Character, Mortal, God };
