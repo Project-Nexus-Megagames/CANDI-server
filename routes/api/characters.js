@@ -242,10 +242,10 @@ router.patch('/register', async (req, res) => {
 			res.status(200).json(data);
 
 			const emailStuff = {
-				from: 'Afterlife Registration',
+				from: 'Nexus Registration',
 				to: data.email,
-				subject: 'Afterlife Registration',
-				html: `<p>Dear ${data.playerName},</p> <p> You have been successfully registered for the Afterlife App, and can now log in. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p><b>Note:</b> The webpage may take a moment to load on your first log-in. </p> <p>Have fun!</p> <p>Your Character: ${data.characterName} </p> https://afterlife-app.herokuapp.com/`
+				subject: 'Nexus Registration',
+				html: `<p>Dear ${data.playerName},</p> <p> You have been successfully registered for Nexus App. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p><b>Note:</b> The webpage may take a moment to load on your first log-in. </p> <p>Have fun!</p> <p>Your Character: ${data.characterName} </p> https://afterlife-app.herokuapp.com/`
 			};
 			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
 		}

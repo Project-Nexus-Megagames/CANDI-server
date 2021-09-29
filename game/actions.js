@@ -5,6 +5,7 @@ const { logger } = require('../middleware/log/winston');
 const { Asset } = require('../models/asset');
 const { Comment } = require('../models/comment');
 const { History } = require('../models/history');
+const { GameState } = require('../models/gamestate');
 
 async function removeEffort(data) {
 	let character = await Character.findOne({ characterName: data.creator });
@@ -28,18 +29,18 @@ async function createAction(data, user) {
 	try {
 		// Data check errors!
 		// if (!data.type) throw Error('New actions require a type...');
-		if (data.round === undefined) throw Error('New actions require a round...');
 		if (!data.creator) throw Error('New actions must have a character _id for creator...');
 		if (!data.submission) throw Error('You must include a submission...');
 		if (!data.controllers) throw Error('New actions must have a controllers array...');
 		else if (data.controllers.length < 1) throw Error('New actions must at least 1 controller assigned to it...');
 
-		const { type, round, creator, controllers } = data;
+		const { type, creator, controllers } = data;
 
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
+		const gamestate = await GameState.findOne();
 
-		let action = new Action({ type, name: `${character.playerName} action ${actions.length + 1}`, round, creator, controllers, status: ['Draft'] });
+		let action = new Action({ type, name: `${character.playerName} action ${actions.length + 1}`, round: gamestate.round, creator, controllers });
 
 		action = await action.save();
 		await action.submit(data.submission);

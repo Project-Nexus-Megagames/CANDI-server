@@ -24,14 +24,10 @@ const submissionSchema = new Schema({
 
 const resultSchema = new Schema({
 	model: { type: String, default: 'Result' },
+	status: { type: String, default: 'Private', enum: ['Public', 'Private'] },
 	resolver: { type: String, required: true },
 	description: { type: String, default: 'None yet...', required: true }, // Description of the result
 	dice: { type: String, default: 'None' }
-	// dice: {
-	// 	amount: { type: Number, default: 1 }, // Amount of dice rolled
-	// 	type: { type: String, enum: ['d6', 'd8', 'd10', 'd12', 'd20', 'd100'] }, // Type of dice rolled
-	// 	roll: { type: String, default: 'None yet...', required: true } // Result of roll
-	// }
 }, { timestamps: true });
 
 const effectSchema = new Schema({
@@ -54,7 +50,6 @@ const ActionSchema = new Schema({
 	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	progress: { type: Number, default: 0, min: 0, max: 100 }, // % of compleation | Goes to 100% automatically when control posts a RESULT
 	effort: { type: Number, required: true, default: 0 }, // Current effort assigned to the ACTION
-	status: [{ type: String, enum: ['Draft', 'Awaiting', 'Ready', 'Published' ] }], // Any current STATUS of this ACTION
 	tags: [{ Type: String }], // Any tags added by control
 	image: { type: String }, // URL for an image associated with this ACTION
 	submission: submissionSchema, // Player submission that created the ACTION

@@ -72,7 +72,7 @@ async function addAsset(data, user) {
 				newAsset.uses = 999;
 				break;
 			default:
-				throw Error(`${data.type} is Invalid!`);
+				throw Error(`Type '${data.type}' is Invalid!`);
 			}
 
 			newAsset = await newAsset.save();
