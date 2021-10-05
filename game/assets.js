@@ -6,7 +6,7 @@ const { History } = require('../models/history');
 
 async function modifyAsset(data, user) {
 	try {
-		const { id, name, description, uses, used, owner, hidden, lendable, level } = data;
+		const { id, name, description, uses, used, owner, hidden, lendable, level, dice } = data;
 		const asset = await Asset.findById(id);
 
 		if (asset === null) {
@@ -20,6 +20,7 @@ async function modifyAsset(data, user) {
 			asset.description = description;
 			asset.uses = uses;
 			asset.level = level;
+			asset.dice = dice;
 			asset.owner = owner;
 			asset.status.used = used;
 			asset.status.hidden = hidden;
