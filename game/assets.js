@@ -1,6 +1,6 @@
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const { logger } = require('../middleware/log/winston');
-const { Asset, GodBond } = require('../models/asset');
+const { Asset, GodBond, MortalBond } = require('../models/asset');
 const { Character } = require('../models/character');
 const { History } = require('../models/history');
 
@@ -71,8 +71,13 @@ async function addAsset(data, user) {
 				newAsset.status.lendable = false;
 				newAsset.uses = 999;
 				break;
+			case 'MortalBond':
+				newAsset = new MortalBond(asset);
+				newAsset.status.lendable = false;
+				newAsset.uses = 999;
+				break;
 			default:
-				throw Error(`Type '${data.type}' is Invalid!`);
+				throw Error(`Type '${data.asset.type}' is Invalid!`);
 			}
 
 			newAsset = await newAsset.save();
