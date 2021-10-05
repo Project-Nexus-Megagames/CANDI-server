@@ -39,17 +39,10 @@ async function modifyGameState(data, user) {
 async function closeRound() {
 	const gamestate = await GameState.findOne();
 	try {
-		const actions = await Action.find({ 'status': 'Draft' });
-		for (const action of actions) {
-			action.status = 'Awaiting';
-			action.dieResult = await calculateDie(action);
-			await action.save();
-		}
 
 		gamestate.status = 'Resolution';
 		await gamestate.save();
 
-		nexusEvent.emit('respondClient', 'update', actions);
 		nexusEvent.emit('respondClient', 'update', [ gamestate ]);
 		return ({ message : 'Round Closed Success', type: 'success' });
 	}
@@ -124,18 +117,14 @@ async function nextRound() {
 
 		for (const character of await Character.find()) {
 			character.lentAssets = [];
-			character.feed = false;
-			character.effort = 3;
+			character.effort = 2;
 			character.save();
-			console.log(`Restoring effort of  ${character.characterName}`);
+			console.log(`Restoring effort of ${character.characterName}`);
 		}
-
-		for (const action of await Action.find({ 'status': 'Ready' })) {
+		for (const action of await Action.find({ 'round': gamestate.round })) {
 			action.status = 'Published';
 
-			const { asset1, asset2, asset3 } = action; // find all assets being used for new action and use them
-			const arr = [asset1, asset2, asset3];
-			for (const el of arr) {
+			for (const el of action.submission.assets) {
 				if (el !== null || el !== undefined) {
 					let asset = el ? await Asset.findOne({ name: el }) : undefined;
 					if (asset) {
@@ -157,7 +146,13 @@ async function nextRound() {
 				}
 			}
 
+			for (const el of action.results) {
+				console.log(`Making public result ${el._id}`);
+				el.status = 'Public';
+			}
+
 			await action.save();
+			await action.populateMe();
 			actions.push(action);
 		}
 

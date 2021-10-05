@@ -5,44 +5,25 @@ const { default: axios } = require('axios');
 
 
 async function modifyCharacter(data) {
-	const { id, effort, email, worldAnvil, tag, standing, control, timeZone, popsupport, bio, characterName, color, characterActualName, controlEmail, pronouns } = data;
-	const character = await Character.findById(id).populate('assets').populate('lent');
+	const { _id } = data;
+	const character = await Character.findById(_id);
 
 	try {
 		if (character === null) {
-			return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
+			return ({ message : `Could not find a character for _id "${_id}"`, type: 'error' });
 		}
 		else if (character.length > 1) {
-			return ({ message : `Found multiple characters for id ${id}`, type: 'error' });
+			return ({ message : `Found multiple characters for _id ${_id}`, type: 'error' });
 		}
 		else {
 			for (const el in data) {
-				if (data[el] && data[el] !== '' && el !== 'id' && el !== 'characterName') {
+				if (data[el] !== undefined && data[el] !== '' && el !== '_id' && el !== 'model') {
 					character[el] = data[el];
 				}
 				else {
 					console.log(`Detected invalid edit: ${el} is ${data[el]}`);
 				}
 			}
-			/*
-			character.email = email;
-			character.characterName = characterName;
-			character.worldAnvil = worldAnvil;
-			character.tag = tag;
-			character.control = control;
-			character.timeZone = timeZone;
-			character.effort = effort;
-			character.standingOrders = standing;
-
-			character.popsupport = popsupport;
-			character.bio = bio;
-
-			character.color = color;
-			character.characterActualName = characterActualName;
-			if (controlEmail && controlEmail !== '') character.controlEmail = controlEmail;
-			character.pronouns = pronouns;
-			*/
-
 
 			await character.save();
 			character.populate('assets').populate('lentAssets');
@@ -95,10 +76,10 @@ async function register(data) {
 			regChar = await regChar.save();
 			nexusEvent.emit('respondClient', 'update', [ regChar ]);
 			const emailStuff = {
-				from: 'Dusk City Registration',
+				from: 'CANDI Registration',
 				to: email,
-				subject: 'Dusk City Registration',
-				html: `<p>Dear ${regChar.playerName},</p> <p> You have been successfully registered for the Dusk City CANDI App, and can now log in. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p>Have fun!</p> <p>Your Character: ${regChar.characterName} </p> https://candi-app.herokuapp.com/home`
+				subject: 'CANDI Registration',
+				html: `<p>Dear ${regChar.playerName},</p> <p> You have been successfully registered on the CANDI App, and can now log in. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p>Have fun!</p> <p>Your Character: ${regChar.characterName} </p> https://candi-app.herokuapp.com/home`
 			};
 			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
 		}

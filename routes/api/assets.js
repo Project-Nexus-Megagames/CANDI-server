@@ -11,8 +11,6 @@ const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { Character } = require('../../models/character');
 const { assets } = require('../../config/startingData');
-const { characters } = require('../../config/startingCharacters');
-const { Action } = require('../../models/action');
 
 // @route   GET api/assets
 // @Desc    Get all assets
@@ -24,8 +22,8 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const assets = await Asset.find();
-			res.status(200).json(assets);
+			const asses = await Asset.find();
+			res.status(200).json(asses);
 		}
 		catch (err) {
 			logger.error(err.message, { meta: err.stack });
@@ -143,6 +141,34 @@ router.patch('/deleteAll', async function(req, res) {
 	}
 	nexusEvent.emit('updateCharacters');
 	return res.status(200).send(`We wiped out ${delCount} Assets`);
+});
+
+router.post('/initAssets', async function(req, res) {
+	logger.info('POST Route: api/assets/initAssets call made...');
+
+	try {
+		let assCount = 0;
+
+		for (const ass of assets) {
+			const newAsset = new Asset(ass);
+			switch (newAsset.type) {
+			case 'Asset':
+				newAsset.lendable = true;
+				break;
+			default:
+				newAsset.uses = 999;
+				break;
+			}
+			newAsset.save();
+			assCount++;
+			logger.info(`${newAsset.name} created.`);
+		}
+		logger.info(`Created ${assCount} Assets.`);
+		res.status(200).send('All done');
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
 });
 
 router.patch('/test2', async function(req, res, next) {

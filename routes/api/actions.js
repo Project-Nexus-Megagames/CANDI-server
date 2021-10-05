@@ -23,7 +23,9 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const actions = await Action.find();
+			const actions = await Action.find()
+				.populate('comments')
+				.populate('creator');
 			res.status(200).json(actions);
 		}
 		catch (err) {

@@ -8,10 +8,10 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const AssetSchema = new Schema({
 	model: { type: String, default: 'Asset' },
-	type: { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth', 'Bond', 'Power', 'Territory'] },
+	type: { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth', 'Power', 'Territory', 'GodBond', 'MortalBond'] },
 	name: { type: String, required: true },
+	dice: { type: String, required: true, default: 'd6' },
 	description: { type: String, required: true },
-	level: { type: String, default: 'Neutral', enum: ['Loathing', 'Unfriendly', 'Neutral', 'Warm', 'Friendly', 'Bonded' ] },
 	status: {
 		hidden: { type: Boolean, default: false },
 		lent: { type: Boolean, default: false },
@@ -24,6 +24,7 @@ const AssetSchema = new Schema({
 	currentHolder: { type: String },
 	uses: { type: Number, default: 2 }
 });
+
 
 AssetSchema.methods.use = async function() {
 	this.status.used = true;
@@ -39,8 +40,22 @@ AssetSchema.methods.unuse = async function() {
 	return asset;
 };
 
-
 const Asset = mongoose.model('Asset', AssetSchema);
 
+const GodBond = Asset.discriminator(
+	'GodBond',
+	new Schema({
+		with: { type: ObjectId, ref: 'Character', required: true },
+		level: { type: String, enum: ['Loathing', 'Unfriendly', 'Neutral', 'Preferred', 'Favoured', 'Blessed' ] }
+	})
+);
 
-module.exports = { Asset };
+const MortalBond = Asset.discriminator(
+	'MortalBond',
+	new Schema({
+		with: { type: ObjectId, ref: 'Character', required: true },
+		level: { type: String, enum: ['Loathing', 'Unfriendly', 'Neutral', 'Warm', 'Friendly', 'Bonded' ] }	})
+);
+
+
+module.exports = { Asset, GodBond, MortalBond };

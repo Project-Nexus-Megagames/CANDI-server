@@ -7,7 +7,7 @@ const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
 
-const { editResult, createAction, createProject, deleteAction, controlOverride, newEditAction } = require('../game/actions');
+const { createAction, deleteAction, controlOverride, editAction, deleteSubObject, editSubObject } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
@@ -43,7 +43,34 @@ module.exports = function(server) {
 			case 'create': {
 				// console.log(data);
 				response = await createAction(data, client.username);
+
 				response.type === 'success' ? client.emit('clearLocalStorage', 'newActionState') : null ;
+				break;
+			}
+			case 'comment': {
+				// Expects data.id <<Action ref>>
+				// Expects data.comment <<Comment object>> { body, commentor, type, status }
+				// console.log(data);
+				const action = await Action.findById(data.id);
+				action ? response = await action.comment(data.comment) : response = ({ message : `Could not find Action for ${data.id}`, type: 'error' });
+				response.type === 'success' ? client.emit('clearLocalStorage', 'NewComment') : null ;
+				break;
+			}
+			case 'result': {
+				// Expects data.id <<Action ref>>
+				// Expects data.result <<Result object>> { description, resolver, dice }
+				// console.log(data);
+				const action = await Action.findById(data.id);
+				action ? response = await action.postResult(data.result) : response = ({ message : `Could not find Action for ${data.id} in 'result'`, type: 'error' });
+				response.type === 'success' ? client.emit('clearLocalStorage', 'newResultState') : null ;
+				break;
+			}
+			case 'effect': {
+				// Expects data.id <<Action ref>>
+				// Expects data.effect <<Effect object>> { description, type, asset <<Asset ref>>, action <<Action ref>>, other }
+				// console.log(data);
+				const action = await Action.findById(data.id);
+				response = await action.addEffect(data.effect);
 				break;
 			}
 			case 'delete': {
@@ -51,26 +78,34 @@ module.exports = function(server) {
 				response = await deleteAction(data, client.username);
 				break;
 			}
-			case 'createProject': {
-				// console.log(data);
-				response = await createProject(data, client.username);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'newProjectState') : null ;
-				break;
-			}
+			// case 'createProject': {
+			// 	// console.log(data);
+			// 	response = await createProject(data, client.username);
+			// 	response.type === 'success' ? client.emit('clearLocalStorage', 'newProjectState') : null ;
+			// 	break;
+			// }
 			case 'update': {
+				// Expects data to be a Action object with edits
 				// console.log(data);
-				if (data.playerBoolean) {
-					response = await newEditAction(data, client.username);
-				}
-				else {
-					response = await editResult(data, client.username);
-				}
+				response = await editAction(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionState') : null ;
 				break;
 			}
 			case 'controlReject': {
-				console.log(data);
+				// console.log(data);
 				response = await controlOverride(data, client.username);
+				break;
+			}
+			case 'deleteSubObject': {
+				// console.log(data);
+				response = await deleteSubObject(data, client.username);
+				break;
+			}
+			case 'updateSubObject': {
+				// console.log(data);
+				response = await editSubObject(data, client.username);
+				response.type === 'success' ? client.emit('clearLocalStorage', 'EditComment') : null ;
+				response.type === 'success' ? client.emit('clearLocalStorage', 'EditResult') : null ;
 				break;
 			}
 			default:
@@ -164,7 +199,7 @@ module.exports = function(server) {
 				break;
 			}
 			case 'create': {
-				// console.log(data);
+				console.log(data);
 				response = await addAsset(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'addAssetState') : null ;
 				break;

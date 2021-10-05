@@ -3,96 +3,48 @@ const nexusEvent = require('../middleware/events/events'); // Local event trigge
 const { Action } = require('../models/action');
 const { logger } = require('../middleware/log/winston');
 const { Asset } = require('../models/asset');
+const { Comment } = require('../models/comment');
 const { History } = require('../models/history');
+const { GameState } = require('../models/gamestate');
 
 async function removeEffort(data) {
-	const character = await Character.findOne({ characterName: data.creator });
-	character.effort = character.effort - data.effort;
-	await character.save();
-	character.populate('assets').populate('lentAssets');
+	let character = await Character.findOne({ characterName: data.creator });
+	character = await character.expendEffort(data.effort);
+
 	// nexusEvent.emit('updateCharacters');
 	return character;
 }
 
 async function addEffort(data) {
-	const character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
-	character.effort = character.effort + data.effort;
-	if (character.effort > 3) character.effort = 3;
-	await character.save();
+	let character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
+	character = await character.restoreEffort(data.effort);
 
 	// nexusEvent.emit('updateCharacters');
 
 	return character;
 }
 
-async function editResult(data, user) {
-	const { id, result, status, dieResult, mechanicalEffect } = data;
-	try {
-		const action = await Action.findById(id);
-
-		action.result = result;
-		action.dieResult = dieResult;
-		action.mechanicalEffect = mechanicalEffect;
-		if (status) {
-			action.status = status;
-		}
-
-		await action.save();
-
-		const log = new History({
-			docType: 'action',
-			action: 'edit',
-			function: 'editResult',
-			document: action,
-			user
-		});
-
-		await log.save();
-		nexusEvent.emit('respondClient', 'update', [ action ]);
-		return ({ message : 'Action Result Edit Success', type: 'success' });
-	}
-	catch (err) {
-		return { message : `Error: ${err}`, type: 'error' };
-	}
-
-}
-
 async function createAction(data, user) {
+	// Expecting -  round, creator <<character_id>>, controllers <<Array>>, submission <<submissionSchema>>
 	try {
-		let action = new Action(data);
-		const changed = [];
-		// console.log(data);
-		let character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
+		// Data check errors!
+		// if (!data.type) throw Error('New actions require a type...');
+		if (!data.creator) throw Error('New actions must have a character _id for creator...');
+		if (!data.submission) throw Error('You must include a submission...');
+		if (!data.controllers) throw Error('New actions must have a controllers array...');
+		else if (data.controllers.length < 1) throw Error('New actions must at least 1 controller assigned to it...');
 
-		// const { asset1, asset2, asset3 } = data; // find all assets being used for new action and use them
-		// const arr = [asset1, asset2, asset3];
-		// for (const el of arr) {
-		// 	if (el) {
-		// 		let asset = await Asset.findOne({ name: el });
-		// 		asset.status.used = true;
-		// 		asset = await asset.save();
-		// 		nexusEvent.emit('respondClient', 'update', [ asset ]);
-		// 	}
-		// }
+		const { type, creator, controllers } = data;
 
-		for (let i = 1; i < 4; i++) {
-			if (action[`asset${i}`]) {
-				let asset = await Asset.findOne({ name: action[`asset${i}`] });
-				asset = await asset.use();
-				changed.push(asset);
-			}
-		}
+		const character = await Character.findById(creator);
+		const actions = await Action.find({ creator });
+		const gamestate = await GameState.findOne();
 
-		if (action.type === 'Feed') {
-			character.feed = true;
-			character = await character.save();
-		}
-		else if (action.type === 'Action') {
-			character.effort = character.effort - data.effort;
-			character = await character.save();
-		}
+		let action = new Action({ type, name: `${character.playerName} action ${actions.length + 1}`, round: gamestate.round, creator, controllers });
 
 		action = await action.save();
+		await action.submit(data.submission);
+		await action.populateMe();
 
 		const log = new History({
 			docType: 'action',
@@ -100,97 +52,143 @@ async function createAction(data, user) {
 			function: 'createAction',
 			document: action,
 			user,
-			character: character._id
+			character: creator
 		});
 
 		await log.save();
 
-		logger.info(`${action.type} "${action.intent}" created.`);
+		logger.info(`${action.type} "${action._id}" created.`);
 
-		nexusEvent.emit('respondClient', 'update', [ character, ...changed ]);
 		nexusEvent.emit('respondClient', 'create', [ action ]);
 		return ({ message : `${action.type} Creation Success`, type: 'success' });
 
 	}
 	catch (err) {
+		console.log(err);
 		logger.error(`message : Server Error: ${err}`);
 		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
 	}
 }
 
-async function createProject(data, user) {
-	// TODO Scott review that this is what you want projects to do....
-	// TODO how is character information passed for projects?
-	let action = new Action(data);
-	action.status.draft = false;
-	action.status.published = true;
+async function deleteSubObject(data, user) {
+	const id = data.id;
+	let action = await Action.findById(id);
+	if (action != null && data.result) {
+		const log = new History({
+			docType: 'action',
+			action: 'delete',
+			function: 'deleteResult',
+			document: action,
+			user
+		});
+		const result = action.results.findIndex(el => el._id.toHexString() === data.result); // results are populated,
+		action.results.splice(result, 1);
+		action = await action.save();
+		await action.populateMe();
 
-	action = await action.save();
+		await log.save();
+		logger.info(`Result with the id ${id} was deleted via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+	} // if
+	else if (action != null && data.comment) {
+		const log = new History({
+			docType: 'action',
+			action: 'delete',
+			function: 'deleteComment',
+			document: action,
+			user
+		});
+		const comment = action.comments.findIndex(el => el.toHexString() === data.comment); // comments are not populated,
+		action.comments.splice(comment, 1);
+		action = await action.save();
+		await action.populateMe();
 
-	const log = new History({
-		docType: 'action',
-		action: 'create',
-		function: 'createProject',
-		document: action,
-		user
-	});
+		await log.save();
+		logger.info(`Comment with the id ${id} was deleted via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+	} // if
+}
 
-	await log.save();
+async function editSubObject(data, user) {
+	const id = data.id;
+	let action = await Action.findById(id);
+	if (action != null && data.result) {
+		const log = new History({
+			docType: 'action',
+			action: 'edit',
+			function: 'editResult',
+			document: action,
+			user
+		});
+		const result = action.results.findIndex(el => el._id.toHexString() === data.result.id); // results are populated,
+		let thing = action.results[result];
 
-	// nexusEvent.emit('respondClient', 'update', [ character ]);
-	nexusEvent.emit('respondClient', 'create', [ action ]);
-	return ({ message : `${action.type} Creation Success`, type: 'success' });
+		for (const el in data.result) {
+			if (data.result[el] !== undefined && data.result[el] !== '' && el !== '_id' && el !== 'model') {
+				thing[el] = data.result[el];
+			}
+			else {
+				console.log(`Detected invalid edit: ${el} is ${data.result[el]}`);
+			}
+		}
+
+		action = await action.save();
+		await action.populateMe();
+
+		await log.save();
+		logger.info(`Result with the id ${id} was edited via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+		return ({ message : `Result with the id ${id} was edited via Socket!`, type: 'success' });
+	} // if
+	else if (action != null && data.comment) {
+		const log = new History({
+			docType: 'action',
+			action: 'edit',
+			function: 'editComment',
+			document: action,
+			user
+		});
+		let comment = await Comment.findByIdAndUpdate(data.comment._id, data.comment, { new: true }).populate('creator');
+		action = await Action.findById(id);
+		action = await action.save();
+		await action.populateMe();
+
+		await log.save();
+		logger.info(`Comment with the id ${id} was edited via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+		return ({ message : `Comment with the id ${id} was edited via Socket!`, type: 'success' });
+	} // if
 }
 
 async function deleteAction(data, user) {
 	try {
 		const id = data.id;
-		let element = await Action.findById(id);
+		let action = await Action.findById(id);
 		const changed = [];
 
-		if (element != null) {
+		if (action != null) {
 			const log = new History({
 				docType: 'action',
 				action: 'delete',
 				function: 'deleteAction',
-				document: element,
+				document: action,
 				user
 			});
 
-			if (element.type === 'Action') {
-				const character = await addEffort(element);
-				character.populate('assets').populate('lentAssets');
-				nexusEvent.emit('respondClient', 'update', [ character ]);
-			}
-			else{
-				const character = await Character.findOne({ characterName: element.creator }).populate('assets').populate('lentAssets');
-				character.feed = false;
-				await character.save();
-				nexusEvent.emit('respondClient', 'update', [ character ]);
-				log.character = character;
-				log.user = character.username;
-			}
+			const character = await Character.findById(action.creator).populate('assets').populate('lentAssets');
+			await character.restoreEffort(action.effort);
+			nexusEvent.emit('respondClient', 'update', [ character ]);
 
-			for (let i = 1; i < 4; i++) {
-				if (element[`asset${i}`]) { // CASE 1: An old asset slot is getting removed
-					let asset = await Asset.findOne({ name: element[`asset${i}`] });
-					asset = await asset.unuse();
+
+			for (const item of action.assets) {
+				if (!action.assets.some(el => el.toString() === item.toString())) {
+					let asset = await Asset.findById(item);
+					asset ? asset = await asset.unuse() : console.log('Avoided un-using a thing!');
 					changed.push(asset);
 				}
 			}
 
-			// const { asset1, asset2, asset3 } = element; // find all assets being used for new action and use them
-			// const arr = [asset1, asset2, asset3];
-			// for (const el of arr) {
-			// 	if (el) {
-			// 		const asset = await Asset.findOne({ name: el });
-			// 		asset.status.used = false;
-			// 		await asset.save();
-			// 		nexusEvent.emit('respondClient', 'update', [ asset ]);
-			// 	}
-			// }
-
-			element = await Action.findByIdAndDelete(id);
+			action = await Action.findByIdAndDelete(id);
 			await log.save();
 
 			logger.info(`Action with the id ${id} was deleted via Socket!`);
@@ -211,30 +209,34 @@ async function deleteAction(data, user) {
 async function controlOverride(data, user) {
 	try {
 		const { id, asset } = data;
-		let element = await Action.findById(id);
+		let action = await Action.findById(id);
+		if (!action) return ({ message : `No action with the id ${id} exists!`, type: 'error' });
+		const item = await Asset.findById(asset);
+		if (!item) return ({ message : `No asset with the id ${id} exists!`, type: 'error' });
 
-		if (element != null) {
-			element[asset] = '';
-			element = await element.save();
+		const i = action.assets.findIndex(el => el.toString() === asset.toString());
+		if (i > -1) {
+			action.assets.splice(i, 1);
+			action.markModified('assets');
+
+			action = await action.save();
 
 			const log = new History({
 				docType: 'action',
 				action: 'override',
 				function: 'controlOverride',
-				document: element,
+				document: action,
 				user
 			});
 
 			await log.save();
 
 			logger.info(`Asset ${asset} removed`);
-			nexusEvent.emit('respondClient', 'update', [ element ]);
+			nexusEvent.emit('respondClient', 'update', [ action ]);
 			return ({ message : `Asset ${asset} removed`, type: 'success' });
-
-
 		}
 		else {
-			return ({ message : `No action with the id ${id} exists!`, type: 'error' });
+			throw Error(`Asset ${item.name} is not attached to this action.`);
 		}
 	}
 	catch (err) {
@@ -243,16 +245,31 @@ async function controlOverride(data, user) {
 	}
 }
 
-async function newEditAction(data, user) {
-	const { id, effort } = data;
+async function editAction(data, user) {
+	const { id } = data;
 	const changed = [];
 	const oldAction = await Action.findById(id);
-	const action = await Action.findByIdAndUpdate(id, data, { new: true });
 
-	const character = await Character.findOne({ characterName: action.creator }).populate('lentAssets').populate('assets');
-	character.effort = character.effort - (action.effort - oldAction.effort);
+	if (!id) throw Error('Actions must have an _id...');
+	if (oldAction === undefined) throw Error('Could not find oldAction');
 
-	await character.save();
+	let action = await Action.findByIdAndUpdate(id, data, { new: true }).populate('creator');
+
+	const character = await Character.findById(action.creator._id).populate('lentAssets');
+	await character.expendEffort(action.effort - oldAction.effort);
+
+	// let comment = new Comment({
+	// 	body: `${user} edited this action...`,
+	// 	author: user,
+	// 	type: 'Info'
+	// });
+	// comment = await comment.save(); // Saves comment
+
+	// action.comments.push(comment._id);
+	// action.markModified('comments');
+
+	action = await action.save();
+	await action.populateMe();
 
 	const log = new History({
 		docType: 'action',
@@ -262,14 +279,17 @@ async function newEditAction(data, user) {
 		document: action
 	});
 
-	for (let i = 1; i < 4; i++) {
-		if (oldAction[`asset${i}`] && action[`asset${i}`] !== oldAction[`asset${i}`]) { // CASE 1: An old asset slot is getting removed
-			let asset = await Asset.findOne({ name: oldAction[`asset${i}`] });
+	for (const item of oldAction.assets) {
+		if (!action.assets.some(el => el === item.toString())) {
+			let asset = await Asset.findById(item);
 			asset ? asset = await asset.unuse() : console.log('Avoided un-using a thing!');
 			changed.push(asset);
 		}
-		if (action[`asset${i}`] && action[`asset${i}`] !== oldAction[`asset${i}`]) {
-			let asset = await Asset.findOne({ name: action[`asset${i}`] });
+	}
+
+	for (const item of action.assets) {
+		if (!oldAction.assets.some(el => el === item.toString())) {
+			let asset = await Asset.findById(item);
 			asset ? asset = await asset.use() : console.log('Avoided using a thing!');
 			changed.push(asset);
 		}
@@ -277,18 +297,8 @@ async function newEditAction(data, user) {
 
 	await log.save(); // Saves history log
 	nexusEvent.emit('respondClient', 'update', [ action, ...changed, character ]);
-	logger.info(`${action.type} "${action.intent}" edited.`);
+	console.log(`${action.type} "${action.name}" edited.`);
 	return { message : `${action.type} Edit Success`, type: 'success' };
-
-	// let { asset1, asset2, asset3 } = action;
-	// const arr = [asset1, asset2, asset3];
-	// for (const el of arr) {
-	// 	const asset = await Asset.findOne({ name: el });
-	// 	if (asset) {
-	// 		asset.unuse();
-	// 		changed.push(asset);
-	// 	}
-	// }
 }
 
-module.exports = { removeEffort, addEffort, editResult, createAction, createProject, deleteAction, controlOverride, newEditAction };
+module.exports = { removeEffort, addEffort, createAction, deleteAction, controlOverride, editAction, deleteSubObject, editSubObject };

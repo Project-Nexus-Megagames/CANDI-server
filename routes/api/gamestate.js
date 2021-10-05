@@ -68,7 +68,7 @@ router.post('/', async function(req, res) {
 			newGameState = await newGameState.save();
 
 			logger.info(`GameState ${tag} created...`);
-			res.status(200).json(docs);
+			res.status(200).json(newGameState);
 		}
 		else {
 			logger.info(`GameState with the tag: ${tag} already registered...`);
@@ -112,16 +112,15 @@ router.patch('/deleteAll', async function(req, res) {
 	return res.status(200).send(`We wiped out ${data.deletedCount} GameStates!`);
 });
 
-// game routes
-
-setInterval(async () => {
-	const gamestate = await GameState.findOne();
-	if (gamestate && gamestate.discovered) {
-		gamestate.hunger = gamestate.hunger - 13;
-		gamestate.happiness = gamestate.happiness - 13;
-		await gamestate.save();
-		console.log('hi');
-	}
-}, 10000);
+// This was for Bitsy. RIP Bitsy, you were too good for this world
+// setInterval(async () => {
+// 	const gamestate = await GameState.findOne();
+// 	if (gamestate && gamestate.discovered) {
+// 		gamestate.hunger = gamestate.hunger - 13;
+// 		gamestate.happiness = gamestate.happiness - 13;
+// 		await gamestate.save();
+// 		console.log('hi');
+// 	}
+// }, 10000);
 
 module.exports = router;
