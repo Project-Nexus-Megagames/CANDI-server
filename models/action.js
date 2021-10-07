@@ -63,8 +63,7 @@ ActionSchema.methods.submit = async function(submission) {
 	if (!submission.description) throw Error('A submission must have a description...');
 	if (!submission.intent) throw Error('You must have an intent for an action...');
 
-	if (!this.status.some(el => el === 'Draft')) this.status.push('Draft');
-	this.markModified('status');
+	// this.markModified('status');
 
 	const { description, intent, effort } = submission;
 
