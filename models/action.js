@@ -49,7 +49,6 @@ const ActionSchema = new Schema({
 	controllers: [{ type: String }], // Controllers assigned to handle this ACTION
 	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	progress: { type: Number, default: 0, min: 0, max: 100 }, // % of compleation | Goes to 100% automatically when control posts a RESULT
-	effort: { type: Number, required: true, default: 0 }, // Current effort assigned to the ACTION
 	tags: [{ Type: String }], // Any tags added by control
 	image: { type: String }, // URL for an image associated with this ACTION
 	submission: submissionSchema, // Player submission that created the ACTION
@@ -63,8 +62,7 @@ ActionSchema.methods.submit = async function(submission) {
 	if (!submission.description) throw Error('A submission must have a description...');
 	if (!submission.intent) throw Error('You must have an intent for an action...');
 
-	if (!this.status.some(el => el === 'Draft')) this.status.push('Draft');
-	this.markModified('status');
+	// this.markModified('status');
 
 	const { description, intent, effort } = submission;
 

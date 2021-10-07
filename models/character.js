@@ -49,6 +49,7 @@ const CharacterSchema = new Schema({
 
 CharacterSchema.methods.expendEffort = async function(amount) {
 	try {
+		// console.log(amount);
 		this.effort = this.effort - amount;
 		const character = await this.save();
 
@@ -60,10 +61,11 @@ CharacterSchema.methods.expendEffort = async function(amount) {
 	}
 };
 
-CharacterSchema.methods.restoreEffort = async function(amount = 3) {
+CharacterSchema.methods.restoreEffort = async function(amount) {
 	try {
 		this.effort = this.effort + amount;
-		if (this.effort > 3) this.effort = 3;
+		// console.log(amount);
+		if (this.effort > 2) this.effort = 2;
 		const character = await this.save();
 
 		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
