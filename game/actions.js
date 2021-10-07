@@ -34,6 +34,8 @@ async function createAction(data, user) {
 		if (!data.controllers) throw Error('New actions must have a controllers array...');
 		else if (data.controllers.length < 1) throw Error('New actions must at least 1 controller assigned to it...');
 
+		console.log(data)
+
 		const { type, creator, controllers } = data;
 
 		const character = await Character.findById(creator);
@@ -43,6 +45,7 @@ async function createAction(data, user) {
 		let action = new Action({ type, name: `${character.playerName} action ${actions.length + 1}`, round: gamestate.round, creator, controllers });
 
 		action = await action.save();
+		// console.log(action)
 		await action.submit(data.submission);
 		await action.populateMe();
 
@@ -176,7 +179,7 @@ async function deleteAction(data, user) {
 			});
 
 			const character = await Character.findById(action.creator).populate('assets').populate('lentAssets');
-			await character.restoreEffort(action.effort);
+			await character.restoreEffort(action.submission.effort);
 			nexusEvent.emit('respondClient', 'update', [ character ]);
 
 
