@@ -62,6 +62,10 @@ async function addAsset(data, user) {
 				newAsset = new Asset(asset);
 				newAsset.status.lendable = true;
 				break;
+			case 'Trait':
+				newAsset = new Asset(asset);
+				newAsset.status.lendable = false;
+				break;
 			case 'Territory':
 				newAsset = new Asset(asset);
 				newAsset.status.lendable = true;
