@@ -116,32 +116,32 @@ router.delete('/:id', async function(req, res, next) {
 // @route   PATCH api/assets/deleteAll
 // @desc    Delete All assets
 // @access  Public
-router.patch('/deleteAll', async function(req, res) {
-	let delCount = 0;
-	for await (const element of Asset.find()) {
-		const id = element.id;
-		try {
-			const elementDel = await Asset.findByIdAndRemove(id);
-			if (elementDel == null) {
-				res.status(404).send(`The Asset with the ID ${id} was not found!`);
-			}
-			else {
-				delCount += 1;
-			}
-		}
-		catch (err) {
-			nexusError(`${err.message}`, 500);
-		}
-	}
+// router.patch('/deleteAll', async function(req, res) {
+// 	let delCount = 0;
+// 	for await (const element of Asset.find()) {
+// 		const id = element.id;
+// 		try {
+// 			const elementDel = await Asset.findByIdAndRemove(id);
+// 			if (elementDel == null) {
+// 				res.status(404).send(`The Asset with the ID ${id} was not found!`);
+// 			}
+// 			else {
+// 				delCount += 1;
+// 			}
+// 		}
+// 		catch (err) {
+// 			nexusError(`${err.message}`, 500);
+// 		}
+// 	}
 
-	for await (const character of Character.find()) {
-		character.assets = [];
-		character.traits = [];
-		character.lentAssets = [];
-	}
-	nexusEvent.emit('updateCharacters');
-	return res.status(200).send(`We wiped out ${delCount} Assets`);
-});
+// 	for await (const character of Character.find()) {
+// 		character.assets = [];
+// 		character.traits = [];
+// 		character.lentAssets = [];
+// 	}
+// 	nexusEvent.emit('updateCharacters');
+// 	return res.status(200).send(`We wiped out ${delCount} Assets`);
+// });
 
 router.post('/initAssets', async function(req, res) {
 	logger.info('POST Route: api/assets/initAssets call made...');
@@ -178,13 +178,13 @@ router.patch('/test2', async function(req, res, next) {
 	}
 	else {
 		try {
-			for (const char of await Character.find()) {
-				char.feed = false;
-				await char.save();
+			let asses = await Asset.find({ type: 'Trait' });
+			for (let ass of asses) {
+				ass.type = 'Power';
+				ass.level = 'None';
+				ass = await ass.save();
 			}
-
-			const act = await Character.find();
-			res.status(200).json(act);
+			res.status(200).json(asses);
 		}
 		catch (err) {
 			logger.error(err.message, { meta: err.stack });
