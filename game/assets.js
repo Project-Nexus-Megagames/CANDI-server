@@ -6,14 +6,14 @@ const { History } = require('../models/history');
 
 async function modifyAsset(data, user) {
 	try {
-		const { id, name, description, uses, used, owner, hidden, lendable, level, dice } = data;
-		const asset = await Asset.findById(id);
+		const { _id, name, description, uses, used, owner, hidden, lendable, level, dice } = data;
+		const asset = await Asset.findById(_id);
 
 		if (asset === null) {
-			return ({ message : `Could not find a asset for id "${id}"`, type: 'error' });
+			return ({ message : `Could not find a asset for _id "${_id}"`, type: 'error' });
 		}
 		else if (asset.length > 1) {
-			return ({ message : `Found multiple assets for id ${id}`, type: 'error' });
+			return ({ message : `Found multiple assets for _id ${_id}`, type: 'error' });
 		}
 		else {
 			asset.name = name;
