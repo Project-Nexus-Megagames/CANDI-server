@@ -44,7 +44,7 @@ module.exports = function(server) {
 				// console.log(data);
 				response = await createAction(data, client.username);
 
-				response.type === 'success' ? client.emit('clearLocalStorage', 'newActionState') : null ;
+				response.type === 'success' ? client.emit('clearLocalStorage', 'newActionStateGW') : null ;
 				break;
 			}
 			case 'comment': {
@@ -53,7 +53,7 @@ module.exports = function(server) {
 				// console.log(data);
 				const action = await Action.findById(data.id);
 				action ? response = await action.comment(data.comment) : response = ({ message : `Could not find Action for ${data.id}`, type: 'error' });
-				response.type === 'success' ? client.emit('clearLocalStorage', 'NewComment') : null ;
+				response.type === 'success' ? client.emit('clearLocalStorage', 'NewCommentGW') : null ;
 				break;
 			}
 			case 'result': {
@@ -62,7 +62,7 @@ module.exports = function(server) {
 				// console.log(data);
 				const action = await Action.findById(data.id);
 				action ? response = await action.postResult(data.result) : response = ({ message : `Could not find Action for ${data.id} in 'result'`, type: 'error' });
-				response.type === 'success' ? client.emit('clearLocalStorage', 'newResultState') : null ;
+				response.type === 'success' ? client.emit('clearLocalStorage', 'newResultStateGW') : null ;
 				break;
 			}
 			case 'effect': {
@@ -88,7 +88,7 @@ module.exports = function(server) {
 				// Expects data to be a Action object with edits
 				// console.log(data);
 				response = await editAction(data, client.username);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionState') : null ;
+				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionStateGW') : null ;
 				break;
 			}
 			case 'controlReject': {
@@ -104,8 +104,8 @@ module.exports = function(server) {
 			case 'updateSubObject': {
 				// console.log(data);
 				response = await editSubObject(data, client.username);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'EditComment') : null ;
-				response.type === 'success' ? client.emit('clearLocalStorage', 'EditResult') : null ;
+				response.type === 'success' ? client.emit('clearLocalStorage', 'EditCommentGW') : null ;
+				response.type === 'success' ? client.emit('clearLocalStorage', 'EditResultGW') : null ;
 				break;
 			}
 			default:
@@ -148,7 +148,7 @@ module.exports = function(server) {
 			case 'create': {
 				// console.log(data);
 				response = await createCharacter(data);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'newCharacterState') : null ;
+				response.type === 'success' ? client.emit('clearLocalStorage', 'newCharacterStateGW') : null ;
 				break;
 			}
 			default:
@@ -167,7 +167,7 @@ module.exports = function(server) {
 			case 'modify': {
 				// console.log(data);
 				response = await editLocation(data);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'editTerritoryState') : null ;
+				response.type === 'success' ? client.emit('clearLocalStorage', 'editTerritoryStateGW') : null ;
 				break;
 			}
 			default:
