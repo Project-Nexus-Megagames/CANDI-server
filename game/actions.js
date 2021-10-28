@@ -36,13 +36,13 @@ async function createAction(data, user) {
 
 		console.log(data)
 
-		const { type, creator, controllers } = data;
+		const { type, creator, controllers, name } = data;
 
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
 		const gamestate = await GameState.findOne();
 
-		let action = new Action({ type, name: `${character.playerName} action ${actions.length + 1}`, round: gamestate.round, creator, controllers });
+		let action = new Action({ type, name: name === '' ? `${character.playerName} action ${actions.length + 1}` : name, round: gamestate.round, creator, controllers, });
 
 		action = await action.save();
 		// console.log(action)
