@@ -26,6 +26,7 @@ const resultSchema = new Schema({
 	model: { type: String, default: 'Result' },
 	status: { type: String, default: 'Private', enum: ['Public', 'Private'] },
 	resolver: { type: String, required: true },
+	ready: { type: Boolean, default: true },
 	description: { type: String, default: 'None yet...', required: true }, // Description of the result
 	dice: { type: String, default: 'None' }
 }, { timestamps: true });
