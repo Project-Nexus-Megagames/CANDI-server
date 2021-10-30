@@ -8,32 +8,33 @@ const { default: axios } = require('axios');
 const { Character } = require('../../models/character');
 
 const { editResult, createAction, submitAction, deleteAction, controlOverride, editAction } = require('../../game/actions');
+const nexusEvent = require('../../middleware/events/events'); // Local event triggers
 const { Action } = require('../../models/action');
 
 // Mongoose Model Import
 
-router.post('/reset', async function(req, res) {
-	logger.info('POST Route: api/debugRoute/reset call made...');
+// router.post('/reset', async function(req, res) {
+// 	logger.info('POST Route: api/debugRoute/reset call made...');
 
-	try {
-		await	axios.patch('http://localhost:5000/api/actions/deleteAll');
-		await	axios.patch('http://localhost:5000/api/assets/deleteAll');
-		await	axios.patch('http://localhost:5000/api/characters/deleteAll');
-		await	axios.patch('http://localhost:5000/api/history/deleteAll');
-		await	axios.patch('http://localhost:5000/api/locations/deleteAll');
-		await	axios.patch('http://localhost:5000/api/comment/deleteAll');
+// 	try {
+// 		await	axios.patch('http://localhost:5000/api/actions/deleteAll');
+// 		await	axios.patch('http://localhost:5000/api/assets/deleteAll');
+// 		await	axios.patch('http://localhost:5000/api/characters/deleteAll');
+// 		await	axios.patch('http://localhost:5000/api/history/deleteAll');
+// 		await	axios.patch('http://localhost:5000/api/locations/deleteAll');
+// 		await	axios.patch('http://localhost:5000/api/comment/deleteAll');
 
-		await	axios.post('http://localhost:5000/api/assets/initAssets');
-		await	axios.post('http://localhost:5000/api/characters/initCharacters');
-		await	axios.post('http://localhost:5000/api/locations/initLocations');
-		/*
-		*/
-		res.status(200).send('All done');
-	}
-	catch (err) {
-		httpErrorHandler(res, err);
-	}
-});
+// 		await	axios.post('http://localhost:5000/api/assets/initAssets');
+// 		await	axios.post('http://localhost:5000/api/characters/initCharacters');
+// 		await	axios.post('http://localhost:5000/api/locations/initLocations');
+// 		/*
+// 		*/
+// 		res.status(200).send('All done');
+// 	}
+// 	catch (err) {
+// 		httpErrorHandler(res, err);
+// 	}
+// });
 
 router.post('/makeAction', async function(req, res) {
 	try {
@@ -95,8 +96,17 @@ router.patch('/restore', async function(req, res) {
 router.delete('/delete', async function(req, res) {
 	try {
 		await deleteAction(req.body.data, req.body.username);
-
 		res.status(200).send('Action deleted....');
+	}
+	catch (err) {
+		res.status(500).send(err);
+	}
+});
+
+router.patch('/test', async function(req, res) {
+	try {
+		nexusEvent.emit('respondClient', 'logout', [ ]);
+		res.status(200).send(`yeets`);
 	}
 	catch (err) {
 		res.status(500).send(err);
