@@ -295,6 +295,9 @@ module.exports = function(server) {
 		case 'create':
 			io.emit('createClients', data);
 			break;
+		case 'logout':
+			io.emit('alert', { type: 'logout', message: `Test` });
+			break;
 		default:
 			logger.error('Scott Should never see this....');
 		}
