@@ -178,7 +178,7 @@ async function deleteAction(data, user) {
 				user
 			});
 
-			const character = await Character.findById(action.creator).populate('assets').populate('lentAssets');
+			const character = await Character.findById(action.creator);
 			await character.restoreEffort(action.submission.effort);
 			nexusEvent.emit('respondClient', 'update', [ character ]);
 
