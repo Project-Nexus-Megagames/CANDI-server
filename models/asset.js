@@ -46,7 +46,7 @@ const GodBond = Asset.discriminator(
 	'GodBond',
 	new Schema({
 		with: { type: ObjectId, ref: 'Character', required: true },
-		level: { type: String, enum: ['Loathing', 'Unfriendly', 'Neutral', 'Preferred', 'Favoured', 'Blessed' ] }
+		level: { type: String, enum: ['Condemned', 'Disfavored', 'Neutral', 'Preferred', 'Favoured', 'Blessed' ] }
 	})
 );
 

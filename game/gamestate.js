@@ -121,9 +121,9 @@ async function nextRound() {
 			character.save();
 			console.log(`Restoring effort of ${character.characterName}`);
 		}
+
 		for (const action of await Action.find({ 'round': gamestate.round })) {
 			action.status = 'Published';
-
 			for (const el of action.submission.assets) {
 				if (el !== null || el !== undefined) {
 					let asset = el ? await Asset.findOne({ name: el }) : undefined;
@@ -168,7 +168,6 @@ async function nextRound() {
 		gamestate.round = gamestate.round + 1;
 		await gamestate.save();
 
-		nexusEvent.emit('updateCharacters'); // this actually needs to be here since all characters get updated
 		nexusEvent.emit('respondClient', 'update', [ gamestate, ...assets, ...actions ]);
 		return ({ message : 'Gamestate pushed!', type: 'success' });
 	}
@@ -179,12 +178,39 @@ async function nextRound() {
 }
 
 async function easterEgg(data) {
-	const gamestate = await GameState.findOne();
-	const { hunger, happiness, discovered } = data;
-	gamestate.discovered = discovered;
-	gamestate.happiness = happiness;
-	gamestate.hunger = hunger;
-	await gamestate.save();
+	try {
+		console.log(data);
+		const { charcater, action } = data;
+		let gamestate = await GameState.findOne();
+		let char = await Character.findById(charcater); // find character of person doing action
+		// set their timeout
+		const actionTimeout = new Date();
+		actionTimeout.setHours(actionTimeout.getHours() + 4);
+		char.bitsy = actionTimeout;
+		char.bitsyCount = char.bitsyCount + 1;
+		char = await char.save();
+		// Do Bitsy Action
+		switch (action) {
+		case 'feed':
+			gamestate.hunger = gamestate.hunger + 20;
+			nexusEvent.emit('respondClient', 'bitsy', { action });
+			break;
+		case 'play':
+			gamestate.happiness = gamestate.happiness + 20;
+			nexusEvent.emit('respondClient', 'bitsy', { action });
+			break;
+		default:
+			break;
+		}
+		// send response event to trigger new animation
+		gamestate = await gamestate.save();
+		nexusEvent.emit('respondClient', 'update', [ gamestate, char ]);
+		return ({ message : 'Bitsy was Fed!', type: 'success' });
+	}
+	catch (err) {
+		logger.error(`message : Server Error: ${err.message}`);
+		return ({ message : `Server Error: ${err.message}`, type: 'error' });
+	}
 }
 
 module.exports = { modifyGameState, closeRound, nextRound, easterEgg };

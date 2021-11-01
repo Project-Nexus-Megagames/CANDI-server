@@ -10,10 +10,10 @@ const GameStateSchema = new Schema({
 	round: { type: Number, required: true },
 	endTime: { type: String, default: '2021-03-24T17:52:50.969Z' },
 	status: { type: String, enum: ['Active', 'Resolution', 'Down'], default: 'Down'	},
-	tag: { type: String, unique: true }
-	// hunger: { type: Number, default: 100 },
-	// happiness: { type: Number, default: 100 },
-	// discovered: { type: Boolean, default: false }
+	tag: { type: String, unique: true },
+	hunger: { type: Number, default: 100 },
+	happiness: { type: Number, default: 100 },
+	discovered: { type: Boolean, default: false }
 });
 
 const GameState = mongoose.model('GameState', GameStateSchema);

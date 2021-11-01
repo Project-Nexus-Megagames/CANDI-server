@@ -43,7 +43,9 @@ const CharacterSchema = new Schema({
 	Pugilism : { type: Number, default: 0 },
 	Glory: { type: Number, default: 0 },
 	supporters: [{ type: String }], // legacy
-	effort: { type: Number, default: 2, min: 0, max: 6 }
+	effort: { type: Number, default: 2, min: 0, max: 6 },
+	bitsyCount: { type: Number, default: 0 },
+	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' }
 	// color: { type: String, default: 'ffffff' }
 });
 

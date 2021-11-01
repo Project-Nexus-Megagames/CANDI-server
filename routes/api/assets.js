@@ -22,7 +22,7 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const asses = await Asset.find();
+			const asses = await Asset.find().populate('with');
 			res.status(200).json(asses);
 		}
 		catch (err) {

@@ -234,7 +234,7 @@ module.exports = function(server) {
 			}
 			case 'easterEgg': {
 				// console.log(data);
-				response = await easterEgg();
+				response = await easterEgg(data);
 				break;
 			}
 			default:
@@ -298,10 +298,24 @@ module.exports = function(server) {
 		case 'logout':
 			io.emit('alert', { type: 'logout', message: `Test` });
 			break;
+		case 'bitsy':
+			io.emit('bitsy', { action: data.action });
+			break;
 		default:
 			logger.error('Scott Should never see this....');
 		}
 	});
+
+	setInterval(async () => {
+		const gamestate = await GameState.findOne();
+		if (gamestate && gamestate.discovered) {
+			gamestate.hunger = gamestate.hunger - 13;
+			gamestate.happiness = gamestate.happiness - 13;
+			await gamestate.save();
+			nexusEvent.emit('respondClient', 'update', [ gamestate ]);
+			console.log('Bitsy Reduced');
+		}
+	}, 600000);
 
 	function currentUsers() {
 		const users = [];
