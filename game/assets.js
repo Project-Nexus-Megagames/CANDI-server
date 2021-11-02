@@ -7,7 +7,7 @@ const { History } = require('../models/history');
 async function modifyAsset(data, user) {
 	try {
 		const { _id, name, description, uses, used, owner, hidden, lendable, level, dice } = data;
-		const asset = await Asset.findById(_id);
+		const asset = await Asset.findById(_id).populate('with');
 
 		if (asset === null) {
 			return ({ message : `Could not find a asset for _id "${_id}"`, type: 'error' });
