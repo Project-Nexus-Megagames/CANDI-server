@@ -171,20 +171,31 @@ router.post('/initAssets', async function(req, res) {
 	}
 });
 
-router.patch('/test2', async function(req, res, next) {
+router.patch('/audit', async function(req, res, next) {
 	logger.info('PATCH Route: api/asset/test requested...');
 	if (req.timedout) {
 		next();
 	}
 	else {
 		try {
-			let asses = await Asset.find({ type: 'Trait' });
-			for (let ass of asses) {
-				ass.type = 'Power';
-				ass.level = 'None';
-				ass = await ass.save();
+			// let asses = await Asset.find({ type: 'Trait' });
+			// console.log(req.body);
+			for (let char of req.body) {
+				let cont = true;
+				console.log(char.characterTitle);
+				// console.log(char);
+				let character = await Character.findOne({ characterTitle: char.characterTitle });
+				console.log(character._id);
+				for (const el in char) {
+					if (char[el] !== character[el]) {
+						console.log(el);
+						console.log(`${char[el]} => ${character[el]}`);
+						character[el] = char[el];
+						character = await character.save();
+					}
+				}
 			}
-			res.status(200).json(asses);
+			res.status(200).json('yo');
 		}
 		catch (err) {
 			logger.error(err.message, { meta: err.stack });
