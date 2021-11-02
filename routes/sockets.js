@@ -306,16 +306,16 @@ module.exports = function(server) {
 		}
 	});
 
-	setInterval(async () => {
-		const gamestate = await GameState.findOne();
-		if (gamestate && gamestate.discovered) {
-			gamestate.hunger = gamestate.hunger - 13;
-			gamestate.happiness = gamestate.happiness - 13;
-			await gamestate.save();
-			nexusEvent.emit('respondClient', 'update', [ gamestate ]);
-			console.log('Bitsy Reduced');
-		}
-	}, 600000);
+	// setInterval(async () => {
+	// 	const gamestate = await GameState.findOne();
+	// 	if (gamestate && gamestate.discovered) {
+	// 		gamestate.hunger = gamestate.hunger - 13;
+	// 		gamestate.happiness = gamestate.happiness - 13;
+	// 		await gamestate.save();
+	// 		nexusEvent.emit('respondClient', 'update', [ gamestate ]);
+	// 		console.log('Bitsy Reduced');
+	// 	}
+	// }, 600000);
 
 	function currentUsers() {
 		const users = [];
