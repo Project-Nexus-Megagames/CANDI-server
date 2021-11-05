@@ -9,7 +9,7 @@ const { Asset } = require('../models/asset');
 
 const { createAction, deleteAction, controlOverride, editAction, deleteSubObject, editSubObject } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
-const { modifyAsset, lendAsset, deleteAsset, addAsset } = require('../game/assets');
+const { modifyAsset, lendAsset, deleteAsset, addAsset, unhideAll } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
 const { editLocation } = require('../game/locations');
 
@@ -199,9 +199,13 @@ module.exports = function(server) {
 				break;
 			}
 			case 'create': {
-				console.log(data);
+				// console.log(data);
 				response = await addAsset(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'addAssetState') : null ;
+				break;
+			}
+			case 'unhide': {
+				response = await unhideAll(data, client.username);
 				break;
 			}
 			default:
