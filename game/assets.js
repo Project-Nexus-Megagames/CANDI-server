@@ -207,4 +207,23 @@ async function deleteAsset(data, user) {
 	}
 }
 
-module.exports = { addAsset, modifyAsset, lendAsset, deleteAsset };
+async function unhideAll() {
+	try {
+		let assets = await Asset.find().populate('with');
+		assets = assets.filter(el => el.status.hidden === true);
+		const res = [];
+		for (const ass of assets) {
+			console.log(ass.name)
+			ass.status.hidden = false;
+			await ass.save();
+			res.push(ass);
+		}
+		nexusEvent.emit('respondClient', 'update', res);
+	}
+	catch (err) {
+		logger.error(err);
+		return ({ message : `ERROR: ${err}`, type: 'error' });
+	}
+}
+
+module.exports = { addAsset, modifyAsset, lendAsset, deleteAsset, unhideAll };
