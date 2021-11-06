@@ -97,9 +97,13 @@ async function calculateDie(action) {
 async function nextRound() {
 	const gamestate = await GameState.findOne();
 	try {
+
+		// Find aall hidden assets and unhide them
+		// Find all used assets and -1 to their uses, then un-use them
+		// Find all hidden resolutions and unhide them
 		const assets = [];
 		const actions = [];
-		for (const asset of await Asset.find({ 'status.lent': true })) {
+		for (const asset of await Asset.find({ 'status.lent': true }).populate('with')) {
 			asset.status.lent = false;
 			asset.currentHolder = null;
 			await asset.save();
@@ -107,13 +111,14 @@ async function nextRound() {
 			assets.push(asset);
 		}
 
-		for (const asset of await Asset.find({ 'status.hidden': true })) {
-			asset.status.hidden = false;
-			await asset.save();
-			console.log(`Un-Hiding ${asset.name}`);
-			assets.push(asset);
+		let hidden = await Asset.find().populate('with');
+		hidden = hidden.filter(el => el.status.hidden === true);
+		for (const ass of hidden) {
+			console.log(`Unhiding ${ass.name}`);
+			ass.status.hidden = false;
+			await ass.save();
+			assets.push(ass);
 		}
-
 
 		for (const character of await Character.find()) {
 			character.lentAssets = [];
@@ -122,29 +127,19 @@ async function nextRound() {
 			console.log(`Restoring effort of ${character.characterName}`);
 		}
 
+		let used = await Asset.find().populate('with');
+		used = used.filter(el => el.status.used === true);
+		for (const ass of used) {
+			console.log(`Un-using ${ass.name}`);
+			if (ass.uses !== 999) ass.uses = ass.uses - 1;
+			ass.status.used = false;
+			await ass.save();
+			assets.push(ass);
+		}
+
+
 		for (const action of await Action.find({ 'round': gamestate.round })) {
 			action.status = 'Published';
-			for (const el of action.submission.assets) {
-				if (el !== null || el !== undefined) {
-					let asset = el ? await Asset.findOne({ name: el }) : undefined;
-					if (asset) {
-						asset.status.used = false;
-						console.log(`Un-Using ${asset.name}`);
-
-						if ((asset.type === 'Asset' || asset.type === 'Wealth') && (asset.uses !== 999 || asset.uses <= 0)) {
-							console.log(`BEFORE ${asset.name} uses: ${asset.uses}`);
-							asset.uses = asset.uses - 1;
-							console.log(`AFTER ${asset.name} uses: ${asset.uses}`);
-						}
-
-						asset = await asset.save();
-						nexusEvent.emit('respondClient', 'update', [ asset ]);
-					}
-					else {
-						console.log(`ERROR could not Un-Use for ${el}`);
-					}
-				}
-			}
 
 			for (const el of action.results) {
 				console.log(`Making public result ${el._id}`);
@@ -156,7 +151,7 @@ async function nextRound() {
 			actions.push(action);
 		}
 
-		for (const asset of await Asset.find({ 'status.used': true })) {
+		for (const asset of await Asset.find({ 'status.used': true }).populate('with')) {
 			asset.status.used = false;
 			console.log(`Un-Using ${asset.name}`);
 			await asset.save();
