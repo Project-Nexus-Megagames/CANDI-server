@@ -224,7 +224,7 @@ async function controlOverride(data, user) {
 			action.submission.assets.splice(i, 1);
 			action.markModified('assets');
 			action = await action.save();
-			action.comment({ body: `Control Override: ${item.name} removed from action by Control.`, commentor: 'CANDI', type: 'Info' });
+			action.comment({ body: `Control Override: ${item.name} removed from action by Control.`, commentor: 'Grunkle the Tech Goblin', type: 'Info' });
 
 			const log = new History({
 				docType: 'action',
