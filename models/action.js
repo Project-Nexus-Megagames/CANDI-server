@@ -48,7 +48,6 @@ const ActionSchema = new Schema({
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
 	controllers: [{ type: String }], // Controllers assigned to handle this ACTION
-	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	progress: { type: Number, default: 0, min: 0, max: 100 }, // % of compleation | Goes to 100% automatically when control posts a RESULT
 	tags: [{ Type: String }], // Any tags added by control
 	image: { type: String }, // URL for an image associated with this ACTION

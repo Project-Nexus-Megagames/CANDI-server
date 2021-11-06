@@ -183,8 +183,8 @@ async function deleteAction(data, user) {
 			nexusEvent.emit('respondClient', 'update', [ character ]);
 
 
-			for (const item of action.assets) {
-				if (!action.assets.some(el => el.toString() === item.toString())) {
+			for (const item of action.submission.assets) {
+				if (!action.submission.assets.some(el => el.toString() === item.toString())) {
 					let asset = await Asset.findById(item);
 					asset ? asset = await asset.unuse() : console.log('Avoided un-using a thing!');
 					changed.push(asset);
@@ -215,14 +215,16 @@ async function controlOverride(data, user) {
 		let action = await Action.findById(id);
 		if (!action) return ({ message : `No action with the id ${id} exists!`, type: 'error' });
 		const item = await Asset.findById(asset);
-		if (!item) return ({ message : `No asset with the id ${id} exists!`, type: 'error' });
+		if (!item) return ({ message : `No asset with the id ${asset} exists!`, type: 'error' });
 
-		const i = action.assets.findIndex(el => el.toString() === asset.toString());
+		console.log(asset)
+		console.log(action.submission.assets[0] == asset)
+		const i = action.submission.assets.findIndex(el => el == asset);
 		if (i > -1) {
-			action.assets.splice(i, 1);
+			action.submission.assets.splice(i, 1);
 			action.markModified('assets');
-
 			action = await action.save();
+			action.comment({ body: `Control Override: ${item.name} removed from action by Control.`, commentor: 'CANDI', type: 'Info' });
 
 			const log = new History({
 				docType: 'action',
@@ -282,16 +284,16 @@ async function editAction(data, user) {
 		document: action
 	});
 
-	for (const item of oldAction.assets) {
-		if (!action.assets.some(el => el === item.toString())) {
+	for (const item of oldAction.submission.assets) {
+		if (!action.submission.assets.some(el => el === item.toString())) {
 			let asset = await Asset.findById(item);
 			asset ? asset = await asset.unuse() : console.log('Avoided un-using a thing!');
 			changed.push(asset);
 		}
 	}
 
-	for (const item of action.assets) {
-		if (!oldAction.assets.some(el => el === item.toString())) {
+	for (const item of action.submission.assets) {
+		if (!oldAction.submission.assets.some(el => el === item.toString())) {
 			let asset = await Asset.findById(item);
 			asset ? asset = await asset.use() : console.log('Avoided using a thing!');
 			changed.push(asset);
