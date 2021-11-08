@@ -55,7 +55,7 @@ const ActionSchema = new Schema({
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
 	results: [resultSchema], // Controller generated result of the ACTION
 	effects: [effectSchema] // Mechanical effects of the ACTION
-}, { timestamps: true });
+});
 
 ActionSchema.methods.submit = async function(submission) {
 	// Expects description, intent, effort, assets, collaborators

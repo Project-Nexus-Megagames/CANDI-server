@@ -91,6 +91,14 @@ module.exports = function(server) {
 				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionStateGW') : null ;
 				break;
 			}
+			case 'tags': {
+				// Expects data to be a Action object with edits
+				console.log(data);
+				let action = await Action.findById(data.id);
+				action.tags = data.tags;
+				await action.save();
+				break;
+			}
 			case 'controlReject': {
 				// console.log(data);
 				response = await controlOverride(data, client.username);
