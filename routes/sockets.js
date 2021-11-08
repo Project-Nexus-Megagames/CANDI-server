@@ -12,6 +12,7 @@ const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modify
 const { modifyAsset, lendAsset, deleteAsset, addAsset, unhideAll } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
 const { editLocation } = require('../game/locations');
+const { addArrayValue } = require('../middleware/util/arrayCalls');
 
 module.exports = function(server) {
 	logger.info('Socket.io servers initialized...');
@@ -94,8 +95,11 @@ module.exports = function(server) {
 			case 'tags': {
 				// Expects data to be a Action object with edits
 				console.log(data);
-				let action = await Action.findById(data.id);
-				action.tags = data.tags;
+				const action = await Action.findById(data.id);
+				for (const item of data.tags) {
+					await addArrayValue(action.tags, item);
+				}
+				action.markModified('tags');
 				await action.save();
 				break;
 			}
