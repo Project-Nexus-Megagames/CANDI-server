@@ -49,64 +49,59 @@ async function modifyAsset(data, user) {
 
 async function addAsset(data, user) {
 	try {
-		const { id, asset } = data;
-		let character = await Character.findById(id).populate('assets').populate('lentAssets');
+		const { asset } = data;
 
-		if (character === null) {
-			return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
+		let newAsset;
+		switch (data.asset.type) {
+		case 'Asset':
+			newAsset = new Asset(asset);
+			newAsset.status.lendable = true;
+			break;
+		case 'Trait':
+			newAsset = new Asset(asset);
+			newAsset.status.lendable = false;
+			break;
+		case 'Power':
+			newAsset = new Asset(asset);
+			newAsset.status.lendable = false;
+			break;
+		case 'Territory':
+			newAsset = new Asset(asset);
+			newAsset.status.lendable = true;
+			newAsset.uses = 999;
+			break;
+		case 'GodBond':
+			newAsset = new GodBond(asset);
+			newAsset.status.lendable = false;
+			newAsset.uses = 999;
+			break;
+		case 'MortalBond':
+			newAsset = new MortalBond(asset);
+			newAsset.status.lendable = false;
+			newAsset.uses = 999;
+			break;
+		default:
+			throw Error(`Type '${data.asset.type}' is Invalid!`);
 		}
-		else {
-			let newAsset;
-			switch (data.asset.type) {
-			case 'Asset':
-				newAsset = new Asset(asset);
-				newAsset.status.lendable = true;
-				break;
-			case 'Trait':
-				newAsset = new Asset(asset);
-				newAsset.status.lendable = false;
-				break;
-			case 'Power':
-				newAsset = new Asset(asset);
-				newAsset.status.lendable = false;
-				break;
-			case 'Territory':
-				newAsset = new Asset(asset);
-				newAsset.status.lendable = true;
-				newAsset.uses = 999;
-				break;
-			case 'GodBond':
-				newAsset = new GodBond(asset);
-				newAsset.status.lendable = false;
-				newAsset.uses = 999;
-				break;
-			case 'MortalBond':
-				newAsset = new MortalBond(asset);
-				newAsset.status.lendable = false;
-				newAsset.uses = 999;
-				break;
-			default:
-				throw Error(`Type '${data.asset.type}' is Invalid!`);
-			}
 
-			newAsset = await newAsset.save();
-			nexusEvent.emit('respondClient', 'create', [ newAsset ]);
-			// nexusEvent.emit('respondClient', 'update', [ character ]);
+		newAsset = await newAsset.save();
+		nexusEvent.emit('respondClient', 'create', [ newAsset ]);
+		// nexusEvent.emit('respondClient', 'update', [ character ]);
 
-			await newAsset.save();
+		await newAsset.save();
 
-			const log = new History({
-				docType: 'asset',
-				action: 'add',
-				function: 'addAsset',
-				document: newAsset,
-				user
-			});
+		const log = new History({
+			docType: 'asset',
+			action: 'add',
+			function: 'addAsset',
+			document: newAsset,
+			user
+		});
 
-			await log.save();
+		await log.save();
 
-			return ({ message : `${newAsset.type} ${newAsset.name} created`, type: 'success' });
-		}
+		return ({ message : `${newAsset.type} ${newAsset.name} created`, type: 'success' });
+
 	}
 	catch (err) {
 		logger.error(err);
