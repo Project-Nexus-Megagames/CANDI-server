@@ -110,7 +110,7 @@ async function addAsset(data, user) {
 }
 
 async function lendAsset(data, user) {
-	const { id, target, lendingBoolean, owner } = data;
+	const { id, target, lendingBoolean } = data;
 	try {
 		let asset = await Asset.findById(id);
 
@@ -129,41 +129,23 @@ async function lendAsset(data, user) {
 				return ({ message : `You cannot lend an already loaned asset "${asset.name}"`, type: 'error' });
 			}
 
-			let char = await Character.findById(target).populate('assets').populate('lentAssets');
-			let assetOwner = await Character.findById(owner).populate('assets').populate('lentAssets');
-			if (char === null || !char) {
-				char = await Character.findBy({ characterName: target });
-			}
-			if (char === null) {
-				return ({ message : `Could not find a character for id "${target}"`, type: 'error' });
+			if (lendingBoolean) { // if the asset is being lent
+				asset.currentHolder = target;
 			}
 			else {
-				const index2 = assetOwner.assets.findIndex(el => el._id.toHexString() === id);
-
-				if (lendingBoolean) { // if the asset is being lent
-					char.lentAssets.push(asset);
-					asset.currentHolder = char.characterName;
-				}
-				else {
-					const index = char.lentAssets.indexOf(asset);
-					char.lentAssets.splice(index, 1);
-					asset.currentHolder = asset.owner;
-				}
-				asset.status.lent = lendingBoolean;
-				assetOwner.assets[index2] = asset;
-
-				char = await char.save();
-				asset = await asset.save();
-				assetOwner = await assetOwner.save();
-
-				log.document = asset;
-
-				await log.save();
-
-				logger.info(`${asset.name} Lent to ${char.characterName}.`);
-				nexusEvent.emit('respondClient', 'update', [ char, asset, assetOwner ]);
-				return ({ message : `${asset.name} lent to ${char.characterName}`, type: 'success' });
+				asset.currentHolder = asset.owner;
 			}
+			asset.status.lent = lendingBoolean;
+			asset = await asset.save();
+
+			log.document = asset;
+
+			await log.save();
+
+			logger.info(`${asset.name} Lent to ${target}.`);
+			nexusEvent.emit('respondClient', 'update', [ asset ]);
+			return ({ message : `${asset.name} lent to ${target}`, type: 'success' });
+
 		}
 	}
 	catch (err) {
@@ -208,7 +190,7 @@ async function unhideAll() {
 		assets = assets.filter(el => el.status.hidden === true);
 		const res = [];
 		for (const ass of assets) {
-			console.log(ass.name)
+			console.log(ass.name);
 			ass.status.hidden = false;
 			await ass.save();
 			res.push(ass);
