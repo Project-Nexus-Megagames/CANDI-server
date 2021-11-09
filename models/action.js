@@ -24,7 +24,7 @@ const submissionSchema = new Schema({
 
 const resultSchema = new Schema({
 	model: { type: String, default: 'Result' },
-	status: { type: String, default: 'Private', enum: ['Public', 'Private'] },
+	status: { type: String, default: 'Temp-Hidden', enum: ['Public', 'Private', 'Temp-Hidden'] },
 	resolver: { type: String, required: true },
 	ready: { type: Boolean, default: true },
 	description: { type: String, default: 'None yet...', required: true }, // Description of the result
@@ -33,8 +33,9 @@ const resultSchema = new Schema({
 
 const effectSchema = new Schema({
 	model: { type: String, default: 'Effect' },
+	status: { type: String, default: 'Temp-Hidden', enum: ['Public', 'Private', 'Temp-Hidden'] },
 	description: { type: String, default: 'It did a thing...', required: true }, // Description of the result
-	type: { type: String, enum: ['Asset', 'Action', 'Other'] }, // Type of effect
+	type: { type: String }, // Type of effect
 	action: { type: ObjectId, ref: 'Action' }, // Ref to any ACTION created by this ACTION
 	asset: { type: ObjectId, ref: 'Asset' }, // Ref to any ASSET created by this ACTION
 	other: { type: String } // Discription of the effect....
@@ -150,23 +151,20 @@ ActionSchema.methods.postResult = async function(result) {
 
 ActionSchema.methods.addEffect = async function(effect) {
 	// Expects effect: { description, type, asset <<Asset ref>>, action <<Action ref>>, other }
-	try {
-		if (!effect.description) throw Error('Effects must have a description..');
-		if (!effect.type) throw Error('Effects must have type attched..');
-		if (!effect[effect.type.toLowerCase()]) throw Error(`${effect.type} effects must have ${effect.type.toLowerCase()} attached...`);
 
-		this.effects.push(effect);
-		this.markModified('effects');
+	if (!effect.description) throw Error('Effects must have a description..');
+	if (!effect.type) throw Error('Effects must have type attched..');
+	// if (!effect[effect.type.toLowerCase()]) throw Error(`${effect.type} effects must have ${effect.type.toLowerCase()} attached...`);
 
-		const action = await this.save();
-		await action.populateMe();
+	this.effects.push(effect);
+	this.markModified('effects');
+	const action = await this.save();
+	await action.populateMe();
 
-		nexusEvent.emit('respondClient', 'update', [ action ]);
-		return ({ message : `Effect Successfully added to ${this.name}`, type: 'success' });
-	}
-	catch (err) {
-		return { message : `Error: ${err}`, type: 'error' };
-	}
+	nexusEvent.emit('respondClient', 'update', [ action ]);
+	console.log(`Effect Successfully added to ${action.name}`);
+	return ({ message : `Effect Successfully added to ${action.name}`, type: 'success' });
+
 };
 
 ActionSchema.methods.populateMe = function() {

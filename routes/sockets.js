@@ -7,7 +7,7 @@ const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
 
-const { createAction, deleteAction, controlOverride, editAction, deleteSubObject, editSubObject } = require('../game/actions');
+const { createAction, deleteAction, controlOverride, editAction, deleteSubObject, editSubObject, effectAction } = require('../game/actions');
 const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
 const { modifyAsset, lendAsset, deleteAsset, addAsset, unhideAll } = require('../game/assets');
 const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
@@ -69,25 +69,15 @@ module.exports = function(server) {
 			case 'effect': {
 				// Expects data.id <<Action ref>>
 				// Expects data.effect <<Effect object>> { description, type, asset <<Asset ref>>, action <<Action ref>>, other }
-				// console.log(data);
-				const action = await Action.findById(data.id);
-				response = await action.addEffect(data.effect);
+				response = await effectAction(data, client.username);
 				break;
 			}
 			case 'delete': {
-				// console.log(data);
 				response = await deleteAction(data, client.username);
 				break;
 			}
-			// case 'createProject': {
-			// 	// console.log(data);
-			// 	response = await createProject(data, client.username);
-			// 	response.type === 'success' ? client.emit('clearLocalStorage', 'newProjectState') : null ;
-			// 	break;
-			// }
 			case 'update': {
 				// Expects data to be a Action object with edits
-				// console.log(data);
 				response = await editAction(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionStateGW') : null ;
 				break;
