@@ -6,7 +6,7 @@ const { Asset } = require('../models/asset');
 const { Comment } = require('../models/comment');
 const { History } = require('../models/history');
 const { GameState } = require('../models/gamestate');
-const { modifyAsset } = require('./assets');
+const { modifyAsset, addAsset } = require('./assets');
 
 async function removeEffort(data) {
 	let character = await Character.findOne({ characterName: data.creator });
@@ -367,51 +367,41 @@ async function effectAction(data, username) {
 		switch (type) {
 		case ('asset'):
 			old = await Asset.findById(document._id).populate('with');
-
-			response = await modifyAsset(document, username);
-			for (const el in document) {
-				if (document[el] !== undefined && document[el] !== '' && el !== '_id' && el !== 'with' && el !== 'status' && el !== 'type' && el !== 'ownerCharacter' && el !== 'model' && old[el] !== document[el]) {
-					effects.push({ description: `${old.type} named *${old.name}* had it's ${capitalizeFirstLetter(el)} changed: ${old[el]} => ${document[el]} `, type: old.type, bond: old._id });
-					old[el] = document[el];
-				}
-				else { // leaving this in case I have to debug
-					// console.log(document[el]);
-					// console.log(`Detected invalid edit: ${el} is ${document[el]}`);
-				}
-			}
-
-			await old.save();
-			nexusEvent.emit('respondClient', 'update', [ old ]);
-
-			for (const effect of effects) {
-				await action.addEffect(effect);
-			}
-			return response;
+			break;
 		case ('bond'):
 			old = await Asset.findById(document._id).populate('with');
-			response = await modifyAsset(document, username);
-			for (const el in document) {
-				if (document[el] !== undefined && document[el] !== '' && el !== '_id' && el !== 'with' && el !== 'status' && el !== 'type' && el !== 'ownerCharacter' && el !== 'model' && old[el] !== document[el]) {
-					effects.push({ description: `${old.type} named *${old.name}* had it's ${capitalizeFirstLetter(el)} changed: ${old[el]} => ${document[el]} `, type: old.type, bond: old._id });
-					old[el] = document[el];
-				}
-				else { // leaving this in case I have to debug
-					// console.log(document[el]);
-					// console.log(`Detected invalid edit: ${el} is ${document[el]}`);
-				}
-			}
-
-			await old.save();
-			nexusEvent.emit('respondClient', 'update', [ old ]);
-
-			for (const effect of effects) {
-				await action.addEffect(effect);
-			}
+			break;
+		case 'aspect':
+			old = await Character.findById(document._id);
+			break;
+		case 'new':
+			response = await addAsset({ asset: document });
+			response.type === 'success' ? await action.addEffect({ description: `New ${document.type} created: ${document.name} ${document.level ? `(${document.level})` : `(${document.dice})`}`, type: document.type, status: 'Temp-Hidden' }) : null;
 			return response;
 		default:
 			console.log(`Invalid effectAction switch type ${type}`);
 			return ({ message : `Invalid effectAction switch type ${type}`, type: 'error' });
 		}
+
+		if (!old) throw Error('No Old thing for the thing... you know the thing?');
+		for (const el in document) {
+			if (document[el] !== undefined && document[el] !== '' && el !== '_id' && el !== 'with' && el !== 'status' && el !== 'type' && el !== 'ownerCharacter' && el !== 'model' && typeof document[el] !== 'object' && old[el] !== document[el]) {
+				effects.push({ description: `${old.model} named *${old.name ? old.name : old.characterName}* had it's ${capitalizeFirstLetter(el)} changed: ${old[el]} => ${document[el]} `, type: old.model, bond: old._id, status: type === 'aspect' ? 'Private' : 'Temp-Hidden' });
+				old[el] = document[el];
+			}
+			else { // leaving this in case I have to debug
+				// console.log(document[el]);
+				// console.log(`Detected invalid edit: ${el} is ${document[el]}`);
+			}
+		}
+
+		await old.save();
+		nexusEvent.emit('respondClient', 'update', [ old ]);
+
+		for (const effect of effects) {
+			await action.addEffect(effect);
+		}
+		return response;
 	}
 	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);

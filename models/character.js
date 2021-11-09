@@ -27,7 +27,6 @@ const CharacterSchema = new Schema({
 	tags: [{ type: String }],
 	username: { type: String, minlength: 2, maxlength: 50, required: true },
 	pronouns: { type: String },
-	control: [{ type: String }],
 	bio: { type: String },
 	standingOrders: { type: String },
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
