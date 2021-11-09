@@ -6,6 +6,7 @@ const { Asset } = require('../models/asset');
 const { Comment } = require('../models/comment');
 const { History } = require('../models/history');
 const { GameState } = require('../models/gamestate');
+const { modifyAsset } = require('./assets');
 
 async function removeEffort(data) {
 	let character = await Character.findOne({ characterName: data.creator });
@@ -34,7 +35,7 @@ async function createAction(data, user) {
 		if (!data.controllers) throw Error('New actions must have a controllers array...');
 		else if (data.controllers.length < 1) throw Error('New actions must at least 1 controller assigned to it...');
 
-		console.log(data)
+		console.log(data);
 
 		const { type, creator, controllers, name } = data;
 
@@ -42,7 +43,7 @@ async function createAction(data, user) {
 		const actions = await Action.find({ creator });
 		const gamestate = await GameState.findOne();
 
-		let action = new Action({ type, name: name === '' ? `${character.playerName} action ${actions.length + 1}` : name, round: gamestate.round, creator, controllers, });
+		let action = new Action({ type, name: name === '' ? `${character.playerName} action ${actions.length + 1}` : name, round: gamestate.round, creator, controllers });
 
 		action = await action.save();
 		// console.log(action)
@@ -93,6 +94,23 @@ async function deleteSubObject(data, user) {
 		logger.info(`Result with the id ${id} was deleted via Socket!`);
 		nexusEvent.emit('respondClient', 'update', [ action ]);
 	} // if
+	else if (action != null && data.effect) {
+		const log = new History({
+			docType: 'action',
+			action: 'delete',
+			function: 'deleteResult',
+			document: action,
+			user
+		});
+		const effect = action.effects.findIndex(el => el._id.toHexString() === data.effect); // effects are populated,
+		action.effects.splice(effect, 1);
+		action = await action.save();
+		await action.populateMe();
+
+		await log.save();
+		logger.info(`effect with the id ${id} was deleted via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+	}
 	else if (action != null && data.comment) {
 		const log = new History({
 			docType: 'action',
@@ -124,7 +142,7 @@ async function editSubObject(data, user) {
 			user
 		});
 		const result = action.results.findIndex(el => el._id.toHexString() === data.result.id); // results are populated,
-		let thing = action.results[result];
+		const thing = action.results[result];
 
 		for (const el in data.result) {
 			if (data.result[el] !== undefined && data.result[el] !== '' && el !== '_id' && el !== 'model') {
@@ -132,6 +150,34 @@ async function editSubObject(data, user) {
 			}
 			else {
 				console.log(`Detected invalid edit: ${el} is ${data.result[el]}`);
+			}
+		}
+
+		action = await action.save();
+		await action.populateMe();
+
+		await log.save();
+		logger.info(`Result with the id ${id} was edited via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [ action ]);
+		return ({ message : `Result with the id ${id} was edited via Socket!`, type: 'success' });
+	} // if
+	else if (action != null && data.effect) {
+		const log = new History({
+			docType: 'action',
+			action: 'edit',
+			function: 'editEffect',
+			document: action,
+			user
+		});
+		const effect = action.effects.findIndex(el => el._id.toHexString() === data.effect.id); // effects are populated,
+		const thing = action.effects[effect];
+
+		for (const el in data.effect) {
+			if (data.effect[el] !== undefined && data.effect[el] !== '' && el !== '_id' && el !== 'model') {
+				thing[el] = data.effect[el];
+			}
+			else {
+				console.log(`Detected invalid edit: ${el} is ${data.effect[el]}`);
 			}
 		}
 
@@ -151,7 +197,7 @@ async function editSubObject(data, user) {
 			document: action,
 			user
 		});
-		let comment = await Comment.findByIdAndUpdate(data.comment._id, data.comment, { new: true }).populate('creator');
+		const comment = await Comment.findByIdAndUpdate(data.comment._id, data.comment, { new: true }).populate('creator');
 		action = await Action.findById(id);
 		action = await action.save();
 		await action.populateMe();
@@ -217,8 +263,8 @@ async function controlOverride(data, user) {
 		const item = await Asset.findById(asset);
 		if (!item) return ({ message : `No asset with the id ${asset} exists!`, type: 'error' });
 
-		console.log(asset)
-		console.log(action.submission.assets[0] == asset)
+		console.log(asset);
+		console.log(action.submission.assets[0] == asset);
 		const i = action.submission.assets.findIndex(el => el == asset);
 		if (i > -1) {
 			action.submission.assets.splice(i, 1);
@@ -306,4 +352,72 @@ async function editAction(data, user) {
 	return { message : `${action.type} Edit Success`, type: 'success' };
 }
 
-module.exports = { removeEffort, addEffort, createAction, deleteAction, controlOverride, editAction, deleteSubObject, editSubObject };
+function capitalizeFirstLetter(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+async function effectAction(data, username) {
+	try {
+		const { type, document } = data;
+		const action = await Action.findById(data.action);
+		if (!action) throw Error('No Action for Effect!');
+		let response;
+		let old;
+		const effects = [];
+		switch (type) {
+		case ('asset'):
+			old = await Asset.findById(document._id).populate('with');
+
+			response = await modifyAsset(document, username);
+			for (const el in document) {
+				if (document[el] !== undefined && document[el] !== '' && el !== '_id' && el !== 'with' && el !== 'status' && el !== 'type' && el !== 'ownerCharacter' && el !== 'model' && old[el] !== document[el]) {
+					effects.push({ description: `${old.type} named *${old.name}* had it's ${capitalizeFirstLetter(el)} changed: ${old[el]} => ${document[el]} `, type: old.type, bond: old._id });
+					old[el] = document[el];
+				}
+				else { // leaving this in case I have to debug
+					// console.log(document[el]);
+					// console.log(`Detected invalid edit: ${el} is ${document[el]}`);
+				}
+			}
+
+			await old.save();
+			nexusEvent.emit('respondClient', 'update', [ old ]);
+
+			for (const effect of effects) {
+				await action.addEffect(effect);
+			}
+			return response;
+		case ('bond'):
+			old = await Asset.findById(document._id).populate('with');
+			response = await modifyAsset(document, username);
+			for (const el in document) {
+				if (document[el] !== undefined && document[el] !== '' && el !== '_id' && el !== 'with' && el !== 'status' && el !== 'type' && el !== 'ownerCharacter' && el !== 'model' && old[el] !== document[el]) {
+					effects.push({ description: `${old.type} named *${old.name}* had it's ${capitalizeFirstLetter(el)} changed: ${old[el]} => ${document[el]} `, type: old.type, bond: old._id });
+					old[el] = document[el];
+				}
+				else { // leaving this in case I have to debug
+					// console.log(document[el]);
+					// console.log(`Detected invalid edit: ${el} is ${document[el]}`);
+				}
+			}
+
+			await old.save();
+			nexusEvent.emit('respondClient', 'update', [ old ]);
+
+			for (const effect of effects) {
+				await action.addEffect(effect);
+			}
+			return response;
+		default:
+			console.log(`Invalid effectAction switch type ${type}`);
+			return ({ message : `Invalid effectAction switch type ${type}`, type: 'error' });
+		}
+	}
+	catch (err) {
+		logger.error(`message : Server Error: ${err.message}`);
+		return ({ message : `Server Error: ${err.message}`, type: 'error' });
+	}
+}
+
+module.exports = { removeEffort, addEffort, createAction, deleteAction, controlOverride, editAction, deleteSubObject, editSubObject, effectAction };
+

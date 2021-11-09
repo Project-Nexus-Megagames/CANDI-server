@@ -142,8 +142,10 @@ async function nextRound() {
 			action.status = 'Published';
 
 			for (const el of action.results) {
-				console.log(`Making public result ${el._id}`);
-				el.status = 'Public';
+				if (el.status === 'Temp-Hidden') {
+					console.log(`Making public result ${el._id}`);
+					el.status = 'Public';
+				}
 			}
 
 			await action.save();
