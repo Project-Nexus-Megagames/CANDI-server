@@ -385,7 +385,7 @@ async function effectAction(data, username) {
 
 		if (!old) throw Error('No Old thing for the thing... you know the thing?');
 		for (const el in document) {
-			if (document[el] !== undefined && document[el] !== '' && el !== '_id' && el !== 'with' && el !== 'status' && el !== 'type' && el !== 'ownerCharacter' && el !== 'model' && typeof document[el] !== 'object' && old[el] !== document[el]) {
+			if (document[el] !== undefined && document[el] !== '' && el !== '_id' && el !== 'with' && el !== 'status' && el !== 'type' && el !== 'ownerCharacter' && el !== 'model' && typeof document[el] !== 'object' && old[el] !== document[el] && document[el] !== 'None') {
 				effects.push({ description: `${old.model} named *${old.name ? old.name : old.characterName}* had it's ${capitalizeFirstLetter(el)} changed: ${old[el]} => ${document[el]} `, type: old.model, bond: old._id, status: type === 'aspect' ? 'Private' : 'Temp-Hidden' });
 				old[el] = document[el];
 			}
