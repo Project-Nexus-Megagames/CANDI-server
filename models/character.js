@@ -25,6 +25,7 @@ const CharacterSchema = new Schema({
 	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
 	characterTitle: { type: String, maxlength: 50, default: 'None' },
 	tags: [{ type: String }],
+	control: [{ type: String }],
 	username: { type: String, minlength: 2, maxlength: 50, required: true },
 	pronouns: { type: String },
 	bio: { type: String },

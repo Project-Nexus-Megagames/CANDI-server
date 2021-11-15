@@ -191,7 +191,7 @@ router.patch('/audit', async function(req, res, next) {
 						console.log(el);
 						console.log(`${char[el]} => ${character[el]}`);
 						character[el] = char[el];
-						// character = await character.save();
+						character = await character.save();
 					}
 				}
 			}
