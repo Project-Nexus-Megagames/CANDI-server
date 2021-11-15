@@ -103,7 +103,7 @@ router.delete('/delete', async function(req, res) {
 	}
 });
 
-router.patch('/test', async function(req, res) {
+router.patch('/massRefresh', async function(req, res) {
 	try {
 		nexusEvent.emit('respondClient', 'logout', [ ]);
 		res.status(200).send(`yeets`);
