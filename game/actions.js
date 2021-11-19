@@ -306,8 +306,8 @@ async function editAction(data, user) {
 
 	let action = await Action.findByIdAndUpdate(id, data, { new: true }).populate('creator');
 
-	const character = await Character.findById(action.creator._id).populate('lentAssets');
-	await character.expendEffort(action.effort - oldAction.effort);
+	// const character = await Character.findById(action.creator._id).populate('lentAssets');
+	// await character.expendEffort(action.effort - oldAction.effort);
 
 	// let comment = new Comment({
 	// 	body: `${user} edited this action...`,
@@ -347,7 +347,7 @@ async function editAction(data, user) {
 	}
 
 	await log.save(); // Saves history log
-	nexusEvent.emit('respondClient', 'update', [ action, ...changed, character ]);
+	nexusEvent.emit('respondClient', 'update', [ action, ...changed, ]);
 	console.log(`${action.type} "${action.name}" edited.`);
 	return { message : `${action.type} Edit Success`, type: 'success' };
 }
