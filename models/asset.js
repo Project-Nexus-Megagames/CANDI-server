@@ -13,7 +13,7 @@ const AssetSchema = new Schema({
 	dice: { type: String, required: true, default: 'd6' },
 	description: { type: String, required: true },
 	status: {
-		hidden: { type: Boolean, default: false },
+		hidden: { type: Boolean, default: true },
 		lent: { type: Boolean, default: false },
 		multiUse: { type: Boolean, default: false },
 		lendable: { type: Boolean, default: false },
