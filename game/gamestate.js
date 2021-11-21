@@ -148,6 +148,13 @@ async function nextRound() {
 				}
 			}
 
+			for (const el of action.effects) {
+				if (el.status === 'Temp-Hidden') {
+					console.log(`Making public effect ${el._id}`);
+					el.status = 'Public';
+				}
+			}
+
 			await action.save();
 			await action.populateMe();
 			actions.push(action);
