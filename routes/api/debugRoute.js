@@ -112,4 +112,37 @@ router.patch('/massRefresh', async function(req, res) {
 		res.status(500).send(err);
 	}
 });
+
+router.patch('/oops', async function(req, res) {
+	console.log('hi')
+	let actions = [];
+	try {
+		for (const action of await Action.find({ 'round': 5 })) {
+			action.status = 'Published';
+			console.log(action.name)
+			for (const el of action.results) {
+				console.log(`Making public result ${el._id}`);
+				el.status = 'Public';
+			}
+		
+			for (const el of action.effects) {
+				if (el.status === 'Temp-Hidden') {
+					console.log(`Making public effect ${el._id}`);
+					el.status = 'Public';
+				}
+			}
+		
+			await action.save();
+			await action.populateMe();
+			actions.push(action);
+		}
+		res.status(200).send(actions);
+	}
+	catch (err) {
+		res.status(500).send(err);
+	}
+});
+
+
+
 module.exports = router;
