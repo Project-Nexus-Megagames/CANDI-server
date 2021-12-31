@@ -291,15 +291,9 @@ router.patch('/test/', async (req, res, next) => {
 	else {
 		try {
 			const changed = [];
-			for (const asset of await Asset.find({ type: 'Territory' })) {
-				if (asset) {
-					asset.status.lendable = true;
-					await asset.save();
-					console.log(`Lendable: ${asset.name}`);
-					changed.push(asset);
-				}
-				else {
-					console.log(`Failed test: ${asset}`);
+			for (const char of await Character.find()) {
+				if (char.tags.some(el => el === 'PC')) {
+					console.log(char.playerName)
 				}
 			}
 			nexusEvent.emit('respondClient', 'update', [ changed ]);
