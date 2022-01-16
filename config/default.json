@@ -1,6 +1,6 @@
 {
   "jwtPrivateKey": "spooky",
-  "dbName": "godsWarDB",
+  "dbName": "crisisDB",
   "version": "4.11",
   "clientURL": "https://candi-app.herokuapp.com/",
 	"serverURL": "https://candi-server.herokuapp.com/",

@@ -43,7 +43,6 @@ const effectSchema = new Schema({
 
 const ActionSchema = new Schema({
 	model:  { type: String, default: 'Action' }, // Model for the DOC
-	type: { type: String, default: 'Action', enum: ['Action', 'Project', 'Feed' ] }, // Likely depreciated by the TAGS Array
 	name: { type: String },
 	round: { type: Number }, // Round Number for the ACTION
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION

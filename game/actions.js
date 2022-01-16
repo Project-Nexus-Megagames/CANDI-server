@@ -11,17 +11,12 @@ const { modifyAsset, addAsset } = require('./assets');
 async function removeEffort(data) {
 	let character = await Character.findOne({ characterName: data.creator });
 	character = await character.expendEffort(data.effort);
-
-	// nexusEvent.emit('updateCharacters');
 	return character;
 }
 
 async function addEffort(data) {
 	let character = await Character.findOne({ characterName: data.creator }).populate('assets').populate('lentAssets');
 	character = await character.restoreEffort(data.effort);
-
-	// nexusEvent.emit('updateCharacters');
-
 	return character;
 }
 

@@ -153,77 +153,77 @@ router.patch('/deleteAll', async function(req, res) {
 });
 
 // game routes
-// router.post('/initCharacters', async function(req, res) { // initializes characters based on /config/startingCharacters.js.
-// 	logger.info('POST Route: api/character call made...');
+router.post('/initCharacters', async function(req, res) { // initializes characters based on /config/startingCharacters.js.
+	logger.info('POST Route: api/character call made...');
 
-// 	const arr = ['Asset', 'Trait', 'Wealth', 'Power'];
+	const arr = ['Asset', 'Trait', 'Wealth', 'Power'];
 
-// 	try {
-// 		let npcCount = 0;
-// 		let charCount = 0;
-// 		for (const char of characters) {
-// 			let newCharacter = new Character(char);
-// 			const docs = await Character.find({ characterName: char.characterName });
+	try {
+		let npcCount = 0;
+		let charCount = 0;
+		for (const char of characters) {
+			let newCharacter = new Character(char);
+			const docs = await Character.find({ characterName: char.characterName });
 
-// 			if (docs.length < 1) {
-// 				charCount++;
-// 				newCharacter = await newCharacter.save();
+			if (docs.length < 1) {
+				charCount++;
+				newCharacter = await newCharacter.save();
 
-// 				for (const el of arr) {
-// 					let ass = new Asset({
-// 						name: `${newCharacter.characterName}'s' ${el}`,
-// 						description: `${newCharacter.characterName}'s' ${el}`,
-// 						type: el,
-// 						ownerCharacter: newCharacter._id
-// 					});
-// 					ass = await ass.save();
-// 				}
+				for (const el of arr) {
+					let ass = new Asset({
+						name: `${newCharacter.characterName}'s' ${el}`,
+						description: `${newCharacter.characterName}'s' ${el}`,
+						type: el,
+						ownerCharacter: newCharacter._id
+					});
+					ass = await ass.save();
+				}
 
-// 				logger.info(`${newCharacter.characterName} created.`);
-// 			}
-// 			else {
-// 				console.log(`${newCharacter.characterName} already exists!\n`);
-// 			}
-// 		}
+				logger.info(`${newCharacter.characterName} created.`);
+			}
+			else {
+				console.log(`${newCharacter.characterName} already exists!\n`);
+			}
+		}
 
-// 		for (const npc of npcs) {
-// 			let newCharacter = new Character(npc);
-// 			//	await newAgent.validateAgent();
-// 			const docs = await Character.find({ characterName: npc.characterName });
+		for (const npc of npcs) {
+			let newCharacter = new Character(npc);
+			//	await newAgent.validateAgent();
+			const docs = await Character.find({ characterName: npc.characterName });
 
-// 			if (docs.length < 1) {
-// 				newCharacter = await newCharacter.save();
-// 				npcCount++;
-// 				logger.info(`${newCharacter.characterName} created.`);
-// 			}
-// 			else {
-// 				console.log(`${newCharacter.characterName} already exists!\n`);
-// 			}
-// 		}
+			if (docs.length < 1) {
+				newCharacter = await newCharacter.save();
+				npcCount++;
+				logger.info(`${newCharacter.characterName} created.`);
+			}
+			else {
+				console.log(`${newCharacter.characterName} already exists!\n`);
+			}
+		}
 
-// 		for (const god of gods) {
-// 			let newCharacter = new God(god);
-// 			//	await newAgent.validateAgent();
-// 			const docs = await Character.find({ characterName: god.characterName });
+		for (const god of gods) {
+			let newCharacter = new God(god);
+			//	await newAgent.validateAgent();
+			const docs = await Character.find({ characterName: god.characterName });
 
-// 			if (docs.length < 1) {
-// 				newCharacter = await newCharacter.save();
-// 				npcCount++;
-// 				logger.info(`${newCharacter.characterName} created.`);
-// 			}
-// 			else {
-// 				console.log(`${newCharacter.characterName} already exists!\n`);
-// 			}
-// 		}
+			if (docs.length < 1) {
+				newCharacter = await newCharacter.save();
+				npcCount++;
+				logger.info(`${newCharacter.characterName} created.`);
+			}
+			else {
+				console.log(`${newCharacter.characterName} already exists!\n`);
+			}
+		}
 
-// 		nexusEvent.emit('updateCharacters');
-// 		logger.info(`Created ${charCount} Characters and ${npcCount} NPCs.`);
-// 		res.status(200).send('All done');
-// 	}
-// 	catch (err) {
-// 		httpErrorHandler(res, err);
-// 	}
-// });
+		nexusEvent.emit('updateCharacters');
+		logger.info(`Created ${charCount} Characters and ${npcCount} NPCs.`);
+		res.status(200).send('All done');
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
 
 // register
 router.patch('/register', async (req, res) => {

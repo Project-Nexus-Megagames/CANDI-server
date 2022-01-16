@@ -32,21 +32,10 @@ const CharacterSchema = new Schema({
 	standingOrders: { type: String },
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
 	Justice: { type: Number, default: 0 },
-	Trickery: { type: Number, default: 0 },
-	Balance: { type: Number, default: 0 },
-	Hedonism: { type: Number, default: 0 },
-	Bonding: { type: Number, default: 0 },
-	Arts: { type: Number, default: 0 },
-	Sporting: { type: Number, default: 0 },
-	Fabrication: { type: Number, default: 0 },
-	Scholarship: { type: Number, default: 0 },
-	Pugilism : { type: Number, default: 0 },
-	Glory: { type: Number, default: 0 },
-	supporters: [{ type: String }], // legacy
 	effort: { type: Number, default: 2, min: 0, max: 6 },
 	bitsyCount: { type: Number, default: 0 },
-	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' }
-	// color: { type: String, default: 'ffffff' }
+	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
+	color: { type: String, default: 'ffffff' }
 });
 
 CharacterSchema.methods.expendEffort = async function(amount) {

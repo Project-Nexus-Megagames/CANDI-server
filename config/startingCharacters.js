@@ -1,16 +1,5 @@
 const characters = [
 	{
-		playerName: 'Noe Player Assigned',
-		pronouns: 'N/A',
-		characterName:'The Agent',
-		tags: ['PC'],
-		email: 'No Email',
-		timeZone: 'N/A',
-		bio: 'No bio',
-		username: 'temp',
-		control: ['Central Control']
-	},
-	{
 		playerName: 'Scott',
 		pronouns: 'They/Them',
 		characterName:'Tech Support',
@@ -21,39 +10,39 @@ const characters = [
 		username: 'BobtheNinjaMan',
 		control: ['Scott']
 	},
-	{
-		playerName: 'Steph',
-		pronouns: 'She/Her',
-		characterName: 'Central Control',
-		tags: ['Control'],
-		email: 'gw.centralcontrol@gmail.com',
-		timeZone: 'EDT (UTC-4)',
-		bio: 'Controlling Tiresias, Zeus, Aphrodite, Ambrose Erastus, Harry Doyle, Katelyn Doyle, and Bennett Otis as well as being the Sisyphean Olympian Overlord',
-		username: 'Kaeira',
-		control: []
-	},
-	{
-		playerName: 'Will',
-		pronouns: 'They/Them',
-		characterName: 'Hammersmith Control',
-		tags: ['Control'],
-		email: 'gw.hammersmithcontrol@gmail.com',
-		timeZone: 'GMT (UTC+0)',
-		bio: 'Controlling Athena, Ares, Rebecca Browning, Amy Lewin, Skye Green, Guinevere Green, Luella Wright and hearts everywhere.',
-		username: 'orionzbelt',
-		control: []
-	},
-	{
-		playerName: 'Greg',
-		pronouns: 'He/Him',
-		characterName:'Waterloo Control',
-		tags: ['Control'],
-		email: 'gw.waterloocontrol.com',
-		timeZone: 'PST',
-		bio: 'Hades, Hermes, Fiona Kelly, Finn, Celina Culpepper, Nora Mather, Night Mather, Odie Smith, Hector Van der Vorm',
-		username: 'Aggrocragg',
-		control: []
-	},
+	// {
+	// 	playerName: 'Steph',
+	// 	pronouns: 'She/Her',
+	// 	characterName: 'Central Control',
+	// 	tags: ['Control'],
+	// 	email: 'gw.centralcontrol@gmail.com',
+	// 	timeZone: 'EDT (UTC-4)',
+	// 	bio: 'Controlling Tiresias, Zeus, Aphrodite, Ambrose Erastus, Harry Doyle, Katelyn Doyle, and Bennett Otis as well as being the Sisyphean Olympian Overlord',
+	// 	username: 'Kaeira',
+	// 	control: []
+	// },
+	// {
+	// 	playerName: 'Will',
+	// 	pronouns: 'They/Them',
+	// 	characterName: 'Hammersmith Control',
+	// 	tags: ['Control'],
+	// 	email: 'gw.hammersmithcontrol@gmail.com',
+	// 	timeZone: 'GMT (UTC+0)',
+	// 	bio: 'Controlling Athena, Ares, Rebecca Browning, Amy Lewin, Skye Green, Guinevere Green, Luella Wright and hearts everywhere.',
+	// 	username: 'orionzbelt',
+	// 	control: []
+	// },
+	// {
+	// 	playerName: 'Greg',
+	// 	pronouns: 'He/Him',
+	// 	characterName:'Waterloo Control',
+	// 	tags: ['Control'],
+	// 	email: 'gw.waterloocontrol.com',
+	// 	timeZone: 'PST',
+	// 	bio: 'Hades, Hermes, Fiona Kelly, Finn, Celina Culpepper, Nora Mather, Night Mather, Odie Smith, Hector Van der Vorm',
+	// 	username: 'Aggrocragg',
+	// 	control: []
+	// },
 	{
 		playerName: 'Stuart',
 		pronouns: 'He/Him',
@@ -65,17 +54,17 @@ const characters = [
 		username: 'Game Control',
 		control: []
 	},
-	{
-		playerName: 'Andrew',
-		pronouns: 'He/Him',
-		characterName: 'Bakerloo Control',
-		tags: ['Control'],
-		email: 'gwbakerloo@gmail.com',
-		timeZone: 'GMT (UTC+0)',
-		bio: 'Controlling Poseidon, Hephaestus, Artemis, Edith Keyes, William Bell, Theodore Cornell, Eveline Cornell, Henry Adalbert, Isobel Beveridge, George Stephenson',
-		username: 'AShielDods',
-		control: []
-	},
+	// {
+	// 	playerName: 'Andrew',
+	// 	pronouns: 'He/Him',
+	// 	characterName: 'Bakerloo Control',
+	// 	tags: ['Control'],
+	// 	email: 'gwbakerloo@gmail.com',
+	// 	timeZone: 'GMT (UTC+0)',
+	// 	bio: 'Controlling Poseidon, Hephaestus, Artemis, Edith Keyes, William Bell, Theodore Cornell, Eveline Cornell, Henry Adalbert, Isobel Beveridge, George Stephenson',
+	// 	username: 'AShielDods',
+	// 	control: []
+	// },
 	{
 		playerName: 'Greg',
 		pronouns: 'He/Him',
@@ -98,17 +87,17 @@ const characters = [
 		username: 'Wintercross',
 		control: ['Game Control']
 	},
-	{
-		playerName: 'Mikolaj / Miki',
-		pronouns: 'He/him',
-		characterName:'Victoria Control',
-		tags: ['Control'],
-		email: 'mikolajrwiecek+gwcontrol@gmail.com',
-		timeZone: 'CET (UTC +1)',
-		bio: 'Channeling Hera, Demeter, Victor Moore, Glenn Garret, Arthur MacNeill, Wren Blackwell, Paul Cresswell, Gary Brindley, Sylvie Belville. Resident Gmail guru and wiki wonder.',
-		username: 'mikolajwiecek',
-		control: ['Game Control']
-	}
+	// {
+	// 	playerName: 'Mikolaj / Miki',
+	// 	pronouns: 'He/him',
+	// 	characterName:'Victoria Control',
+	// 	tags: ['Control'],
+	// 	email: 'mikolajrwiecek+gwcontrol@gmail.com',
+	// 	timeZone: 'CET (UTC +1)',
+	// 	bio: 'Channeling Hera, Demeter, Victor Moore, Glenn Garret, Arthur MacNeill, Wren Blackwell, Paul Cresswell, Gary Brindley, Sylvie Belville. Resident Gmail guru and wiki wonder.',
+	// 	username: 'mikolajwiecek',
+	// 	control: ['Game Control']
+	// }
 	// {
 	// 	playerName: 'CONTROLLER ACTUAL NAME HERE',
 	// 	pronouns: 'CONTROLLER PRONOUNS HERE',
@@ -161,9 +150,10 @@ const gods = [
 		control: ['Game Control']
 	},
 ];
+
 const npcs = [
 	{
-		playerName: 'The Champion',
+		playerName: 'The Champion', 
 		pronouns: '???',
 		characterName:'The Champion',
 		tags: ['NPC'],
