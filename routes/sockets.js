@@ -84,7 +84,6 @@ module.exports = function(server) {
 			}
 			case 'tags': {
 				// Expects data to be a Action object with edits
-				console.log(data);
 				const action = await Action.findById(data.id);
 				for (const item of data.tags) {
 					await addArrayValue(action.tags, item);

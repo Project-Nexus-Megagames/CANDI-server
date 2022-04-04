@@ -50,7 +50,6 @@ const ActionSchema = new Schema({
 	controllers: [{ type: String }], // Controllers assigned to handle this ACTION
 	progress: { type: Number, default: 0, min: 0, max: 100 }, // % of compleation | Goes to 100% automatically when control posts a RESULT
 	tags: [{ type: String }], // Any tags added by control
-	image: { type: String }, // URL for an image associated with this ACTION
 	submission: submissionSchema, // Player submission that created the ACTION
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
 	results: [resultSchema], // Controller generated result of the ACTION

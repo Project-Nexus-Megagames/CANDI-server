@@ -31,7 +31,10 @@ const CharacterSchema = new Schema({
 	bio: { type: String },
 	standingOrders: { type: String },
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
-	Justice: { type: Number, default: 0 },
+	Martial: { type: Number, default: 0 },
+	Economy: { type: Number, default: 0 },
+	Education: { type: Number, default: 0 },
+	Piety: { type: Number, default: 0 },
 	effort: { type: Number, default: 2, min: 0, max: 6 },
 	bitsyCount: { type: Number, default: 0 },
 	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
