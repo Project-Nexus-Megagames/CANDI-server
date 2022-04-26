@@ -28,8 +28,36 @@ async function editLocation(data) {
 		logger.error(err);
 		return { message : err, type: 'error' };
 	}
+}
 
+async function unlockLocation(data) {
+	let { character, location } = data;
+	location = await Location.findById(location);
+
+	if (location.unlockedBy.some((tag) => tag === character))
+		return console.log("Location already unlocked by character");
+
+	location.unlockedBy.push(character);
+	location = await location.save();
+
+	nexusEvent.emit("request", "update", [location]);
+}
+
+async function lockLocation(data) {
+	let { character, location } = data;
+	location = await Location.findById(location);
+
+	if (location.unlockedBy.indexOf(character) === -1)
+		return console.log("Character does not have location unlocked.");
+
+	location.unlockedBy = location.unlockedBy.filter(
+		(el) => el === character
+	);
+	location = await location.save();
+
+	nexusEvent.emit("request", "update", [location]);
 }
 
 
-module.exports = { editLocation };
+
+module.exports = { editLocation, unlockLocation, unlockLocation };
