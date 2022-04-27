@@ -411,7 +411,7 @@ function capitalizeFirstLetter(string) {
 
 async function effectAction(data, username) {
   try {
-    const { type, document } = data;
+    const { type, document, owner } = data;
     const action = await Action.findById(data.action);
     if (!action) throw Error("No Action for Effect!");
     let response;
@@ -440,7 +440,7 @@ async function effectAction(data, username) {
           : null;
         return response;
       case "map":
-        return console.log("Map effectAction triggered");
+        return console.log("Map effectAction triggered ", document, owner);
         break;
       default:
         console.log(`Invalid effectAction switch type ${type}`);
