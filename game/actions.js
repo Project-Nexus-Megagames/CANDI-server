@@ -7,6 +7,7 @@ const { Comment } = require("../models/comment");
 const { History } = require("../models/history");
 const { GameState } = require("../models/gamestate");
 const { modifyAsset, addAsset } = require("./assets");
+const { Location } = require("../models/location");
 
 async function removeEffort(data) {
   let character = await Character.findOne({ characterName: data.creator });
@@ -440,7 +441,15 @@ async function effectAction(data, username) {
           : null;
         return response;
       case "map":
-        return console.log("Map effectAction triggered ", document, owner);
+        for (const el of document) {
+          let loc = await Location.findById(el._id);
+          if (!loc.unlockedBy.includes(owner)) {
+            loc.unlockedBy.push(owner);
+          }
+          await loc.save();
+          old = loc.populate("with");
+          console.log(old);
+        }
         break;
       default:
         console.log(`Invalid effectAction switch type ${type}`);
