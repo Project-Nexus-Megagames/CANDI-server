@@ -445,6 +445,11 @@ async function effectAction(data, username) {
           let loc = await Location.findById(el._id);
           if (!loc.unlockedBy.includes(owner)) {
             loc.unlockedBy.push(owner);
+            await action.addEffect({
+              description: `New location unlocked: ${el.name} `,
+              type: "location",
+              status: "Temp-Hidden",
+            });
           }
           await loc.save();
           old = loc;
