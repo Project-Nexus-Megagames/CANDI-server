@@ -450,8 +450,8 @@ async function effectAction(data, username) {
               type: "location",
               status: "Temp-Hidden",
             });
+            await loc.save();
           }
-          await loc.save();
           old = loc;
         }
         break;
