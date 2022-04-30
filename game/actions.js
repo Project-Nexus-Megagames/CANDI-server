@@ -447,8 +447,7 @@ async function effectAction(data, username) {
             loc.unlockedBy.push(owner);
           }
           await loc.save();
-          old = loc.populate("with");
-          console.log(old);
+          old = loc;
         }
         break;
       default:
