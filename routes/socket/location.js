@@ -6,7 +6,7 @@ module.exports = {
 	async function(client, req) {
 		const { data } = req.data;
 		const { type } = req.type;
-		logger.info(`locationRequest triggered: ''${type}''`);
+		logger.info(`location socket triggered: ''${type}''`);
 		let response;
 		try {
 			switch(type) {
@@ -17,8 +17,8 @@ module.exports = {
 				break;
 			}
 			default:
-				console.log('Bad locationRequest Request: ', type); // need an error socket to trigger
-				response = { message : `Bad locationRequest Request: ${type}`, type: 'error' };
+				console.log('Bad location socket Request: ', type); // need an error socket to trigger
+				response = { message : `Bad location socket Request: ${type}`, type: 'error' };
 				break;
 			}
 			client.emit('alert', response);
