@@ -8,7 +8,7 @@ module.exports = {
 		const { data } = req.data;
 		const { type } = req.type;
 		try {
-			logger.info(`assetRequest triggered: ''${type}''`);
+			logger.info(`asset socket triggered: ''${type}''`);
 			let response;
 			switch(type) {
 			case 'modify': {
@@ -37,8 +37,8 @@ module.exports = {
 				break;
 			}
 			default:
-				console.log('Bad assetRequest Request: ', type); // need an error socket to trigger
-				response = { message : `Bad assetRequest Request: ${type}`, type: 'error' };
+				console.log('Bad asset socket Request: ', type); // need an error socket to trigger
+				response = { message : `Bad asset socket Request: ${type}`, type: 'error' };
 				break;
 			}
 			logger.info(response);
