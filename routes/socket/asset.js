@@ -1,4 +1,4 @@
-const { modifyAsset, lendAsset, deleteAsset, addAsset, unhideAll } = require('....//game/assets');
+const { modifyAsset, lendAsset, deleteAsset, addAsset, unhideAll } = require('../../game/assets');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
 
 module.exports = {

@@ -3,7 +3,6 @@ const http = require('http'); // Import of the NODE HTTP module to create the ht
 const { logger } = require('./middleware/log/winston'); // Import of winston for error logging
 const timeout = require('connect-timeout');
 const config = require('config');
-const { GameState } = require('./models/gamestate');
 
 console.log(`Booting Project Nexus CANDI Server - Version ${config.get('version')}...`);
 
