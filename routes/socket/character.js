@@ -7,7 +7,7 @@ module.exports = {
 		const { data } = req.data;
 		const { type } = req.type;
 		try {
-			logger.info(`characterRequest triggered: ''${type}''`);
+			logger.info(`character Socket triggered: ''${type}''`);
 			let response;
 			switch(type) {
 			case 'modify': {
@@ -41,8 +41,8 @@ module.exports = {
 				break;
 			}
 			default:
-				console.log('Bad characterRequest Request: ', type); // need an error socket to trigger
-				response = { message : `Bad characterRequest Request: ${type}`, type: 'error' };
+				console.log('Bad character Socket Request: ', type); // need an error socket to trigger
+				response = { message : `Bad character Socket Request: ${type}`, type: 'error' };
 				break;
 			}
 			client.emit('alert', response);
