@@ -45,6 +45,31 @@ module.exports = function(server) {
 		client.emit('alert', { type: 'success', message: `${client.username} Connected to CANDI server...` });
 		currentUsers();
 
+		client.on('request', (req) => {
+			console.log(req);
+			// Request object: { route, action, data }
+			if (!req.route) {
+				client.emit('alert', { type: 'error', message: 'Socket Request missing a route...' });
+			}
+			else if (!req.action) {
+				client.emit('alert', { type: 'error', message: 'Socket Request missing an action type...' });
+			}
+			else {
+				const socket = socketMap.get(req.route);
+				if (socket) {
+					try {
+						socket.function(client, req, io);
+					}
+					catch (err) {
+						logger.error(err);
+					}
+				}
+				else {
+					client.emit('alert', { message : `Socket-file not found! Route: ${req.route}\nAction: ${req.action}`, type: 'error' });
+				}
+			}
+		});
+
 		client.on('logout', () => {
 			console.log(`${client.username} disconnected (${client.id}), ${io.of('/').sockets.size} clients connected.`);
 			client.emit('alert', { type: 'info', message: `${client.username} Logged out...` });

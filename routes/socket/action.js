@@ -81,8 +81,8 @@ module.exports = {
 				break;
 			}
 			default:
-				console.log('Bad actionRequest Request: ', type); // need an error socket to trigger
-				response = { message : `Bad actionRequest Request: ${type}`, type: 'error' };
+				console.log('Bad action socket Request: ', type); // need an error socket to trigger
+				response = { message : `Bad action socket Request: ${type}`, type: 'error' };
 				break;
 			}
 			client.emit('alert', response);
