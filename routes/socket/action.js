@@ -76,8 +76,6 @@ module.exports = {
 			case 'updateSubObject': {
 				// console.log(data);
 				response = await editSubObject(data, client.username);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'EditCommentGW') : null ;
-				response.type === 'success' ? client.emit('clearLocalStorage', 'EditResultGW') : null ;
 				break;
 			}
 			default:
