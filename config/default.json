@@ -1,6 +1,6 @@
 {
   "jwtPrivateKey": "spooky",
-  "dbName": "crisisDB",
+  "dbName": "tempestDB",
   "version": "4.11",
   "clientURL": "https://candi-app.herokuapp.com/",
 	"serverURL": "https://candi-server.herokuapp.com/",

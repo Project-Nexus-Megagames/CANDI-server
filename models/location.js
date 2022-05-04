@@ -4,7 +4,7 @@ const mongoose = require('mongoose'); // Mongo DB object modeling module
 
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
-// const ObjectId = mongoose.ObjectId; // Destructure of Object ID
+const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const LocationSchema = new Schema({
 	model: { type: String, default: 'Location' },
@@ -16,7 +16,7 @@ const LocationSchema = new Schema({
 		x: { type: Number }, //
 		y: { type: Number } //
 	},
-	unlockedBy: [{ type: String }]
+	unlockedBy: [{ type: ObjectId, ref: 'Location' }]
 });
 
 const Location = mongoose.model('Location', LocationSchema);
