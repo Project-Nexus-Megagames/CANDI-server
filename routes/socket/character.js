@@ -4,8 +4,8 @@ const { logger } = require('../../middleware/log/winston'); // middleware/error.
 module.exports = {
 	name: 'character',
 	async function(client, req) {
-		const { data } = req.data;
-		const { type } = req.type;
+		const data = req.data;
+		const type = req.action;
 		try {
 			logger.info(`character Socket triggered: ''${type}''`);
 			let response;

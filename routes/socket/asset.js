@@ -5,8 +5,8 @@ module.exports = {
 	name: 'asset',
 	async function(client, req) {
 		logger.info(`${client.username} has made a ${req.action} request in the ${req.route} route!`);
-		const { data } = req.data;
-		const { type } = req.type;
+		const data = req.data;
+		const type = req.action;
 		try {
 			logger.info(`asset socket triggered: ''${type}''`);
 			let response;

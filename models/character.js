@@ -1,20 +1,8 @@
 const mongoose = require('mongoose'); // Mongo DB object modeling module
-// const Joi = require('joi'); // Schema description & validation module
-// const nexusError = require('../middleware/util/throwError'); // Costom error handler util
 
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
-
-const MortalRelationshipSchema = new Schema({
-	with: { type: ObjectId, ref: 'Character' },
-	level: { type: String, enum: ['Neutral', 'Warm', 'Friendly', 'Bonded' ] }
-});
-
-const GodRelationshipSchema = new Schema({
-	with: { type: ObjectId, ref: 'Character' },
-	level: { type: String, enum: ['Neutral', 'Preferred', 'Favoured', 'Blessed' ] }
-});
 
 const CharacterSchema = new Schema({
 	model:  { type: String, default: 'Character' },
@@ -30,11 +18,7 @@ const CharacterSchema = new Schema({
 	pronouns: { type: String },
 	bio: { type: String },
 	standingOrders: { type: String },
-	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
-	Martial: { type: Number, default: 0 },
-	Economy: { type: Number, default: 0 },
-	Education: { type: Number, default: 0 },
-	Piety: { type: Number, default: 0 },
+	lentAssets: [{ type: ObjectId, ref: 'Asset' }],
 	effort: { type: Number, default: 2, min: 0, max: 6 },
 	bitsyCount: { type: Number, default: 0 },
 	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
@@ -72,22 +56,5 @@ CharacterSchema.methods.restoreEffort = async function(amount) {
 
 const Character = mongoose.model('Character', CharacterSchema);
 
-const Mortal = Character.discriminator(
-	'Mortal',
-	new Schema({
-		type: { type: String, default: 'Mortal' },
-		relationships: [ MortalRelationshipSchema ]
-	})
-);
 
-
-const God = Character.discriminator(
-	'God',
-	new Schema({
-		type: { type: String, default: 'God' },
-		relationships: [ GodRelationshipSchema ]
-	})
-);
-
-
-module.exports = { Character, Mortal, God };
+module.exports = { Character };

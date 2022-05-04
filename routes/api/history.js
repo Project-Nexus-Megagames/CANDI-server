@@ -112,15 +112,4 @@ router.patch('/deleteAll', async function(req, res) {
 	return res.status(200).send(`We wiped out ${data.deletedCount} Historys!`);
 });
 
-// This was for Bitsy. RIP Bitsy, you were too good for this world
-// setInterval(async () => {
-// 	const history = await History.findOne();
-// 	if (history && history.discovered) {
-// 		history.hunger = history.hunger - 13;
-// 		history.happiness = history.happiness - 13;
-// 		await history.save();
-// 		console.log('hi');
-// 	}
-// }, 10000);
-
 module.exports = router;
