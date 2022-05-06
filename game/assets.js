@@ -15,7 +15,8 @@ async function modifyAsset(data, user) {
 			hidden,
 			lendable,
 			level,
-			dice
+			dice,
+			tags
 		} = data;
 		const asset = await Asset.findById(_id).populate('with');
 
@@ -24,9 +25,11 @@ async function modifyAsset(data, user) {
 				message: `Could not find a asset for _id "${_id}"`,
 				type: 'error'
 			};
-		} else if (asset.length > 1) {
+		}
+		else if (asset.length > 1) {
 			return { message: `Found multiple assets for _id ${_id}`, type: 'error' };
-		} else {
+		}
+		else {
 			asset.name = name;
 			asset.description = description;
 			asset.uses = uses;
@@ -36,6 +39,7 @@ async function modifyAsset(data, user) {
 			asset.status.used = used;
 			asset.status.hidden = hidden;
 			asset.status.lendable = lendable;
+			asset.tags = tags;
 
 			await asset.save();
 			const log = new History({
@@ -50,7 +54,8 @@ async function modifyAsset(data, user) {
 			nexusEvent.emit('respondClient', 'update', [asset]);
 			return { message: `${asset.name} edited`, type: 'success' };
 		}
-	} catch (err) {
+	}
+	catch (err) {
 		logger.error(err);
 		return { message: `ERROR: ${err}`, type: 'error' };
 	}
@@ -59,41 +64,39 @@ async function modifyAsset(data, user) {
 async function addAsset(data, user) {
 	try {
 		const { asset, arcane } = data;
-		console.log(data);
 		let newAsset;
 		switch (data.asset.type) {
-			case 'Asset':
-				newAsset = new Asset(asset);
-				newAsset.status.lendable = true;
-				console.log(data);
-				if (arcane) newAsset.tags.push('arcane');
-				console.log(newAsset.tags);
-				break;
-			case 'Trait':
-				newAsset = new Asset(asset);
-				newAsset.status.lendable = false;
-				break;
-			case 'Power':
-				newAsset = new Asset(asset);
-				newAsset.status.lendable = false;
-				break;
-			case 'Territory':
-				newAsset = new Asset(asset);
-				newAsset.status.lendable = true;
-				newAsset.uses = 999;
-				break;
-			case 'GodBond':
-				newAsset = new GodBond(asset);
-				newAsset.status.lendable = false;
-				newAsset.uses = 999;
-				break;
-			case 'MortalBond':
-				newAsset = new MortalBond(asset);
-				newAsset.status.lendable = false;
-				newAsset.uses = 999;
-				break;
-			default:
-				throw Error(`Type '${data.asset.type}' is Invalid!`);
+		case 'Asset':
+			newAsset = new Asset(asset);
+			newAsset.status.lendable = true;
+			if (arcane) newAsset.tags.push('arcane');
+			break;
+		case 'Trait':
+			newAsset = new Asset(asset);
+			newAsset.status.lendable = false;
+			if (arcane) newAsset.tags.push('arcane');
+			break;
+		case 'Power':
+			newAsset = new Asset(asset);
+			newAsset.status.lendable = false;
+			break;
+		case 'Territory':
+			newAsset = new Asset(asset);
+			newAsset.status.lendable = true;
+			newAsset.uses = 999;
+			break;
+		case 'GodBond':
+			newAsset = new GodBond(asset);
+			newAsset.status.lendable = false;
+			newAsset.uses = 999;
+			break;
+		case 'MortalBond':
+			newAsset = new MortalBond(asset);
+			newAsset.status.lendable = false;
+			newAsset.uses = 999;
+			break;
+		default:
+			throw Error(`Type '${data.asset.type}' is Invalid!`);
 		}
 
 		newAsset = await newAsset.save();
@@ -116,7 +119,8 @@ async function addAsset(data, user) {
 			message: `${newAsset.type} ${newAsset.name} created`,
 			type: 'success'
 		};
-	} catch (err) {
+	}
+	catch (err) {
 		logger.error(err);
 		return { message: `ERROR: ${err}`, type: 'error' };
 	}
@@ -139,7 +143,8 @@ async function lendAsset(data, user) {
 				message: `Could not find a asset for id "${id}"`,
 				type: 'error'
 			};
-		} else {
+		}
+		else {
 			if (lendingBoolean === asset.status.lent) {
 				// this is a check to see if someone is trying to relend a previously lent asset
 				return {
@@ -151,7 +156,8 @@ async function lendAsset(data, user) {
 			if (lendingBoolean) {
 				// if the asset is being lent
 				asset.currentHolder = target;
-			} else {
+			}
+			else {
 				asset.currentHolder = asset.owner;
 			}
 			asset.status.lent = lendingBoolean;
@@ -165,7 +171,8 @@ async function lendAsset(data, user) {
 			nexusEvent.emit('respondClient', 'update', [asset]);
 			return { message: `${asset.name} lent to ${target}`, type: 'success' };
 		}
-	} catch (err) {
+	}
+	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
@@ -190,10 +197,12 @@ async function deleteAsset(data, user) {
 
 			nexusEvent.emit('respondClient', 'delete', [{ model: 'asset', id }]);
 			return { message: 'Asset Delete Success', type: 'success' };
-		} else {
+		}
+		else {
 			return { message: `No asset with the id ${id} exists!`, type: 'error' };
 		}
-	} catch (err) {
+	}
+	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
@@ -211,7 +220,8 @@ async function unhideAll() {
 			res.push(ass);
 		}
 		nexusEvent.emit('respondClient', 'update', res);
-	} catch (err) {
+	}
+	catch (err) {
 		logger.error(err);
 		return { message: `ERROR: ${err}`, type: 'error' };
 	}
