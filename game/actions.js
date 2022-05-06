@@ -466,7 +466,6 @@ async function effectAction(data, username) {
 		case 'map':
 			for (const el of document) {
 				const loc = await Location.findById(el._id);
-				console.log(loc, loc.unlockedBy, owner);
 				if (!loc.unlockedBy.includes(owner)) {
 					loc.unlockedBy.push(owner);
 					await action.addEffect({
@@ -476,7 +475,7 @@ async function effectAction(data, username) {
 					});
 					await loc.save();
 				}
-				old = loc;
+				return { message: `${el.name} unlocked`, type: 'success' };
 			}
 			break;
 		default:
