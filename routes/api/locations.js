@@ -6,8 +6,7 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const { locations } = require('../../config/startingData');
 
 const validateObjectId = require('../../middleware/util/validateObjectId');
-// Agent Model - Using Mongoose Model
-const { Location } = require('../../models/location'); // Agent Model
+const { Location } = require('../../models/location'); // Location Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 
@@ -22,7 +21,7 @@ router.get('/', async function(req, res, next) {
 	else {
 		try {
 			const locat = await Location.find()
-				.populate('unlockedBy');
+				.populate('unlockedBy', 'characterName playerName');
 			res.status(200).json(locat);
 		}
 		catch (err) {
@@ -124,7 +123,6 @@ router.delete('/:id', async function(req, res, next) {
 
 router.patch('/deleteAll', async function(req, res) {
 	const data = await Location.deleteMany();
-  console.log(await Location.find())
 	return res.status(200).send(`We wiped out ${data.deletedCount} Locations`);
 });
 
