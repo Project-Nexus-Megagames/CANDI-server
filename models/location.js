@@ -14,7 +14,7 @@ const LocationSchema = new Schema({
 	influence: { type: Number, default: 0, min: 0, max: 15 },
 	coords: {
 		x: { type: Number, required: true }, //
-		y: { type: Number, required: true }, //
+		y: { type: Number, required: true } //
 	},
 	unlockedBy: [{ type: ObjectId, ref: 'Character' }]
 });
