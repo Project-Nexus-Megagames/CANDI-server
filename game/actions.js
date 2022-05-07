@@ -239,7 +239,7 @@ async function editSubObject(data, user) {
 			document: action,
 			user
 		});
-		const comment = await Comment.findByIdAndUpdate(
+		await Comment.findByIdAndUpdate(
 			data.comment._id,
 			data.comment,
 			{ new: true }
@@ -463,7 +463,8 @@ async function effectAction(data, username) {
 					  })
 				: null;
 			return response;
-		case 'map':
+		case 'map': {
+			let locsForMessage = '';
 			for (const el of document) {
 				const loc = await Location.findById(el._id);
 				if (!loc.unlockedBy.includes(owner)) {
@@ -473,11 +474,13 @@ async function effectAction(data, username) {
 						type: 'location',
 						status: 'Temp-Hidden'
 					});
+					locsForMessage = locsForMessage + el.name + ', ';
 					await loc.save();
 				}
-				return { message: `${el.name} unlocked`, type: 'success' };
 			}
-			break;
+			return { message: `${locsForMessage} unlocked`, type: 'success' };
+		}
+
 		default:
 			console.log(`Invalid effectAction switch type ${type}`);
 			return {
