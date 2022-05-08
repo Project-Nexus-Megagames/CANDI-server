@@ -11,14 +11,14 @@ const characters = [
 		control: ['Scott']
 	},
 	{
-		playerName: 'Frazi',
+		playerName: 'Franzi',
 		pronouns: 'She/Her',
 		characterName: 'Apprentice Tech Wizard',
 		tags: ['Control'],
-		email: 'email here',
+		email: 'franziska.schulz@gmail.com',
 		timeZone: 'GMT (UTC+0)',
 		bio: '',
-		username: 'xanatosdc',
+		username: 'Franzi',
 		control: []
 	},
 	{
@@ -42,7 +42,7 @@ const characters = [
 		bio: 'controlling Apollo, Dionysus, Charles, Eloise, Oliver, Lillian, Mabel',
 		username: 'Wintercross',
 		control: ['Game Control']
-	},
+	}
 	// {
 	// 	playerName: 'CONTROLLER ACTUAL NAME HERE',
 	// 	pronouns: 'CONTROLLER PRONOUNS HERE',
@@ -71,4 +71,4 @@ const npcs = [
 	}
 ];
 
-module.exports = { characters, npcs, };
+module.exports = { characters, npcs };
