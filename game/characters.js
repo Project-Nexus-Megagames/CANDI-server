@@ -158,9 +158,7 @@ async function createCharacter(data) {
 
 async function lockCharacter(data) {
 	const { char, charsToRemove } = data;
-
 	const character = await Character.findById(char);
-	console.log(character);
 	for (const charToRemove of charsToRemove) {
 		if (character.unlockedBy.indexOf(charToRemove) === -1) {
 			return {
@@ -173,7 +171,27 @@ async function lockCharacter(data) {
 	await character.save();
 	nexusEvent.emit('respondClient', 'update', [character]);
 	logger.info(`${character.characterName} edited.`);
-	return { message: 'Charactger Edit Success', type: 'success' };
+	return { message: 'Character Edit Success', type: 'success' };
 }
 
-module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, lockCharacter };
+async function shareContacts(data) {
+	const { chars, _id } = data;
+	for (const char of chars) {
+		const character = await Character.findById(char);
+		console.log(character.unlockedBy);
+		console.log(character.unlockedBy.indexOf(_id));
+		if (character.unlockedBy.indexOf(_id) !== -1) {
+			return {
+				message: 'Character already has contact unlocked.',
+				type: 'error'
+			};
+		}
+		character.unlockedBy.push(_id);
+		await character.save();
+		nexusEvent.emit('respondClient', 'update', [character]);
+		logger.info(`${character.characterName} edited.`);
+		return { message: 'Character Edit Success', type: 'success' };
+	}
+}
+
+module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, lockCharacter, shareContacts };

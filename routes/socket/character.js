@@ -1,4 +1,4 @@
-const { modifyCharacter, modifyMemory, modifySupport, register, deleteCharacter, createCharacter, lockCharacter } = require('../../game/characters');
+const { modifyCharacter, modifyMemory, modifySupport, register, deleteCharacter, createCharacter, lockCharacter, shareContacts } = require('../../game/characters');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
 
 module.exports = {
@@ -42,6 +42,11 @@ module.exports = {
 			}
 			case 'lockCharacter': {
 				response = await lockCharacter(data);
+				response.type === 'success' ? client.emit('clearLocalStorage') : null;
+				break;
+			}
+			case 'share': {
+				response = await shareContacts(data);
 				response.type === 'success' ? client.emit('clearLocalStorage') : null;
 				break;
 			}
