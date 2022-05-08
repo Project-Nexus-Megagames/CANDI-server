@@ -60,7 +60,6 @@ async function lockLocation(data) {
 	const { loc, charsToRemove } = data;
 
 	const location = await Location.findById(loc);
-	console.log(location);
 	for (const character of charsToRemove) {
 		if (location.unlockedBy.indexOf(character) === -1) {
 			return {

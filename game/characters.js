@@ -156,4 +156,24 @@ async function createCharacter(data) {
 	}
 }
 
-module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register };
+async function lockCharacter(data) {
+	const { char, charsToRemove } = data;
+
+	const character = await Character.findById(char);
+	console.log(character);
+	for (const charToRemove of charsToRemove) {
+		if (character.unlockedBy.indexOf(charToRemove) === -1) {
+			return {
+				message: 'Character does not have character unlocked.',
+				type: 'error'
+			};
+		}
+		character.unlockedBy = character.unlockedBy.filter((el) => el != charToRemove);
+	}
+	await character.save();
+	nexusEvent.emit('respondClient', 'update', [character]);
+	logger.info(`${character.characterName} edited.`);
+	return { message: 'Charactger Edit Success', type: 'success' };
+}
+
+module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, lockCharacter };

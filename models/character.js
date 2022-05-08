@@ -22,7 +22,8 @@ const CharacterSchema = new Schema({
 	effort: { type: Number, default: 2, min: 0, max: 6 },
 	bitsyCount: { type: Number, default: 0 },
 	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
-	color: { type: String, default: 'ffffff' }
+	color: { type: String, default: 'ffffff' },
+	unlockedBy: [{ type: ObjectId, ref: 'Character' }]
 });
 
 CharacterSchema.methods.expendEffort = async function(amount) {

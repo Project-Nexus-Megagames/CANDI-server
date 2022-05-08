@@ -480,6 +480,24 @@ async function effectAction(data, username) {
 			}
 			return { message: `${locsForMessage} unlocked`, type: 'success' };
 		}
+		case 'character': {
+			let charsForMessage = '';
+			for (const el of document) {
+				console.log(el);
+				const char = await Character.findById(el._id);
+				if (!char.unlockedBy.includes(owner)) {
+					char.unlockedBy.push(owner);
+					await action.addEffect({
+						description: `New character unlocked: ${el.characterName} `,
+						type: 'character',
+						status: 'Temp-Hidden'
+					});
+					charsForMessage = charsForMessage + el.characterName + ', ';
+					await char.save();
+				}
+			}
+			return { message: `${charsForMessage} unlocked`, type: 'success' };
+		}
 
 		default:
 			console.log(`Invalid effectAction switch type ${type}`);
