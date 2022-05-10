@@ -476,7 +476,9 @@ async function effectAction(data, username) {
 					});
 					locsForMessage = locsForMessage + el.name + ', ';
 					await loc.save();
+					nexusEvent.emit('respondClient', 'update', [loc]);
 				}
+
 			}
 			return { message: `${locsForMessage} unlocked`, type: 'success' };
 		}
@@ -494,6 +496,7 @@ async function effectAction(data, username) {
 					});
 					charsForMessage = charsForMessage + el.characterName + ', ';
 					await char.save();
+					nexusEvent.emit('respondClient', 'update', [char]);
 				}
 			}
 			return { message: `${charsForMessage} unlocked`, type: 'success' };

@@ -44,17 +44,6 @@ async function editLocation(data) {
 	}
 }
 
-async function unlockLocation(data) {
-	let { character, location } = data;
-	location = await Location.findById(location);
-
-	if (location.unlockedBy.some((tag) => tag === character)) {return console.log('Location already unlocked by character');}
-
-	location.unlockedBy.push(character);
-	location = await location.save();
-
-	nexusEvent.emit('request', 'update', [location]);
-}
 
 async function lockLocation(data) {
 	const { loc, charsToRemove } = data;
@@ -75,4 +64,4 @@ async function lockLocation(data) {
 	return { message: 'Location Edit Success', type: 'success' };
 }
 
-module.exports = { editLocation, unlockLocation, lockLocation };
+module.exports = { editLocation, lockLocation };
