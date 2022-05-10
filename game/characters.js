@@ -178,20 +178,15 @@ async function shareContacts(data) {
 	const { chars, _id } = data;
 	for (const char of chars) {
 		const character = await Character.findById(char);
-		console.log(character.unlockedBy);
-		console.log(character.unlockedBy.indexOf(_id));
-		if (character.unlockedBy.indexOf(_id) !== -1) {
-			return {
-				message: 'Character already has contact unlocked.',
-				type: 'error'
-			};
+		if (character.unlockedBy.indexOf(_id) === -1) {
+			character.unlockedBy.push(_id);
+			await character.save();
+			nexusEvent.emit('respondClient', 'update', [character]);
+			logger.info(`${character.characterName} edited.`);
+
 		}
-		character.unlockedBy.push(_id);
-		await character.save();
-		nexusEvent.emit('respondClient', 'update', [character]);
-		logger.info(`${character.characterName} edited.`);
-		return { message: 'Character Edit Success', type: 'success' };
-	}
+		else {logger.info(`${character.characterName} was already unlocked.`);}
+	}	return { message: 'Character Edit Success', type: 'success' };
 }
 
 module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, lockCharacter, shareContacts };
