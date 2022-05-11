@@ -470,11 +470,11 @@ async function effectAction(data, username) {
 				if (!loc.unlockedBy.includes(owner)) {
 					loc.unlockedBy.push(owner);
 					await action.addEffect({
-						description: `New location unlocked: ${el.name} `,
+						description: `New location unlocked: ${loc.name} `,
 						type: 'location',
 						status: 'Temp-Hidden'
 					});
-					locsForMessage = locsForMessage + el.name + ', ';
+					locsForMessage = locsForMessage + loc.name + ', ';
 					await loc.save();
 					loc = await loc.populateMe();
 					nexusEvent.emit('respondClient', 'update', [loc]);
@@ -487,15 +487,15 @@ async function effectAction(data, username) {
 			let charsForMessage = '';
 			for (const el of document) {
 				console.log(el);
-				const char = await Character.findById(el._id);
+				const char = await Character.findById(el);
 				if (!char.unlockedBy.includes(owner)) {
 					char.unlockedBy.push(owner);
 					await action.addEffect({
-						description: `New character unlocked: ${el.characterName} `,
+						description: `New character unlocked: ${char.characterName} `,
 						type: 'character',
 						status: 'Temp-Hidden'
 					});
-					charsForMessage = charsForMessage + el.characterName + ', ';
+					charsForMessage = charsForMessage + char.characterName + ', ';
 					await char.save();
 					nexusEvent.emit('respondClient', 'update', [char]);
 				}
