@@ -467,6 +467,7 @@ async function effectAction(data, username) {
 			let locsForMessage = '';
 			for (const el of document) {
 				let loc = await Location.findById(el._id);
+				const loc = await Location.findById(el);
 				if (!loc.unlockedBy.includes(owner)) {
 					loc.unlockedBy.push(owner);
 					await action.addEffect({
