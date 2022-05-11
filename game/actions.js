@@ -466,21 +466,15 @@ async function effectAction(data, username) {
 		case 'map': {
 			let locsForMessage = '';
 			for (const el of document) {
-				let loc = await Location.findById(el._id);
-				const loc = await Location.findById(el);
-				if (!loc.unlockedBy.includes(owner)) {
-					loc.unlockedBy.push(owner);
-					await action.addEffect({
-						description: `New location unlocked: ${loc.name} `,
-						type: 'location',
-						status: 'Temp-Hidden'
-					});
-					locsForMessage = locsForMessage + loc.name + ', ';
-					await loc.save();
-					loc = await loc.populateMe();
+				old = await Location.findById(el);
+				if (!old.unlockedBy.includes(owner)) {
+					old.unlockedBy.push(owner);
+					await action.addEffect({ description: `New location unlocked: ${old.name} `, type: 'location',	status: 'Temp-Hidden'	});
+					locsForMessage = locsForMessage + old.name + ', ';
+					await old.save();
+					const loc = await old.populateMe();
 					nexusEvent.emit('respondClient', 'update', [loc]);
 				}
-
 			}
 			return { message: `${locsForMessage} unlocked`, type: 'success' };
 		}
