@@ -466,7 +466,7 @@ async function effectAction(data, username) {
 		case 'map': {
 			let locsForMessage = '';
 			for (const el of document) {
-				const loc = await Location.findById(el._id);
+				let loc = await Location.findById(el._id);
 				if (!loc.unlockedBy.includes(owner)) {
 					loc.unlockedBy.push(owner);
 					await action.addEffect({
@@ -476,6 +476,7 @@ async function effectAction(data, username) {
 					});
 					locsForMessage = locsForMessage + el.name + ', ';
 					await loc.save();
+					loc = await loc.populateMe();
 					nexusEvent.emit('respondClient', 'update', [loc]);
 				}
 

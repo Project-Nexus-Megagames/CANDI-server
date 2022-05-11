@@ -15,7 +15,7 @@ async function editLocation(data) {
 			influence,
 			unlockedBy
 		} = data;
-		const location = await Location.findById(_id);
+		let location = await Location.findById(_id);
 		if (location != null) {
 			location.name = name;
 			location.description = description;
@@ -27,6 +27,7 @@ async function editLocation(data) {
 			location.unlockedBy = unlockedBy;
 
 			await location.save();
+			location = await location.populateMe();
 			nexusEvent.emit('respondClient', 'update', [location]);
 			logger.info(`${location.name} edited.`);
 			return { message: 'Location Edit Success', type: 'success' };
@@ -48,7 +49,7 @@ async function editLocation(data) {
 async function lockLocation(data) {
 	const { loc, charsToRemove } = data;
 
-	const location = await Location.findById(loc);
+	let location = await Location.findById(loc);
 	for (const character of charsToRemove) {
 		if (location.unlockedBy.indexOf(character) === -1) {
 			return {
@@ -59,6 +60,7 @@ async function lockLocation(data) {
 		location.unlockedBy = location.unlockedBy.filter((el) => el != character);
 	}
 	await location.save();
+	location = await location.populateMe();
 	nexusEvent.emit('respondClient', 'update', [location]);
 	logger.info(`${location.name} edited.`);
 	return { message: 'Location Edit Success', type: 'success' };

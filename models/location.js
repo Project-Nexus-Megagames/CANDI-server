@@ -19,6 +19,12 @@ const LocationSchema = new Schema({
 	unlockedBy: [{ type: ObjectId, ref: 'Character' }]
 });
 
+LocationSchema.methods.populateMe = function() {
+	return this
+		.populate('unlockedBy', 'characterName playerName')
+		.execPopulate();
+};
+
 const Location = mongoose.model('Location', LocationSchema);
 
 module.exports = { Location };
