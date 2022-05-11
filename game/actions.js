@@ -481,23 +481,22 @@ async function effectAction(data, username) {
 		case 'character': {
 			let charsForMessage = '';
 			for (const el of document) {
-				console.log(el);
-				const char = await Character.findById(el);
-				if (!char.unlockedBy.includes(owner)) {
-					char.unlockedBy.push(owner);
+				old = await Character.findById(el);
+				if (!old.unlockedBy.includes(owner)) {
+					old.unlockedBy.push(owner);
 					await action.addEffect({
-						description: `New character unlocked: ${char.characterName} `,
+						description: `New character unlocked: ${old.characterName} `,
 						type: 'character',
 						status: 'Temp-Hidden'
 					});
-					charsForMessage = charsForMessage + char.characterName + ', ';
-					await char.save();
+					charsForMessage = charsForMessage + old.characterName + ', ';
+					await old.save();
+					const char = await old.populateMe();
 					nexusEvent.emit('respondClient', 'update', [char]);
 				}
 			}
 			return { message: `${charsForMessage} unlocked`, type: 'success' };
 		}
-
 		default:
 			console.log(`Invalid effectAction switch type ${type}`);
 			return {

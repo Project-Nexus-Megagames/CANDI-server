@@ -22,7 +22,7 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const char = await Character.find().populate('assets').populate('lentAssets');
+			const char = await Character.find().populate('assets').populate('lentAssets').populate('unlockedBy', 'characterName playerName');
 			res.status(200).json(char);
 		}
 		catch (err) {
@@ -56,6 +56,7 @@ router.get('/:id', validateObjectId, async (req, res, next) => {
 		}
 	}
 });
+
 
 // @route   POST api/characters
 // @Desc    Post a new Character

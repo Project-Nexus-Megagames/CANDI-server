@@ -158,7 +158,7 @@ async function createCharacter(data) {
 
 async function lockCharacter(data) {
 	const { char, charsToRemove } = data;
-	const character = await Character.findById(char);
+	let character = await Character.findById(char);
 	for (const charToRemove of charsToRemove) {
 		if (character.unlockedBy.indexOf(charToRemove) === -1) {
 			return {
@@ -169,6 +169,7 @@ async function lockCharacter(data) {
 		character.unlockedBy = character.unlockedBy.filter((el) => el != charToRemove);
 	}
 	await character.save();
+	character = character.populateMe();
 	nexusEvent.emit('respondClient', 'update', [character]);
 	logger.info(`${character.characterName} edited.`);
 	return { message: 'Character Edit Success', type: 'success' };
@@ -177,10 +178,11 @@ async function lockCharacter(data) {
 async function shareContacts(data) {
 	const { chars, _id } = data;
 	for (const char of chars) {
-		const character = await Character.findById(char);
+		let character = await Character.findById(char);
 		if (character.unlockedBy.indexOf(_id) === -1) {
 			character.unlockedBy.push(_id);
 			await character.save();
+			character = character.populateMe();
 			nexusEvent.emit('respondClient', 'update', [character]);
 			logger.info(`${character.characterName} edited.`);
 

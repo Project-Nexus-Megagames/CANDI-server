@@ -55,6 +55,12 @@ CharacterSchema.methods.restoreEffort = async function(amount) {
 	}
 };
 
+CharacterSchema.methods.populateMe = function() {
+	return this
+		.populate('unlockedBy', 'characterName playerName')
+		.execPopulate();
+};
+
 const Character = mongoose.model('Character', CharacterSchema);
 
 
