@@ -169,7 +169,7 @@ async function lockCharacter(data) {
 		character.unlockedBy = character.unlockedBy.filter((el) => el != charToRemove);
 	}
 	await character.save();
-	character = character.populateMe();
+	character = await character.populateMe();
 	nexusEvent.emit('respondClient', 'update', [character]);
 	logger.info(`${character.characterName} edited.`);
 	return { message: 'Character Edit Success', type: 'success' };
@@ -182,7 +182,7 @@ async function shareContacts(data) {
 		if (character.unlockedBy.indexOf(_id) === -1) {
 			character.unlockedBy.push(_id);
 			await character.save();
-			character = character.populateMe();
+			character = await character.populateMe();
 			nexusEvent.emit('respondClient', 'update', [character]);
 			logger.info(`${character.characterName} edited.`);
 

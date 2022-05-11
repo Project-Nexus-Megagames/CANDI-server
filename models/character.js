@@ -55,7 +55,7 @@ CharacterSchema.methods.restoreEffort = async function(amount) {
 	}
 };
 
-CharacterSchema.methods.populateMe = function() {
+CharacterSchema.methods.populateMe = async function() {
 	return this
 		.populate('unlockedBy', 'characterName playerName')
 		.execPopulate();
