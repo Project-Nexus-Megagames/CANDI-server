@@ -30,7 +30,8 @@ CharacterSchema.methods.expendEffort = async function(amount) {
 	try {
 		// console.log(amount);
 		this.effort = this.effort - amount;
-		const character = await this.save();
+		let character = await this.save();
+		character = await character.populateMe();
 
 		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
 		return character;
@@ -45,7 +46,8 @@ CharacterSchema.methods.restoreEffort = async function(amount) {
 		this.effort = this.effort + amount;
 		// console.log(amount);
 		if (this.effort > 2) this.effort = 2;
-		const character = await this.save();
+		let character = await this.save();
+		character = await character.populateMe();
 
 		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
 		return character;

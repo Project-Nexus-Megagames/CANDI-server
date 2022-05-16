@@ -44,6 +44,7 @@ const effectSchema = new Schema({
 const ActionSchema = new Schema({
 	model:  { type: String, default: 'Action' }, // Model for the DOC
 	name: { type: String },
+	type: { type: String, default: 'normal' }, // Type of action (explore or normal)
 	round: { type: Number }, // Round Number for the ACTION
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION

@@ -152,6 +152,7 @@ async function deleteSubObject(data, user) {
 	} // if
 }
 
+// Used to edit comments, results, or effects of an action. probably should be seperate functions, but...
 async function editSubObject(data, user) {
 	const id = data.id;
 	let action = await Action.findById(id);
@@ -379,12 +380,13 @@ async function editAction(data, user) {
 		new: true
 	}).populate('creator');
 
-	// const character = await Character.findById(action.creator._id).populate('lentAssets');
-	// await character.expendEffort(action.effort - oldAction.effort);
+	let character = await Character.findById(action.creator._id).populate('lentAssets');
+	character = await character.expendEffort(action.submission.effort - oldAction.submission.effort);
+	nexusEvent.emit('respondClient', 'update', [character]);
 
 	// let comment = new Comment({
 	// 	body: `${user} edited this action...`,
-	// 	author: user,
+	// 	commentor: user,
 	// 	type: 'Info'
 	// });
 	// comment = await comment.save(); // Saves comment
