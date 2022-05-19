@@ -8,6 +8,7 @@ const injurySchema = new Schema({
 	model: { type: String, default: 'Injury' },
 	received: { type: Number },
 	expires: { type: Number },
+	duration: { type: Number },
 	actionTitle: { type: String, default: 'no action description was to be found' }
 });
 
