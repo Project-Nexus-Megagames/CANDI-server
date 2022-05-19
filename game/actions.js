@@ -499,6 +499,21 @@ async function effectAction(data, username) {
 			}
 			return { message: `${charsForMessage} unlocked`, type: 'success' };
 		}
+		case 'addInjury': {
+		  console.log(document, owner);
+			old = await Character.findById(owner);
+			const expires = document.received + parseInt(document.duration);
+			const inj = { actionTitle: document.actionTitle, received: document.received, expires, duration: document.duration };
+			old.injuries.push(inj);
+			await old.save();
+			const char = await old.populateMe();
+			nexusEvent.emit('respondClient', 'update', [char]);
+			return { message: `1 Injury added to ${char.characterName}` };
+		}
+		case 'healInjury': {
+		  console.log('heal Injury');
+			break;
+		}
 		default:
 			console.log(`Invalid effectAction switch type ${type}`);
 			return {
