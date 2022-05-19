@@ -4,6 +4,13 @@ const mongoose = require('mongoose'); // Mongo DB object modeling module
 const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
+const injurySchema = new Schema({
+	model: { type: String, default: 'Injury' },
+	received: { type: Number },
+	expires: { type: Number },
+	actionTitle: { type: String, default: 'no action description was to be found' }
+});
+
 const CharacterSchema = new Schema({
 	model:  { type: String, default: 'Character' },
 	playerName: { type: String, minlength: 1, maxlength: 50, required: true },
@@ -23,8 +30,10 @@ const CharacterSchema = new Schema({
 	bitsyCount: { type: Number, default: 0 },
 	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
 	color: { type: String, default: 'ffffff' },
-	unlockedBy: [{ type: ObjectId, ref: 'Character' }]
+	unlockedBy: [{ type: ObjectId, ref: 'Character' }],
+	injuries: [injurySchema]
 });
+
 
 CharacterSchema.methods.expendEffort = async function(amount) {
 	try {
