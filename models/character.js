@@ -6,6 +6,7 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const injurySchema = new Schema({
 	model: { type: String, default: 'Injury' },
+	label: { type: String },
 	received: { type: Number },
 	expires: { type: Number },
 	duration: { type: Number },

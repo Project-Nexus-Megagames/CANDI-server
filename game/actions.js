@@ -503,7 +503,8 @@ async function effectAction(data, username) {
 		  console.log(document, owner);
 			old = await Character.findById(owner);
 			const expires = document.received + parseInt(document.duration);
-			const inj = { actionTitle: document.actionTitle, received: document.received, expires, duration: document.duration };
+			const label = `Injury received in action ${document.actionTitle}. (AutoHeal at end of round ${expires})`;
+			const inj = { actionTitle: document.actionTitle, received: document.received, expires, duration: document.duration, label };
 			old.injuries.push(inj);
 			await old.save();
 			const char = await old.populateMe();
