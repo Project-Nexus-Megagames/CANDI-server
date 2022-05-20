@@ -42,7 +42,7 @@ async function createAction(data, user) {
 
 		console.log(data);
 
-		const { type, creator, controllers, name } = data;
+		const { type, creator, controllers, name, numberOfInjuries } = data;
 
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
@@ -56,7 +56,8 @@ async function createAction(data, user) {
 					: name,
 			round: gamestate.round,
 			creator,
-			controllers
+			controllers,
+			numberOfInjuries
 		});
 
 		action = await action.save();
@@ -508,6 +509,11 @@ async function effectAction(data, username) {
 			else {label = `Injury received in action ${actionTitle}. (Permanent Injury)`;}
 			const inj = { actionTitle, received, expires, duration, label };
 			old.injuries.push(inj);
+			await action.addEffect({
+				description: `Injury with duration ${duration} added to ${old.characterName} `,
+				type: 'injury',
+				status: 'Temp-Hidden'
+			});
 			await old.save();
 			const char = await old.populateMe();
 			nexusEvent.emit('respondClient', 'update', [char]);
@@ -524,6 +530,11 @@ async function effectAction(data, username) {
 				}
 				else {console.log('Injury could not be healed. It does not exist');}
 			}
+			await action.addEffect({
+				description: `${injuryCount} injuries healed for ${old.characterName}. `,
+				type: 'injury',
+				status: 'Temp-Hidden'
+			});
 			await old.save();
 			const char = await old.populateMe();
 			nexusEvent.emit('respondClient', 'update', [char]);

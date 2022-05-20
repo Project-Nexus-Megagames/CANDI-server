@@ -47,6 +47,7 @@ const ActionSchema = new Schema({
 	type: { type: String, default: 'normal' }, // Type of action (explore or normal)
 	round: { type: Number }, // Round Number for the ACTION
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
+	numberOfInjuries: { type: Number, required: true, default: 0 }, // The number of injuries the character has when submitting an action
 	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
 	controllers: [{ type: String }], // Controllers assigned to handle this ACTION
 	progress: { type: Number, default: 0, min: 0, max: 100 }, // % of compleation | Goes to 100% automatically when control posts a RESULT
