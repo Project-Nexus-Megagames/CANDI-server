@@ -160,7 +160,7 @@ async function lockCharacter(data) {
 	const { char, charsToRemove } = data;
 	console.log(data);
 	let character = await Character.findById(char);
-	for (const charToRemove of charsToRemove) {
+	charsToRemove.forEach((charToRemove) => {
 		if (character.unlockedBy.indexOf(charToRemove) === -1) {
 			return {
 				message: 'Character does not have character unlocked.',
@@ -168,7 +168,7 @@ async function lockCharacter(data) {
 			};
 		}
 		character.unlockedBy = character.unlockedBy.filter((el) => el != charToRemove);
-	}
+	});
 	await character.save();
 	character = await character.populateMe();
 	nexusEvent.emit('respondClient', 'update', [character]);
@@ -179,9 +179,18 @@ async function lockCharacter(data) {
 async function healInjury(data) {
 	const { char, injuriesToHeal } = data;
 	let character = await Character.findById(char);
-	for (const injId of injuriesToHeal) {
-		character.injuries = character.injuries.filter((injury) => injId != injury._id);
-	}
+	injuriesToHeal.forEach((injId) => {
+		const found = character.injuries.findIndex((injury) => injury._id.toString() === injId);
+		if (found === -1) 	{
+			console.log('blah');
+			return {
+				message: 'Character does not have that injury to heal.',
+				type: 'error'
+			};
+
+		}
+		else {character.injuries = character.injuries.filter((injury) => injId !== injury._id.toString());}
+	});
 	await character.save();
 	character = await character.populateMe();
 	nexusEvent.emit('respondClient', 'update', [character]);
