@@ -505,8 +505,8 @@ async function effectAction(data, username) {
 			let label = '';
 			old = await Character.findById(owner);
 			const expires = received + parseInt(duration);
-			if (duration < 99) {label = `Injury received in action ${actionTitle}. (AutoHeal at end of round ${expires})`;}
-			else {label = `Injury received in action ${actionTitle}. (Permanent Injury)`;}
+			if (duration < 99) {label = `${actionTitle}. (AutoHeal at end of round ${expires})`;}
+			else {label = `${actionTitle}. (Permanent Injury)`;}
 			const inj = { actionTitle, received, expires, duration, label };
 			old.injuries.push(inj);
 			await action.addEffect({
