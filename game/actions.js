@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-const { Character, Injury } = require('../models/character');
+const { Character } = require('../models/character');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const { Action } = require('../models/action');
 const { logger } = require('../middleware/log/winston');
@@ -523,12 +523,8 @@ async function effectAction(data, username) {
 			old = await Character.findById(owner);
 			let injuryCount = 0;
 			for (const el of document) {
-				const injuryToRemove = await Injury.findById(el);
-				if (old.injuries.indexOf(injuryToRemove) !== 1) {
-					old.injuries = old.injuries.filter((injury) => el != injury._id);
-					injuryCount++;
-				}
-				else {console.log('Injury could not be healed. It does not exist');}
+				old.injuries = old.injuries.filter((injury) => el != injury._id);
+				injuryCount++;
 			}
 			await action.addEffect({
 				description: `${injuryCount} injuries healed for ${old.characterName}. `,

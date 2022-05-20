@@ -158,6 +158,7 @@ async function createCharacter(data) {
 
 async function lockCharacter(data) {
 	const { char, charsToRemove } = data;
+	console.log(data);
 	let character = await Character.findById(char);
 	for (const charToRemove of charsToRemove) {
 		if (character.unlockedBy.indexOf(charToRemove) === -1) {
@@ -167,6 +168,19 @@ async function lockCharacter(data) {
 			};
 		}
 		character.unlockedBy = character.unlockedBy.filter((el) => el != charToRemove);
+	}
+	await character.save();
+	character = await character.populateMe();
+	nexusEvent.emit('respondClient', 'update', [character]);
+	logger.info(`${character.characterName} edited.`);
+	return { message: 'Character Edit Success', type: 'success' };
+}
+
+async function healInjury(data) {
+	const { char, injuriesToHeal } = data;
+	let character = await Character.findById(char);
+	for (const injId of injuriesToHeal) {
+		character.injuries = character.injuries.filter((injury) => injId != injury._id);
 	}
 	await character.save();
 	character = await character.populateMe();
@@ -191,4 +205,4 @@ async function shareContacts(data) {
 	}	return { message: 'Character Edit Success', type: 'success' };
 }
 
-module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, lockCharacter, shareContacts };
+module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, lockCharacter, healInjury, shareContacts };
