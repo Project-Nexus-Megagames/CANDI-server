@@ -48,17 +48,16 @@ async function editLocation(data) {
 
 async function lockLocation(data) {
 	const { loc, charsToRemove } = data;
-
 	let location = await Location.findById(loc);
-	for (const character of charsToRemove) {
-		if (location.unlockedBy.indexOf(character) === -1) {
+	charsToRemove.forEach((charToRemove) => {
+		if (location.unlockedBy.indexOf(charToRemove) === -1) {
 			return {
 				message: 'Character does not have location unlocked.',
 				type: 'error'
 			};
 		}
-		location.unlockedBy = location.unlockedBy.filter((el) => el != character);
-	}
+		location.unlockedBy = location.unlockedBy.filter((el) => el != charToRemove);
+	});
 	await location.save();
 	location = await location.populateMe();
 	nexusEvent.emit('respondClient', 'update', [location]);
