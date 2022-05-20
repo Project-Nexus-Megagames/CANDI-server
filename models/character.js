@@ -75,6 +75,7 @@ CharacterSchema.methods.populateMe = async function() {
 };
 
 const Character = mongoose.model('Character', CharacterSchema);
+const Injury = mongoose.model('Injury', injurySchema);
 
 
-module.exports = { Character };
+module.exports = { Character, Injury };

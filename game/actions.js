@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-const { Character } = require('../models/character');
+const { Character, Injury } = require('../models/character');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const { Action } = require('../models/action');
 const { logger } = require('../middleware/log/winston');
@@ -500,21 +500,36 @@ async function effectAction(data, username) {
 			return { message: `${charsForMessage} unlocked`, type: 'success' };
 		}
 		case 'addInjury': {
-		  console.log(document, owner);
+			const { received, duration, actionTitle } = document;
+			let label = '';
 			old = await Character.findById(owner);
-			const expires = document.received + parseInt(document.duration);
-			const label = `Injury received in action ${document.actionTitle}. (AutoHeal at end of round ${expires})`;
-			const inj = { actionTitle: document.actionTitle, received: document.received, expires, duration: document.duration, label };
+			const expires = received + parseInt(duration);
+			if (duration < 99) {label = `Injury received in action ${actionTitle}. (AutoHeal at end of round ${expires})`;}
+			else {label = `Injury received in action ${actionTitle}. (Permanent Injury)`;}
+			const inj = { actionTitle, received, expires, duration, label };
 			old.injuries.push(inj);
 			await old.save();
 			const char = await old.populateMe();
 			nexusEvent.emit('respondClient', 'update', [char]);
 			return { message: `1 Injury added to ${char.characterName}` };
 		}
-		case 'healInjury': {
-		  console.log('heal Injury');
-			break;
+		case 'healInjuries': {
+			old = await Character.findById(owner);
+			let injuryCount = 0;
+			for (const el of document) {
+				const injuryToRemove = await Injury.findById(el);
+				if (old.injuries.indexOf(injuryToRemove) !== 1) {
+					old.injuries = old.injuries.filter((injury) => el != injury._id);
+					injuryCount++;
+				}
+				else {console.log('Injury could not be healed. It does not exist');}
+			}
+			await old.save();
+			const char = await old.populateMe();
+			nexusEvent.emit('respondClient', 'update', [char]);
+			return { message: `${injuryCount} injuries healed!`, type: 'success' };
 		}
+
 		default:
 			console.log(`Invalid effectAction switch type ${type}`);
 			return {
