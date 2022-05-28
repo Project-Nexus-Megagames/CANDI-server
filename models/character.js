@@ -5,8 +5,8 @@ const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const injurySchema = new Schema({
-	model: { type: String, default: 'Injury' },
-	label: { type: String },
+	submodel: { type: String, default: 'Injury' },
+	label: { type: String, default : 'Scurvey' }, // 
 	received: { type: Number },
 	expires: { type: Number },
 	duration: { type: Number },
@@ -32,7 +32,7 @@ const CharacterSchema = new Schema({
 	bitsyCount: { type: Number, default: 0 },
 	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
 	color: { type: String, default: 'ffffff' },
-	unlockedBy: [{ type: ObjectId, ref: 'Character' }],
+	unlockedBy: [{ type: ObjectId, ref: 'Character' }], //knownContacts
 	injuries: [injurySchema]
 });
 
