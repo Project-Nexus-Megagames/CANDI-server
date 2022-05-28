@@ -436,7 +436,7 @@ function capitalizeFirstLetter(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-async function effectAction(data, username) {
+async function effectAction(data) {
 	try {
 		const { type, document, owner, arcane } = data;
 		const action = await Action.findById(data.action);
@@ -501,16 +501,13 @@ async function effectAction(data, username) {
 			return { message: `${charsForMessage} unlocked`, type: 'success' };
 		}
 		case 'addInjury': {
-			const { received, duration, actionTitle } = document;
-			let label = '';
+			const { received, duration, actionTitle, name, permanent } = document;
 			old = await Character.findById(owner);
-			const expires = received + parseInt(duration);
-			if (duration < 99) {label = `${actionTitle}. (AutoHeal at end of round ${expires})`;}
-			else {label = `${actionTitle}. (Permanent Injury)`;}
-			const inj = { actionTitle, received, expires, duration, label };
+			const inj = { actionTitle, received, permanent, duration: parseInt(duration), name };
+			console.log(inj);
 			old.injuries.push(inj);
 			await action.addEffect({
-				description: `Injury with duration ${duration} added to ${old.characterName} `,
+				description: `${name} added to ${old.characterName} `,
 				type: 'injury',
 				status: 'Temp-Hidden'
 			});

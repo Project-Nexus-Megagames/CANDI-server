@@ -122,7 +122,7 @@ async function nextRound() {
 		for (const character of await Character.find()) {
 			character.lentAssets = [];
 			character.effort = 2;
-			character.injuries = character.injuries.filter((el) => el.expires > gamestate.round);
+			character.injuries = character.injuries.filter((el) => (el.received + el.duration) > gamestate.round || el.permanent);
 			character.save();
 			console.log(`Restoring effort of ${character.characterName}`);
 		}

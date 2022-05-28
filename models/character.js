@@ -6,11 +6,11 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const injurySchema = new Schema({
 	submodel: { type: String, default: 'Injury' },
-	label: { type: String, default : 'Scurvey' }, // 
+	name: { type: String, default: 'Scurvey' },
 	received: { type: Number },
-	expires: { type: Number },
 	duration: { type: Number },
-	actionTitle: { type: String, default: 'no action description was to be found' }
+	permanent: { type: Boolean, default: false },
+	actionTitle: { type: String, default: 'no action title was to be found' }
 });
 
 const CharacterSchema = new Schema({
@@ -32,7 +32,7 @@ const CharacterSchema = new Schema({
 	bitsyCount: { type: Number, default: 0 },
 	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
 	color: { type: String, default: 'ffffff' },
-	unlockedBy: [{ type: ObjectId, ref: 'Character' }], //knownContacts
+	knownContacts: [{ type: ObjectId, ref: 'Character' }],
 	injuries: [injurySchema]
 });
 
