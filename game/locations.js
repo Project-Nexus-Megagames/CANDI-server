@@ -45,24 +45,24 @@ async function editLocation(data) {
 	}
 }
 
-
-async function lockLocation(data) {
-	const { loc, charsToRemove } = data;
-	let location = await Location.findById(loc);
-	charsToRemove.forEach((charToRemove) => {
-		if (location.unlockedBy.indexOf(charToRemove) === -1) {
+function lockLocation(data) {
+	const { locsToRemove, selectedChar } = data;
+	locsToRemove.forEach(async (locToRemove) => {
+		let loc = await Location.findById(locToRemove);
+		if (loc.unlockedBy.indexOf(selectedChar) === -1) {
 			return {
 				message: 'Character does not have location unlocked.',
 				type: 'error'
 			};
 		}
-		location.unlockedBy = location.unlockedBy.filter((el) => el != charToRemove);
+		loc.unlockedBy = loc.unlockedBy.filter((el) => el != selectedChar);
+		await loc.save();
+		loc = await loc.populateMe();
+		nexusEvent.emit('respondClient', 'update', [loc]);
+		logger.info(`${loc.name} edited.`);
+		return { message: 'Location Edit Success', type: 'success' };
 	});
-	await location.save();
-	location = await location.populateMe();
-	nexusEvent.emit('respondClient', 'update', [location]);
-	logger.info(`${location.name} edited.`);
-	return { message: 'Location Edit Success', type: 'success' };
+	return { message: 'Location(s) successfully locked', type: 'success' };
 }
 
 module.exports = { editLocation, lockLocation };
