@@ -42,7 +42,40 @@ const characters = [
 		bio: 'controlling Apollo, Dionysus, Charles, Eloise, Oliver, Lillian, Mabel',
 		username: 'Wintercross',
 		control: ['Game Control']
-	}
+	},
+	{
+		playerName: 'Character A',
+		pronouns: 'He/Him',
+		characterName:'Character A',
+		tags: ['PC'],
+		email: 'a@gmail.com',
+		timeZone: 'GMT +8',
+		bio: 'controlling Apollo, Dionysus, Charles, Eloise, Oliver, Lillian, Mabel',
+		username: 'temp',
+		control: ['Game Control']
+	},
+	{
+		playerName: 'Character B',
+		pronouns: 'He/Him',
+		characterName:'Character B',
+		tags: ['PC'],
+		email: 'b@gmail.com',
+		timeZone: 'GMT +8',
+		bio: 'controlling Apollo, Dionysus, Charles, Eloise, Oliver, Lillian, Mabel',
+		username: 'temp',
+		control: ['Game Control']
+	},
+	{
+		playerName: 'Character C',
+		pronouns: 'He/Him',
+		characterName:'Character C',
+		tags: ['PC'],
+		email: 'C@gmail.com',
+		timeZone: 'GMT +8',
+		bio: 'controlling Apollo, Dionysus, Charles, Eloise, Oliver, Lillian, Mabel',
+		username: 'temp',
+		control: ['Game Control']
+	},
 	// {
 	// 	playerName: 'CONTROLLER ACTUAL NAME HERE',
 	// 	pronouns: 'CONTROLLER PRONOUNS HERE',
