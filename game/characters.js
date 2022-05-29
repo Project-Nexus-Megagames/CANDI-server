@@ -156,19 +156,10 @@ async function createCharacter(data) {
 	}
 }
 
-async function lockCharacter(data) {
-	const { char, charsToRemove } = data;
-	console.log(data);
-	let character = await Character.findById(char);
-	charsToRemove.forEach((charToRemove) => {
-		if (character.unlockedBy.indexOf(charToRemove) === -1) {
-			return {
-				message: 'Character does not have character unlocked.',
-				type: 'error'
-			};
-		}
-		character.unlockedBy = character.unlockedBy.filter((el) => el != charToRemove);
-	});
+async function manageContacts(data) {
+	const { charId, contacts } = data;
+	let character = await Character.findById(charId);
+	character.knownContacts = contacts;
 	await character.save();
 	character = await character.populateMe();
 	nexusEvent.emit('respondClient', 'update', [character]);
@@ -199,19 +190,19 @@ async function healInjury(data) {
 }
 
 async function shareContacts(data) {
-	const { chars, _id } = data;
-	for (const char of chars) {
-		let character = await Character.findById(char);
-		if (character.unlockedBy.indexOf(_id) === -1) {
-			character.unlockedBy.push(_id);
-			await character.save();
-			character = await character.populateMe();
-			nexusEvent.emit('respondClient', 'update', [character]);
-			logger.info(`${character.characterName} edited.`);
-
+	const { chars, charId } = data;
+	console.log(data);
+	let character = await Character.findById(charId);
+	for (const id of chars) {
+		if (character.knownContacts.findIndex((el) => el == id) === -1) {
+			character.knownContacts.push(id);
 		}
-		else {logger.info(`${character.characterName} was already unlocked.`);}
-	}	return { message: 'Character Edit Success', type: 'success' };
+	}
+	await character.save();
+	character = await character.populateMe();
+	nexusEvent.emit('respondClient', 'update', [character]);
+	logger.info(`${character.characterName} edited.`);
+	return { message: 'Contacts successfully shared!', type: 'success' };
 }
 
-module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, lockCharacter, healInjury, shareContacts };
+module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, manageContacts, healInjury, shareContacts };

@@ -482,29 +482,26 @@ async function effectAction(data) {
 			return { message: `${locsForMessage} unlocked`, type: 'success' };
 		}
 		case 'character': {
-			let charsForMessage = '';
-			for (const el of document) {
-				old = await Character.findById(el);
-				if (!old.unlockedBy.includes(owner)) {
-					old.unlockedBy.push(owner);
-					await action.addEffect({
-						description: `New character unlocked: ${old.characterName} `,
-						type: 'character',
-						status: 'Temp-Hidden'
-					});
-					charsForMessage = charsForMessage + old.characterName + ', ';
-					await old.save();
-					const char = await old.populateMe();
-					nexusEvent.emit('respondClient', 'update', [char]);
+			old = await Character.findById(owner);
+			for (const id of document) {
+			  if (old.knownContacts.findIndex((el) => el == id) === -1) {
+					old.knownContacts.push(id);
 				}
 			}
-			return { message: `${charsForMessage} unlocked`, type: 'success' };
+			await action.addEffect({
+				description: 'New character(s) unlocked',
+				type: 'character',
+				status: 'Temp-Hidden'
+			});
+			await old.save();
+			const char = await old.populateMe();
+			nexusEvent.emit('respondClient', 'update', [char]);
+			return { message: 'Character(s) successfully unlocked', type: 'success' };
 		}
 		case 'addInjury': {
 			const { received, duration, actionTitle, name, permanent } = document;
 			old = await Character.findById(owner);
 			const inj = { actionTitle, received, permanent, duration: parseInt(duration), name };
-			console.log(inj);
 			old.injuries.push(inj);
 			await action.addEffect({
 				description: `${name} added to ${old.characterName} `,

@@ -32,7 +32,7 @@ const CharacterSchema = new Schema({
 	bitsyCount: { type: Number, default: 0 },
 	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
 	color: { type: String, default: 'ffffff' },
-	knownContacts: [{ type: ObjectId, ref: 'Character' }],
+	knownContacts: [{ type: Schema.Types.ObjectId, ref: 'Character' }],
 	injuries: [injurySchema]
 });
 
@@ -59,7 +59,6 @@ CharacterSchema.methods.restoreEffort = async function(amount) {
 		if (this.effort > 2) this.effort = 2;
 		let character = await this.save();
 		character = await character.populateMe();
-
 		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
 		return character;
 	}
@@ -70,7 +69,7 @@ CharacterSchema.methods.restoreEffort = async function(amount) {
 
 CharacterSchema.methods.populateMe = async function() {
 	return this
-		.populate('unlockedBy', 'characterName playerName')
+		.populate('knownContacts', 'characterName playerName')
 		.execPopulate();
 };
 
