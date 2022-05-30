@@ -22,7 +22,7 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const char = await Character.find().populate('assets').populate('lentAssets').populate('unlockedBy', 'characterName playerName');
+			const char = await Character.find().populate('knownContacts');
 			res.status(200).json(char);
 		}
 		catch (err) {
