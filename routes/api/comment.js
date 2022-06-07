@@ -116,24 +116,8 @@ router.delete('/:id', async function(req, res, next) {
 // @access  Public
 
 router.patch('/deleteAll', async function(req, res) {
-	let delCount = 0;
-	for await (const element of Comment.find()) {
-		const id = element.id;
-		try {
-			const elementDel = await Comment.findByIdAndRemove(id);
-			if (elementDel == null) {
-				res.status(404).send(`The Comment with the ID ${id} was not found!`);
-			}
-			else {
-				delCount += 1;
-			}
-		}
-		catch (err) {
-			nexusError(`${err.message}`, 500);
-		}
-	}
-	nexusEvent.emit('updateComments');
-	return res.status(200).send(`We wiped out ${delCount} Comments`);
+	const data = await Comment.deleteMany();
+	return res.status(200).send(`We wiped out ${data.deletedCount} Comments!`);
 });
 
 module.exports = router;

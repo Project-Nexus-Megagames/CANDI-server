@@ -7,7 +7,6 @@ const { GameState } = require('../models/gamestate');
 const { History } = require('../models/history');
 const { d10, d8, d6, d4 } = require('../scripts/util/dice');
 
-
 async function modifyGameState(data, user) {
 	const { round, status, endTime } = data;
 	let gamestate = await GameState.findOne();
@@ -27,28 +26,27 @@ async function modifyGameState(data, user) {
 
 		await log.save();
 
-		nexusEvent.emit('respondClient', 'update', [ gamestate ]);
-		return ({ message : 'Gamestate edit Success', type: 'success' });
+		nexusEvent.emit('respondClient', 'update', [gamestate]);
+		return { message: 'Gamestate edit Success', type: 'success' };
 	}
 	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
-		return ({ message : `Server Error: ${err.message}`, type: 'error' });
+		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 
 async function closeRound() {
 	const gamestate = await GameState.findOne();
 	try {
-
 		gamestate.status = 'Resolution';
 		await gamestate.save();
 
-		nexusEvent.emit('respondClient', 'update', [ gamestate ]);
-		return ({ message : 'Round Closed Success', type: 'success' });
+		nexusEvent.emit('respondClient', 'update', [gamestate]);
+		return { message: 'Round Closed Success', type: 'success' };
 	}
 	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
-		return ({ message : `Server Error: ${err.message}`, type: 'error' });
+		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 
@@ -97,13 +95,14 @@ async function calculateDie(action) {
 async function nextRound() {
 	const gamestate = await GameState.findOne();
 	try {
-
 		// Find aall hidden assets and unhide them
 		// Find all used assets and -1 to their uses, then un-use them
 		// Find all hidden resolutions and unhide them
 		const assets = [];
 		const actions = [];
-		for (const asset of await Asset.find({ 'status.lent': true }).populate('with')) {
+		for (const asset of await Asset.find({ 'status.lent': true }).populate(
+			'with'
+		)) {
 			asset.status.lent = false;
 			asset.currentHolder = null;
 			await asset.save();
@@ -112,7 +111,7 @@ async function nextRound() {
 		}
 
 		let hidden = await Asset.find().populate('with');
-		hidden = hidden.filter(el => el.status.hidden === true);
+		hidden = hidden.filter((el) => el.status.hidden === true);
 		for (const ass of hidden) {
 			console.log(`Unhiding ${ass.name}`);
 			ass.status.hidden = false;
@@ -123,12 +122,13 @@ async function nextRound() {
 		for (const character of await Character.find()) {
 			character.lentAssets = [];
 			character.effort = 2;
+			character.injuries = character.injuries.filter((el) => (el.received + el.duration) > gamestate.round || el.permanent);
 			character.save();
 			console.log(`Restoring effort of ${character.characterName}`);
 		}
 
 		let used = await Asset.find().populate('with');
-		used = used.filter(el => el.status.used === true);
+		used = used.filter((el) => el.status.used === true);
 		for (const ass of used) {
 			console.log(`Un-using ${ass.name}`);
 			if (ass.uses !== 999) ass.uses = ass.uses - 1;
@@ -137,8 +137,7 @@ async function nextRound() {
 			assets.push(ass);
 		}
 
-
-		for (const action of await Action.find({ 'round': gamestate.round })) {
+		for (const action of await Action.find({ round: gamestate.round })) {
 			action.status = 'Published';
 
 			for (const el of action.results) {
@@ -158,33 +157,38 @@ async function nextRound() {
 			actions.push(action);
 		}
 
-		for (const asset of await Asset.find({ 'status.used': true }).populate('with')) {
+		for (const asset of await Asset.find({ 'status.used': true }).populate(
+			'with'
+		)) {
 			asset.status.used = false;
 			console.log(`Un-Using ${asset.name}`);
 			await asset.save();
 			assets.push(asset);
 		}
 
-
 		gamestate.status = 'Active';
 		gamestate.round = gamestate.round + 1;
 		await gamestate.save();
 
-		nexusEvent.emit('respondClient', 'update', [ gamestate, ...assets, ...actions ]);
-		return ({ message : 'Gamestate pushed!', type: 'success' });
+		nexusEvent.emit('respondClient', 'update', [
+			gamestate,
+			...assets,
+			...actions
+		]);
+		return { message: 'Gamestate pushed!', type: 'success' };
 	}
 	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
-		return ({ message : `Server Error: ${err.message}`, type: 'error' });
+		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 
 async function easterEgg(data) {
 	try {
 		console.log(data);
-		const { charcater, action } = data;
+		const { character, action } = data;
 		let gamestate = await GameState.findOne();
-		let char = await Character.findById(charcater); // find character of person doing action
+		let char = await Character.findById(character); // find character of person doing action
 		// set their timeout
 		const actionTimeout = new Date();
 		actionTimeout.setHours(actionTimeout.getHours() + 4);
@@ -206,12 +210,12 @@ async function easterEgg(data) {
 		}
 		// send response event to trigger new animation
 		gamestate = await gamestate.save();
-		nexusEvent.emit('respondClient', 'update', [ gamestate, char ]);
-		return ({ message : 'Bitsy was Fed!', type: 'success' });
+		nexusEvent.emit('respondClient', 'update', [gamestate, char]);
+		return { message: 'Bitsy was Fed!', type: 'success' };
 	}
 	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
-		return ({ message : `Server Error: ${err.message}`, type: 'error' });
+		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 

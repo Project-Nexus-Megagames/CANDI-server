@@ -6,13 +6,22 @@ const { Character } = require('../models/character');
 const { Action } = require('../models/action');
 const { GameState } = require('../models/gamestate');
 const { Asset } = require('../models/asset');
+const fs = require('fs'); // Node.js file system module
 
-const { createAction, deleteAction, controlOverride, editAction, deleteSubObject, editSubObject, effectAction } = require('../game/actions');
-const { modifyCharacter, modifySupport, deleteCharacter, createCharacter, modifyMemory, register } = require('../game/characters');
-const { modifyAsset, lendAsset, deleteAsset, addAsset, unhideAll } = require('../game/assets');
-const { modifyGameState, closeRound, nextRound, easterEgg } = require('../game/gamestate');
-const { editLocation } = require('../game/locations');
-const { addArrayValue } = require('../middleware/util/arrayCalls');
+const socketFiles = fs.readdirSync('./routes/socket/').filter(file => file.endsWith('.js')); // Loads spell files
+const socketMap = new Map();
+
+logger.info('Mapping sockets...');
+for (const file of socketFiles) {
+	const sock = require(`./socket/${file}`);
+	// set a new item in the Collection
+	// with the key as the sock name and the value as the exported module
+	if (sock.name) {
+		socketMap.set(sock.name, sock);
+	}
+}
+
+console.log(socketMap);
 
 module.exports = function(server) {
 	logger.info('Socket.io servers initialized...');
@@ -36,219 +45,29 @@ module.exports = function(server) {
 		client.emit('alert', { type: 'success', message: `${client.username} Connected to CANDI server...` });
 		currentUsers();
 
-		// Action Socket
-		client.on('actionRequest', async (type, data) => {
-			logger.info(`actionRequest triggered: ''${type}''`);
-			let response;
-			switch(type) {
-			case 'create': {
-				// console.log(data);
-				response = await createAction(data, client.username);
-
-				response.type === 'success' ? client.emit('clearLocalStorage', 'newActionStateGW') : null ;
-				break;
+		client.on('request', (req) => {
+			console.log(req);
+			// Request object: { route, action, data }
+			if (!req.route) {
+				client.emit('alert', { type: 'error', message: 'Socket Request missing a route...' });
 			}
-			case 'comment': {
-				// Expects data.id <<Action ref>>
-				// Expects data.comment <<Comment object>> { body, commentor, type, status }
-				// console.log(data);
-				const action = await Action.findById(data.id);
-				action ? response = await action.comment(data.comment) : response = ({ message : `Could not find Action for ${data.id}`, type: 'error' });
-				response.type === 'success' ? client.emit('clearLocalStorage', 'NewCommentGW') : null ;
-				break;
+			else if (!req.action) {
+				client.emit('alert', { type: 'error', message: 'Socket Request missing an action type...' });
 			}
-			case 'result': {
-				// Expects data.id <<Action ref>>
-				// Expects data.result <<Result object>> { description, resolver, dice }
-				// console.log(data);
-				const action = await Action.findById(data.id);
-				action ? response = await action.postResult(data.result) : response = ({ message : `Could not find Action for ${data.id} in 'result'`, type: 'error' });
-				response.type === 'success' ? client.emit('clearLocalStorage', 'newResultStateGW') : null ;
-				break;
-			}
-			case 'effect': {
-				// Expects data.id <<Action ref>>
-				// Expects data.effect <<Effect object>> { description, type, asset <<Asset ref>>, action <<Action ref>>, other }
-				response = await effectAction(data, client.username);
-				break;
-			}
-			case 'delete': {
-				response = await deleteAction(data, client.username);
-				break;
-			}
-			case 'update': {
-				// Expects data to be a Action object with edits
-				response = await editAction(data, client.username);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'selectedActionStateGW') : null ;
-				break;
-			}
-			case 'tags': {
-				// Expects data to be a Action object with edits
-				console.log(data);
-				const action = await Action.findById(data.id);
-				for (const item of data.tags) {
-					await addArrayValue(action.tags, item);
+			else {
+				const socket = socketMap.get(req.route);
+				if (socket) {
+					try {
+						socket.function(client, req, io);
+					}
+					catch (err) {
+						logger.error(err);
+					}
 				}
-				action.markModified('tags');
-				await action.save();
-				break;
+				else {
+					client.emit('alert', { message : `Socket-file not found! Route: ${req.route}\nAction: ${req.action}`, type: 'error' });
+				}
 			}
-			case 'controlReject': {
-				// console.log(data);
-				response = await controlOverride(data, client.username);
-				break;
-			}
-			case 'deleteSubObject': {
-				// console.log(data);
-				response = await deleteSubObject(data, client.username);
-				break;
-			}
-			case 'updateSubObject': {
-				// console.log(data);
-				response = await editSubObject(data, client.username);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'EditCommentGW') : null ;
-				response.type === 'success' ? client.emit('clearLocalStorage', 'EditResultGW') : null ;
-				break;
-			}
-			default:
-				console.log('Bad actionRequest Request: ', type); // need an error socket to trigger
-				response = { message : `Bad actionRequest Request: ${type}`, type: 'error' };
-				break;
-			}
-			client.emit('alert', response);
-		});
-
-		// Character Socket
-		client.on('characterRequest', async (type, data) => {
-			logger.info(`characterRequest triggered: ''${type}''`);
-			let response;
-			switch(type) {
-			case 'modify': {
-				response = await modifyCharacter(data);
-				break;
-			}
-			case 'memory': {
-				// console.log(data);
-				response = await modifyMemory(data);
-				break;
-			}
-			case 'support': {
-				// console.log(data);
-				response = await modifySupport(data);
-				break;
-			}
-			case 'register': {
-				// console.log(data);
-				response = await register(data);
-				break;
-			}
-			case 'delete': {
-				// console.log(data);
-				response = await deleteCharacter(data);
-				break;
-			}
-			case 'create': {
-				// console.log(data);
-				response = await createCharacter(data);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'newCharacterStateGW') : null ;
-				break;
-			}
-			default:
-				console.log('Bad characterRequest Request: ', type); // need an error socket to trigger
-				response = { message : `Bad characterRequest Request: ${type}`, type: 'error' };
-				break;
-			}
-			client.emit('alert', response);
-		});
-
-		// Character Socket
-		client.on('locationRequest', async (type, data) => {
-			logger.info(`locationRequest triggered: ''${type}''`);
-			let response;
-			switch(type) {
-			case 'modify': {
-				// console.log(data);
-				response = await editLocation(data);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'editTerritoryStateGW') : null ;
-				break;
-			}
-			default:
-				console.log('Bad locationRequest Request: ', type); // need an error socket to trigger
-				response = { message : `Bad locationRequest Request: ${type}`, type: 'error' };
-				break;
-			}
-			client.emit('alert', response);
-		});
-
-		// Asset Socket
-		client.on('assetRequest', async (type, data) => {
-			logger.info(`assetRequest triggered: ''${type}''`);
-			let response;
-			switch(type) {
-			case 'modify': {
-				console.log(data);
-				response = await modifyAsset(data, client.username);
-				break;
-			}
-			case 'lend': {
-				// console.log(data);
-				response = await lendAsset(data, client.username);
-				break;
-			}
-			case 'delete': {
-				// console.log(data);
-				response = await deleteAsset(data, client.username);
-				break;
-			}
-			case 'create': {
-				// console.log(data);
-				response = await addAsset(data, client.username);
-				response.type === 'success' ? client.emit('clearLocalStorage', 'addAssetState') : null ;
-				break;
-			}
-			case 'unhide': {
-				response = await unhideAll(data, client.username);
-				break;
-			}
-			default:
-				console.log('Bad assetRequest Request: ', type); // need an error socket to trigger
-				response = { message : `Bad assetRequest Request: ${type}`, type: 'error' };
-				break;
-			}
-			logger.info(response);
-			client.emit('alert', response);
-		});
-
-		client.on('gamestateRequest', async (type, data) => {
-			logger.info(`gamestateRequest triggered: ''${type}''`);
-			let response;
-			switch(type) {
-			case 'modify': {
-				// console.log(data);
-				response = await modifyGameState(data, client.username);
-				break;
-			}
-			case 'closeRound': {
-				// console.log(data);
-				response = await closeRound();
-				break;
-			}
-			case 'nextRound': {
-				// console.log(data);
-				response = await nextRound();
-				break;
-			}
-			case 'easterEgg': {
-				// console.log(data);
-				response = await easterEgg(data);
-				break;
-			}
-			default:
-				console.log('Bad gamestateRequest Request: ', type); // need an error socket to trigger
-				response = { message : `Bad gamestateRequest Request: ${type}`, type: 'error' };
-				break;
-			}
-			client.emit('alert', response);
 		});
 
 		client.on('logout', () => {
@@ -302,7 +121,7 @@ module.exports = function(server) {
 			io.emit('createClients', data);
 			break;
 		case 'logout':
-			io.emit('alert', { type: 'logout', message: `Test` });
+			io.emit('alert', { type: 'logout', message: 'Logged Out' });
 			break;
 		case 'bitsy':
 			io.emit('bitsy', { action: data.action });
@@ -311,17 +130,6 @@ module.exports = function(server) {
 			logger.error('Scott Should never see this....');
 		}
 	});
-
-	// setInterval(async () => {
-	// 	const gamestate = await GameState.findOne();
-	// 	if (gamestate && gamestate.discovered) {
-	// 		gamestate.hunger = gamestate.hunger - 13;
-	// 		gamestate.happiness = gamestate.happiness - 13;
-	// 		await gamestate.save();
-	// 		nexusEvent.emit('respondClient', 'update', [ gamestate ]);
-	// 		console.log('Bitsy Reduced');
-	// 	}
-	// }, 600000);
 
 	function currentUsers() {
 		const users = [];

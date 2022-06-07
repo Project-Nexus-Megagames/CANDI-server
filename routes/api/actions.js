@@ -142,24 +142,8 @@ router.delete('/:id', async function(req, res, next) {
 // @access  Public
 
 router.patch('/deleteAll', async function(req, res) {
-	let delCount = 0;
-	for await (const element of Action.find()) {
-		const id = element.id;
-		try {
-			const elementDel = await Action.findByIdAndRemove(id);
-			if (elementDel == null) {
-				res.status(404).send(`The Action with the ID ${id} was not found!`);
-			}
-			else {
-				delCount += 1;
-			}
-		}
-		catch (err) {
-			nexusError(`${err.message}`, 500);
-		}
-	}
-	nexusEvent.emit('updateActions');
-	return res.status(200).send(`We wiped out ${delCount} Actions`);
+	const data = await Action.deleteMany();
+	return res.status(200).send(`We wiped out ${data.delCount} Actions`);
 });
 
 

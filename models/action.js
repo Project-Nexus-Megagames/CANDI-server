@@ -43,15 +43,15 @@ const effectSchema = new Schema({
 
 const ActionSchema = new Schema({
 	model:  { type: String, default: 'Action' }, // Model for the DOC
-	type: { type: String, default: 'Action', enum: ['Action', 'Project', 'Feed' ] }, // Likely depreciated by the TAGS Array
 	name: { type: String },
+	type: { type: String, default: 'normal' }, // Type of action (explore or normal)
 	round: { type: Number }, // Round Number for the ACTION
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
+	numberOfInjuries: { type: Number, required: true, default: 0 }, // The number of injuries the character has when submitting an action
 	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
 	controllers: [{ type: String }], // Controllers assigned to handle this ACTION
 	progress: { type: Number, default: 0, min: 0, max: 100 }, // % of compleation | Goes to 100% automatically when control posts a RESULT
 	tags: [{ type: String }], // Any tags added by control
-	image: { type: String }, // URL for an image associated with this ACTION
 	submission: submissionSchema, // Player submission that created the ACTION
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
 	results: [resultSchema], // Controller generated result of the ACTION

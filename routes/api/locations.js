@@ -6,11 +6,9 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const { locations } = require('../../config/startingData');
 
 const validateObjectId = require('../../middleware/util/validateObjectId');
-// Agent Model - Using Mongoose Model
-const { Location } = require('../../models/location'); // Agent Model
+const { Location } = require('../../models/location'); // Location Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
-
 
 // @route   GET api/locations
 // @Desc    Get all locations
@@ -22,7 +20,8 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const locat = await Location.find();
+			const locat = await Location.find()
+				.populate('unlockedBy', 'characterName playerName');
 			res.status(200).json(locat);
 		}
 		catch (err) {
@@ -62,18 +61,24 @@ router.post('/', async function(req, res, next) {
 	}
 	else {
 		const { data } = req.body;
+		console.log(req.body);
 		try {
 			let newElement = new Location(data);
-			const docs = await Location.find({ intent: data.intent });
+			const docs = await Location.find({ name: data.name });
 
 			if (docs.length < 1) {
 				newElement = await newElement.save();
-				const location = await Location.findById(newElement._id).populate('creator');
-				logger.info(`Location "${newElement.intent}" created.`);
+				const location = await Location.findById(newElement._id).populate(
+					'creator'
+				);
+				logger.info(`Location "${newElement.name}" created.`);
 				res.status(200).json(location);
 			}
 			else {
-				nexusError(`An location with intent ${newElement.intent} already exists!`, 400);
+				nexusError(
+					`An location with name  ${newElement.name} already exists!`,
+					400
+				);
 			}
 		}
 		catch (err) {
@@ -117,24 +122,8 @@ router.delete('/:id', async function(req, res, next) {
 // @access  Public
 
 router.patch('/deleteAll', async function(req, res) {
-	let delCount = 0;
-	for await (const element of Location.find()) {
-		const id = element.id;
-		try {
-			const elementDel = await Location.findByIdAndRemove(id);
-			if (elementDel == null) {
-				res.status(404).send(`The Location with the ID ${id} was not found!`);
-			}
-			else {
-				delCount += 1;
-			}
-		}
-		catch (err) {
-			nexusError(`${err.message}`, 500);
-		}
-	}
-	nexusEvent.emit('updateLocations');
-	return res.status(200).send(`We wiped out ${delCount} Locations`);
+	const data = await Location.deleteMany();
+	return res.status(200).send(`We wiped out ${data.deletedCount} Locations`);
 });
 
 router.post('/initLocations', async function(req, res) {

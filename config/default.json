@@ -1,7 +1,7 @@
 {
   "jwtPrivateKey": "spooky",
-  "dbName": "godsWarDB",
-  "version": "4.11",
+  "dbName": "tempestDB",
+  "version": "1.0",
   "clientURL": "https://candi-app.herokuapp.com/",
 	"serverURL": "https://candi-server.herokuapp.com/",
   "socketCORS": "https://candi-app.herokuapp.com"

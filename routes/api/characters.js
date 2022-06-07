@@ -1,16 +1,15 @@
 const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
 const nexusEvent = require('../../middleware/events/events'); // Local event triggers
-const axios = require('axios');
 
 const validateObjectId = require('../../middleware/util/validateObjectId');
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
 
 // Agent Model - Using Mongoose Model
-const { Character, God } = require('../../models/character'); // Agent Model
+const { Character } = require('../../models/character'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
-const { characters, npcs, gods } = require('../../config/startingCharacters');
+const { characters, npcs } = require('../../config/startingCharacters');
 const { Asset } = require('../../models/asset');
 
 // @route   GET api/characters
@@ -23,7 +22,7 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const char = await Character.find().populate('assets').populate('lentAssets');
+			const char = await Character.find().populate('knownContacts');
 			res.status(200).json(char);
 		}
 		catch (err) {
@@ -57,6 +56,7 @@ router.get('/:id', validateObjectId, async (req, res, next) => {
 		}
 	}
 });
+
 
 // @route   POST api/characters
 // @Desc    Post a new Character
@@ -132,124 +132,62 @@ router.delete('/:id', async function(req, res, next) {
 // @desc    Delete All Agents
 // @access  Public
 router.patch('/deleteAll', async function(req, res) {
-	let airDelCount = 0;
-	for await (const agent of Character.find()) {
-		const id = agent.id;
-		try {
-			const agentDel = await Character.findByIdAndRemove(id);
-			if (agentDel == null) {
-				res.status(404).send(`The Character with the ID ${id} was not found!`);
-			}
-			else {
-				airDelCount += 1;
-			}
-		}
-		catch (err) {
-			nexusError(`${err.message}`, 500);
-		}
-	}
-	nexusEvent.emit('updateCharacters');
-	return res.status(200).send(`We wiped out ${airDelCount} Characters`);
+	const data = await Character.deleteMany();
+	return res.status(200).send(`We wiped out ${data.deletedCount} Characters!`);
 });
 
 // game routes
-// router.post('/initCharacters', async function(req, res) { // initializes characters based on /config/startingCharacters.js.
-// 	logger.info('POST Route: api/character call made...');
+router.post('/initCharacters', async function(req, res) { // initializes characters based on /config/startingCharacters.js.
+	logger.info('POST Route: api/character call made...');
 
-// 	const arr = ['Asset', 'Trait', 'Wealth', 'Power'];
+	const arr = ['Asset', 'Trait', 'Wealth', 'Power'];
 
-// 	try {
-// 		let npcCount = 0;
-// 		let charCount = 0;
-// 		for (const char of characters) {
-// 			let newCharacter = new Character(char);
-// 			const docs = await Character.find({ characterName: char.characterName });
-
-// 			if (docs.length < 1) {
-// 				charCount++;
-// 				newCharacter = await newCharacter.save();
-
-// 				for (const el of arr) {
-// 					let ass = new Asset({
-// 						name: `${newCharacter.characterName}'s' ${el}`,
-// 						description: `${newCharacter.characterName}'s' ${el}`,
-// 						type: el,
-// 						ownerCharacter: newCharacter._id
-// 					});
-// 					ass = await ass.save();
-// 				}
-
-// 				logger.info(`${newCharacter.characterName} created.`);
-// 			}
-// 			else {
-// 				console.log(`${newCharacter.characterName} already exists!\n`);
-// 			}
-// 		}
-
-// 		for (const npc of npcs) {
-// 			let newCharacter = new Character(npc);
-// 			//	await newAgent.validateAgent();
-// 			const docs = await Character.find({ characterName: npc.characterName });
-
-// 			if (docs.length < 1) {
-// 				newCharacter = await newCharacter.save();
-// 				npcCount++;
-// 				logger.info(`${newCharacter.characterName} created.`);
-// 			}
-// 			else {
-// 				console.log(`${newCharacter.characterName} already exists!\n`);
-// 			}
-// 		}
-
-// 		for (const god of gods) {
-// 			let newCharacter = new God(god);
-// 			//	await newAgent.validateAgent();
-// 			const docs = await Character.find({ characterName: god.characterName });
-
-// 			if (docs.length < 1) {
-// 				newCharacter = await newCharacter.save();
-// 				npcCount++;
-// 				logger.info(`${newCharacter.characterName} created.`);
-// 			}
-// 			else {
-// 				console.log(`${newCharacter.characterName} already exists!\n`);
-// 			}
-// 		}
-
-// 		nexusEvent.emit('updateCharacters');
-// 		logger.info(`Created ${charCount} Characters and ${npcCount} NPCs.`);
-// 		res.status(200).send('All done');
-// 	}
-// 	catch (err) {
-// 		httpErrorHandler(res, err);
-// 	}
-// });
-
-// register
-router.patch('/register', async (req, res) => {
-	logger.info('GET Route: api/characters/register requested...');
-	const { character, username } = req.body.data;
 	try {
-		let data = await Character.findById(character).populate('wealth');
+		let npcCount = 0;
+		let charCount = 0;
+		for (const char of characters) {
+			let newCharacter = new Character(char);
+			const docs = await Character.find({ characterName: char.characterName });
 
-		if (data === null) {
-			nexusError(`Could not find a character for id "${character}"`, 404);
+			if (docs.length < 1) {
+				charCount++;
+				newCharacter = await newCharacter.save();
+
+				for (const el of arr) {
+					let ass = new Asset({
+						name: `${newCharacter.characterName}'s' ${el}`,
+						description: `${newCharacter.characterName}'s' ${el}`,
+						type: el,
+						ownerCharacter: newCharacter._id
+					});
+					ass = await ass.save();
+				}
+
+				logger.info(`${newCharacter.characterName} created.`);
+			}
+			else {
+				console.log(`${newCharacter.characterName} already exists!\n`);
+			}
 		}
-		else {
-			data.username = username;
-			data = await data.save();
-			nexusEvent.emit('updateCharacters');
-			res.status(200).json(data);
 
-			const emailStuff = {
-				from: 'Nexus Registration',
-				to: data.email,
-				subject: 'Nexus Registration',
-				html: `<p>Dear ${data.playerName},</p> <p> You have been successfully registered for Nexus App. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p><b>Note:</b> The webpage may take a moment to load on your first log-in. </p> <p>Have fun!</p> <p>Your Character: ${data.characterName} </p> https://afterlife-app.herokuapp.com/`
-			};
-			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
+		for (const npc of npcs) {
+			let newCharacter = new Character(npc);
+			//	await newAgent.validateAgent();
+			const docs = await Character.find({ characterName: npc.characterName });
+
+			if (docs.length < 1) {
+				newCharacter = await newCharacter.save();
+				npcCount++;
+				logger.info(`${newCharacter.characterName} created.`);
+			}
+			else {
+				console.log(`${newCharacter.characterName} already exists!\n`);
+			}
 		}
 
+		nexusEvent.emit('updateCharacters');
+		logger.info(`Created ${charCount} Characters and ${npcCount} NPCs.`);
+		res.status(200).send('All done');
 	}
 	catch (err) {
 		httpErrorHandler(res, err);
@@ -282,28 +220,5 @@ router.patch('/cleanSupporters', async (req, res, next) => {
 		}
 	}
 });
-
-router.patch('/test/', async (req, res, next) => {
-	logger.info('PATCH Route: api/characters/test requested...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		try {
-			const changed = [];
-			for (const char of await Character.find()) {
-				if (char.tags.some(el => el === 'PC')) {
-					console.log(char.playerName)
-				}
-			}
-			nexusEvent.emit('respondClient', 'update', [ changed ]);
-			res.status(200).send('All done');
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-});
-
 
 module.exports = router;

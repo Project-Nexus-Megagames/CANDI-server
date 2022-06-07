@@ -9,7 +9,6 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const { Asset } = require('../../models/asset'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
-const { Character } = require('../../models/character');
 const { assets } = require('../../config/startingData');
 
 // @route   GET api/assets
@@ -116,32 +115,10 @@ router.delete('/:id', async function(req, res, next) {
 // @route   PATCH api/assets/deleteAll
 // @desc    Delete All assets
 // @access  Public
-// router.patch('/deleteAll', async function(req, res) {
-// 	let delCount = 0;
-// 	for await (const element of Asset.find()) {
-// 		const id = element.id;
-// 		try {
-// 			const elementDel = await Asset.findByIdAndRemove(id);
-// 			if (elementDel == null) {
-// 				res.status(404).send(`The Asset with the ID ${id} was not found!`);
-// 			}
-// 			else {
-// 				delCount += 1;
-// 			}
-// 		}
-// 		catch (err) {
-// 			nexusError(`${err.message}`, 500);
-// 		}
-// 	}
-
-// 	for await (const character of Character.find()) {
-// 		character.assets = [];
-// 		character.traits = [];
-// 		character.lentAssets = [];
-// 	}
-// 	nexusEvent.emit('updateCharacters');
-// 	return res.status(200).send(`We wiped out ${delCount} Assets`);
-// });
+router.patch('/deleteAll', async function(req, res) {
+	const data = await Asset.deleteMany();
+	return res.status(200).send(`We wiped out ${data.delCount} Assets`);
+});
 
 router.post('/initAssets', async function(req, res) {
 	logger.info('POST Route: api/assets/initAssets call made...');
@@ -168,39 +145,6 @@ router.post('/initAssets', async function(req, res) {
 	}
 	catch (err) {
 		httpErrorHandler(res, err);
-	}
-});
-
-router.patch('/audit', async function(req, res, next) {
-	logger.info('PATCH Route: api/asset/test requested...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		try {
-			// let asses = await Asset.find({ type: 'Trait' });
-			// console.log(req.body);
-			for (let char of req.body) {
-				let cont = true;
-				console.log(char.characterTitle);
-				// console.log(char);
-				let character = await Character.findOne({ characterTitle: char.characterTitle });
-				console.log(character._id);
-				for (const el in char) {
-					if (char[el] !== character[el]) {
-						console.log(el);
-						console.log(`${char[el]} => ${character[el]}`);
-						character[el] = char[el];
-						character = await character.save();
-					}
-				}
-			}
-			res.status(200).json('yo');
-		}
-		catch (err) {
-			logger.error(err.message, { meta: err.stack });
-			res.status(500).send(err.message);
-		}
 	}
 });
 

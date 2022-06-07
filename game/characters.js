@@ -156,4 +156,53 @@ async function createCharacter(data) {
 	}
 }
 
-module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register };
+async function manageContacts(data) {
+	const { charId, contacts } = data;
+	let character = await Character.findById(charId);
+	character.knownContacts = contacts;
+	await character.save();
+	character = await character.populateMe();
+	nexusEvent.emit('respondClient', 'update', [character]);
+	logger.info(`${character.characterName} edited.`);
+	return { message: 'Character Edit Success', type: 'success' };
+}
+
+async function healInjury(data) {
+	const { char, injuriesToHeal } = data;
+	let character = await Character.findById(char);
+	injuriesToHeal.forEach((injId) => {
+		const found = character.injuries.findIndex((injury) => injury._id.toString() === injId);
+		if (found === -1) 	{
+			console.log('blah');
+			return {
+				message: 'Character does not have that injury to heal.',
+				type: 'error'
+			};
+
+		}
+		else {character.injuries = character.injuries.filter((injury) => injId !== injury._id.toString());}
+	});
+	await character.save();
+	character = await character.populateMe();
+	nexusEvent.emit('respondClient', 'update', [character]);
+	logger.info(`${character.characterName} edited.`);
+	return { message: 'Character Edit Success', type: 'success' };
+}
+
+async function shareContacts(data) {
+	const { chars, charId } = data;
+	console.log(data);
+	let character = await Character.findById(charId);
+	for (const id of chars) {
+		if (character.knownContacts.findIndex((el) => el == id) === -1) {
+			character.knownContacts.push(id);
+		}
+	}
+	await character.save();
+	character = await character.populateMe();
+	nexusEvent.emit('respondClient', 'update', [character]);
+	logger.info(`${character.characterName} edited.`);
+	return { message: 'Contacts successfully shared!', type: 'success' };
+}
+
+module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, manageContacts, healInjury, shareContacts };

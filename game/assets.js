@@ -1,19 +1,33 @@
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const { logger } = require('../middleware/log/winston');
 const { Asset, GodBond, MortalBond } = require('../models/asset');
-const { Character } = require('../models/character');
 const { History } = require('../models/history');
 
 async function modifyAsset(data, user) {
 	try {
-		const { _id, name, description, uses, used, owner, hidden, lendable, level, dice } = data;
+		const {
+			_id,
+			name,
+			description,
+			uses,
+			used,
+			owner,
+			hidden,
+			lendable,
+			level,
+			dice,
+			tags
+		} = data;
 		const asset = await Asset.findById(_id).populate('with');
 
 		if (asset === null) {
-			return ({ message : `Could not find a asset for _id "${_id}"`, type: 'error' });
+			return {
+				message: `Could not find a asset for _id "${_id}"`,
+				type: 'error'
+			};
 		}
 		else if (asset.length > 1) {
-			return ({ message : `Found multiple assets for _id ${_id}`, type: 'error' });
+			return { message: `Found multiple assets for _id ${_id}`, type: 'error' };
 		}
 		else {
 			asset.name = name;
@@ -25,6 +39,7 @@ async function modifyAsset(data, user) {
 			asset.status.used = used;
 			asset.status.hidden = hidden;
 			asset.status.lendable = lendable;
+			asset.tags = tags;
 
 			await asset.save();
 			const log = new History({
@@ -36,30 +51,30 @@ async function modifyAsset(data, user) {
 			});
 			await log.save();
 
-			nexusEvent.emit('respondClient', 'update', [ asset ]);
-			return ({ message : `${asset.name} edited`, type: 'success' });
+			nexusEvent.emit('respondClient', 'update', [asset]);
+			return { message: `${asset.name} edited`, type: 'success' };
 		}
 	}
 	catch (err) {
 		logger.error(err);
-		return ({ message : `ERROR: ${err}`, type: 'error' });
+		return { message: `ERROR: ${err}`, type: 'error' };
 	}
-
 }
 
 async function addAsset(data, user) {
 	try {
-		const { asset } = data;
-
+		const { asset, arcane } = data;
 		let newAsset;
 		switch (data.asset.type) {
 		case 'Asset':
 			newAsset = new Asset(asset);
 			newAsset.status.lendable = true;
+			if (arcane) newAsset.tags.push('arcane');
 			break;
 		case 'Trait':
 			newAsset = new Asset(asset);
 			newAsset.status.lendable = false;
+			if (arcane) newAsset.tags.push('arcane');
 			break;
 		case 'Power':
 			newAsset = new Asset(asset);
@@ -85,7 +100,7 @@ async function addAsset(data, user) {
 		}
 
 		newAsset = await newAsset.save();
-		nexusEvent.emit('respondClient', 'create', [ newAsset ]);
+		nexusEvent.emit('respondClient', 'create', [newAsset]);
 		// nexusEvent.emit('respondClient', 'update', [ character ]);
 
 		await newAsset.save();
@@ -100,12 +115,14 @@ async function addAsset(data, user) {
 
 		await log.save();
 
-		return ({ message : `${newAsset.type} ${newAsset.name} created`, type: 'success' });
-
+		return {
+			message: `${newAsset.type} ${newAsset.name} created`,
+			type: 'success'
+		};
 	}
 	catch (err) {
 		logger.error(err);
-		return ({ message : `ERROR: ${err}`, type: 'error' });
+		return { message: `ERROR: ${err}`, type: 'error' };
 	}
 }
 
@@ -122,14 +139,22 @@ async function lendAsset(data, user) {
 		});
 
 		if (asset === null) {
-			return ({ message : `Could not find a asset for id "${id}"`, type: 'error' });
+			return {
+				message: `Could not find a asset for id "${id}"`,
+				type: 'error'
+			};
 		}
 		else {
-			if (lendingBoolean === asset.status.lent) { // this is a check to see if someone is trying to relend a previously lent asset
-				return ({ message : `You cannot lend an already loaned asset "${asset.name}"`, type: 'error' });
+			if (lendingBoolean === asset.status.lent) {
+				// this is a check to see if someone is trying to relend a previously lent asset
+				return {
+					message: `You cannot lend an already loaned asset "${asset.name}"`,
+					type: 'error'
+				};
 			}
 
-			if (lendingBoolean) { // if the asset is being lent
+			if (lendingBoolean) {
+				// if the asset is being lent
 				asset.currentHolder = target;
 			}
 			else {
@@ -143,14 +168,13 @@ async function lendAsset(data, user) {
 			await log.save();
 
 			logger.info(`${asset.name} Lent to ${target}.`);
-			nexusEvent.emit('respondClient', 'update', [ asset ]);
-			return ({ message : `${asset.name} lent to ${target}`, type: 'success' });
-
+			nexusEvent.emit('respondClient', 'update', [asset]);
+			return { message: `${asset.name} lent to ${target}`, type: 'success' };
 		}
 	}
 	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
-		return ({ message : `Server Error: ${err.message}`, type: 'error' });
+		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 
@@ -171,23 +195,23 @@ async function deleteAsset(data, user) {
 
 			await log.save();
 
-			nexusEvent.emit('respondClient', 'delete', [ { model: 'asset', id } ]);
-			return ({ message : 'Asset Delete Success', type: 'success' });
+			nexusEvent.emit('respondClient', 'delete', [{ model: 'asset', id }]);
+			return { message: 'Asset Delete Success', type: 'success' };
 		}
 		else {
-			return ({ message : `No asset with the id ${id} exists!`, type: 'error' });
+			return { message: `No asset with the id ${id} exists!`, type: 'error' };
 		}
 	}
 	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
-		return ({ message : `Server Error: ${err.message}`, type: 'error' });
+		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 
 async function unhideAll() {
 	try {
 		let assets = await Asset.find().populate('with');
-		assets = assets.filter(el => el.status.hidden === true);
+		assets = assets.filter((el) => el.status.hidden === true);
 		const res = [];
 		for (const ass of assets) {
 			console.log(ass.name);
@@ -199,7 +223,7 @@ async function unhideAll() {
 	}
 	catch (err) {
 		logger.error(err);
-		return ({ message : `ERROR: ${err}`, type: 'error' });
+		return { message: `ERROR: ${err}`, type: 'error' };
 	}
 }
 

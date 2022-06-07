@@ -1,59 +1,48 @@
 const mongoose = require('mongoose'); // Mongo DB object modeling module
-// const Joi = require('joi'); // Schema description & validation module
-// const nexusError = require('../middleware/util/throwError'); // Costom error handler util
 
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
-const MortalRelationshipSchema = new Schema({
-	with: { type: ObjectId, ref: 'Character' },
-	level: { type: String, enum: ['Neutral', 'Warm', 'Friendly', 'Bonded' ] }
-});
-
-const GodRelationshipSchema = new Schema({
-	with: { type: ObjectId, ref: 'Character' },
-	level: { type: String, enum: ['Neutral', 'Preferred', 'Favoured', 'Blessed' ] }
+const injurySchema = new Schema({
+	submodel: { type: String, default: 'Injury' },
+	name: { type: String, default: 'Scurvey' },
+	received: { type: Number },
+	duration: { type: Number },
+	permanent: { type: Boolean, default: false },
+	actionTitle: { type: String, default: 'no action title was to be found' }
 });
 
 const CharacterSchema = new Schema({
 	model:  { type: String, default: 'Character' },
 	playerName: { type: String, minlength: 1, maxlength: 50, required: true },
+	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
+	username: { type: String, minlength: 2, maxlength: 50, required: true },
+	characterTitle: { type: String, maxlength: 50, default: 'None' },
+	pronouns: { type: String },
+	bio: { type: String },
 	email: { type: String, required: true },
 	wiki: { type: String, default: '' },
 	timeZone: { type: String, default: '???' },
-	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
-	characterTitle: { type: String, maxlength: 50, default: 'None' },
 	tags: [{ type: String }],
 	control: [{ type: String }],
-	username: { type: String, minlength: 2, maxlength: 50, required: true },
-	pronouns: { type: String },
-	bio: { type: String },
 	standingOrders: { type: String },
-	lentAssets: [{ type: ObjectId, ref: 'Asset' }], // change to asset ID
-	Justice: { type: Number, default: 0 },
-	Trickery: { type: Number, default: 0 },
-	Balance: { type: Number, default: 0 },
-	Hedonism: { type: Number, default: 0 },
-	Bonding: { type: Number, default: 0 },
-	Arts: { type: Number, default: 0 },
-	Sporting: { type: Number, default: 0 },
-	Fabrication: { type: Number, default: 0 },
-	Scholarship: { type: Number, default: 0 },
-	Pugilism : { type: Number, default: 0 },
-	Glory: { type: Number, default: 0 },
-	supporters: [{ type: String }], // legacy
+	lentAssets: [{ type: ObjectId, ref: 'Asset' }],
 	effort: { type: Number, default: 2, min: 0, max: 6 },
 	bitsyCount: { type: Number, default: 0 },
-	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' }
-	// color: { type: String, default: 'ffffff' }
+	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
+	color: { type: String, default: 'ffffff' },
+	knownContacts: [{ type: Schema.Types.ObjectId, ref: 'Character' }],
+	injuries: [injurySchema]
 });
+
 
 CharacterSchema.methods.expendEffort = async function(amount) {
 	try {
 		// console.log(amount);
 		this.effort = this.effort - amount;
-		const character = await this.save();
+		let character = await this.save();
+		character = await character.populateMe();
 
 		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
 		return character;
@@ -68,8 +57,8 @@ CharacterSchema.methods.restoreEffort = async function(amount) {
 		this.effort = this.effort + amount;
 		// console.log(amount);
 		if (this.effort > 2) this.effort = 2;
-		const character = await this.save();
-
+		let character = await this.save();
+		character = await character.populateMe();
 		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
 		return character;
 	}
@@ -78,24 +67,12 @@ CharacterSchema.methods.restoreEffort = async function(amount) {
 	}
 };
 
+CharacterSchema.methods.populateMe = async function() {
+	return this
+		.populate('knownContacts')
+		.execPopulate();
+};
+
 const Character = mongoose.model('Character', CharacterSchema);
 
-const Mortal = Character.discriminator(
-	'Mortal',
-	new Schema({
-		type: { type: String, default: 'Mortal' },
-		relationships: [ MortalRelationshipSchema ]
-	})
-);
-
-
-const God = Character.discriminator(
-	'God',
-	new Schema({
-		type: { type: String, default: 'God' },
-		relationships: [ GodRelationshipSchema ]
-	})
-);
-
-
-module.exports = { Character, Mortal, God };
+module.exports = { Character };
