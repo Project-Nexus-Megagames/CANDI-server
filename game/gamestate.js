@@ -50,6 +50,7 @@ async function closeRound() {
 	}
 }
 
+// eslint-disable-next-line no-unused-vars
 async function calculateDie(action) {
 	let dice = 0;
 	let result = 0;
