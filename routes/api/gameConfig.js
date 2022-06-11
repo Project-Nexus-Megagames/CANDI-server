@@ -39,9 +39,11 @@ router.post('/', async function(req, res, next) {
 	}
 	else {
 		try {
+			console.log(req);
 			const docs = await GameConfig.find();
 			if (docs.length < 1) {
-				const config = await GameConfig.find();
+				let config = new GameConfig(req.body);
+				config = await config.save();
 				logger.info('GameConfig  created.');
 				res.status(200).json(config);
 			}
