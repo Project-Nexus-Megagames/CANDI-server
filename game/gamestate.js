@@ -4,6 +4,7 @@ const { Action } = require('../models/action');
 const { Asset } = require('../models/asset');
 const { Character } = require('../models/character');
 const { GameState } = require('../models/gamestate');
+const { GameConfig } = require('../models/gameConfig');
 const { History } = require('../models/history');
 const { d10, d8, d6, d4 } = require('../scripts/util/dice');
 
@@ -95,6 +96,7 @@ async function calculateDie(action) {
 
 async function nextRound() {
 	const gamestate = await GameState.findOne();
+	const config = await GameConfig.findOne();
 	try {
 		// Find aall hidden assets and unhide them
 		// Find all used assets and -1 to their uses, then un-use them
@@ -122,10 +124,16 @@ async function nextRound() {
 
 		for (const character of await Character.find()) {
 			character.lentAssets = [];
-			character.effort = 2;
+			character.effort = [];
+			for (const effort of config.gamestate.effortTypes) {
+				const type = effort.type;
+				const amount = effort.effortRestored;
+				const restoredEffort = { type, amount };
+				character.effort.push(restoredEffort);
+			}
 			character.injuries = character.injuries.filter((el) => (el.received + el.duration) > gamestate.round || el.permanent);
 			character.save();
-			console.log(`Restoring effort of ${character.characterName}`);
+			console.log(`Restoring effort and auto-healing injuries of ${character.characterName}`);
 		}
 
 		let used = await Asset.find().populate('with');

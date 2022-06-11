@@ -13,6 +13,12 @@ const injurySchema = new Schema({
 	actionTitle: { type: String, default: 'no action title was to be found' }
 });
 
+const effortSchema = new Schema ({
+	submodel: { type: String, default: 'Effort' },
+	type: { type: String, default: 'Normal' },
+	amount: { type: Number, default: 0, required: true }
+});
+
 const CharacterSchema = new Schema({
 	model:  { type: String, default: 'Character' },
 	playerName: { type: String, minlength: 1, maxlength: 50, required: true },
@@ -28,7 +34,7 @@ const CharacterSchema = new Schema({
 	control: [{ type: String }],
 	standingOrders: { type: String },
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }],
-	effort: [{ type: ObjectId, ref: 'EffortType' }],
+	effort: [effortSchema],
 	bitsyCount: { type: Number, default: 0 },
 	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
 	color: { type: String, default: 'ffffff' },
