@@ -75,7 +75,7 @@ const characters = [
 		bio: 'controlling Apollo, Dionysus, Charles, Eloise, Oliver, Lillian, Mabel',
 		username: 'temp',
 		control: ['Game Control']
-	},
+	}
 	// {
 	// 	playerName: 'CONTROLLER ACTUAL NAME HERE',
 	// 	pronouns: 'CONTROLLER PRONOUNS HERE',

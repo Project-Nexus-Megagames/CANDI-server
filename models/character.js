@@ -28,7 +28,7 @@ const CharacterSchema = new Schema({
 	control: [{ type: String }],
 	standingOrders: { type: String },
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }],
-	effort: { type: Number, default: 2, min: 0, max: 6 },
+	effort: [{ type: ObjectId, ref: 'EffortType' }],
 	bitsyCount: { type: Number, default: 0 },
 	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
 	color: { type: String, default: 'ffffff' },
