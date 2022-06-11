@@ -15,6 +15,7 @@ const gamestate = require('./api/gamestate');
 const history = require('./api/history');
 const comment = require('./api/comment');
 const debugRoute = require('./api/debugRoute');
+const gameConfig = require('./api/gameConfig');
 
 // Route Function
 module.exports = function(app) {
@@ -31,6 +32,7 @@ module.exports = function(app) {
 	app.use('/api/history', history);
 	app.use('/api/comment', comment);
 	app.use('/api/debugRoute', debugRoute);
+	app.use('/api/gameConfig', gameConfig);
 
 	app.use('/', home);
 };
