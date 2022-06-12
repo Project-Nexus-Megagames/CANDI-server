@@ -8,13 +8,15 @@ const ActionTypeSchema = new Schema({
 	type: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true },
 	minEffort: { type: Number, required: true },
 	maxEffort: { type: Number, required: true },
-	effortType: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true },
+	effortTypes: [{ type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true }],
 	traitTypes: [{ type: String }],
-	maxTraits: { type: Number, required: true } });
+	maxTraits: { type: Number, required: true },
+	public: { type: Boolean, default: false, required: true }
+});
 
 const EffortTypeSchema = new Schema ({
 	model: { type: String, default: 'EffortType' },
-	type: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true, dropDups: true },
+	type: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true },
 	effortAmount: { type: Number, required: true, Default: 0 },
 	effortRestored:  { type: Number, required: true, Default: 0 }
 });
