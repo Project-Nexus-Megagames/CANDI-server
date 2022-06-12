@@ -6,6 +6,7 @@ const mongoose = require('mongoose'); // Mongo DB object modeling module
 const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
+const { actionAndEffortTypes } = require('../config/enums');
 
 // MODEL Imports
 const { Character } = require('./character');
@@ -17,6 +18,7 @@ const submissionSchema = new Schema({
 	model: { type: String, default: 'Submission' },
 	description: { type: String, required: true }, // Description of the ACTION
 	intent: { type: String, required: true }, // Intended result of the ACTION
+	effortType: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true },
 	effort: { type: Number, required: true, default: 0 }, // Initial effort allocated
 	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }] // Characters involved in the ACTION
@@ -44,7 +46,7 @@ const effectSchema = new Schema({
 const ActionSchema = new Schema({
 	model:  { type: String, default: 'Action' }, // Model for the DOC
 	name: { type: String },
-	type: { type: String, default: 'normal' }, // Type of action (explore or normal)
+	type: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true },
 	round: { type: Number }, // Round Number for the ACTION
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
 	numberOfInjuries: { type: Number, required: true, default: 0 }, // The number of injuries the character has when submitting an action
