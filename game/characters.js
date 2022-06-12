@@ -173,7 +173,6 @@ async function healInjury(data) {
 	injuriesToHeal.forEach((injId) => {
 		const found = character.injuries.findIndex((injury) => injury._id.toString() === injId);
 		if (found === -1) 	{
-			console.log('blah');
 			return {
 				message: 'Character does not have that injury to heal.',
 				type: 'error'
@@ -191,7 +190,6 @@ async function healInjury(data) {
 
 async function shareContacts(data) {
 	const { chars, charId } = data;
-	console.log(data);
 	let character = await Character.findById(charId);
 	for (const id of chars) {
 		if (character.knownContacts.findIndex((el) => el == id) === -1) {

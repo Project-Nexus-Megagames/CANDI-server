@@ -1,6 +1,7 @@
 const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
+const _ = require('lodash');
 // Agent Model - Using Mongoose Model
 
 const httpErrorHandler = require('../../middleware/util/httpError');
@@ -34,15 +35,33 @@ router.get('/', async function(req, res, next) {
 // @access  Public
 router.post('/', async function(req, res, next) {
 	logger.info('POST Route: api/gameConfig call made...');
+
 	if (req.timedout) {
 		next();
 	}
 	else {
 		try {
-			console.log(req);
+			console.log(req.body);
 			const docs = await GameConfig.find();
 			if (docs.length < 1) {
 				let config = new GameConfig(req.body);
+				let dupesCheck = [];
+				for (const aT of config.actionTypes) {
+					dupesCheck.push(aT.type);
+					if (dupesCheck.length !== _.uniq(dupesCheck).length) {
+						dupesCheck = [];
+						return nexusError('ActionTypes must be unique', 400);
+					}
+				}
+				dupesCheck = [];
+				for (const eT of config.gamestate.effortTypes) {
+					dupesCheck.push(eT.type);
+					console.log(dupesCheck);
+					if (dupesCheck.length !== _.uniq(dupesCheck).length) {
+						dupesCheck = [];
+						return nexusError('EffortTypes must be unique', 400);
+					}
+				}
 				config = await config.save();
 				logger.info('GameConfig  created.');
 				res.status(200).json(config);
