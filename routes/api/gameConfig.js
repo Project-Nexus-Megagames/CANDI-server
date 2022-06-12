@@ -19,7 +19,7 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const config = await GameConfig.find({});
+			const config = await GameConfig.findOne();
 			res.status(200).json(config);
 		}
 		catch (err) {
@@ -41,7 +41,6 @@ router.post('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			console.log(req.body);
 			const docs = await GameConfig.find();
 			if (docs.length < 1) {
 				let config = new GameConfig(req.body);
