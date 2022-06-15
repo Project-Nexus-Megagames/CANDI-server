@@ -7,6 +7,7 @@ const _ = require('lodash');
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { GameConfig } = require('../../models/gameConfig');
+const { actionAndEffortTypes } = require('../../config/enums');
 
 
 // @route   GET api/gameConfig
@@ -20,7 +21,28 @@ router.get('/', async function(req, res, next) {
 	else {
 		try {
 			const config = await GameConfig.findOne();
+			config.actionAndEffortTypes = actionAndEffortTypes;
+			console.log(config);
 			res.status(200).json(config);
+		}
+		catch (err) {
+			logger.error(err.message, { meta: err.stack });
+			res.status(500).send(err.message);
+		}
+	}
+});
+
+// @route   GET api/gameConfig/enums
+// @Desc    Get gameConfig
+// @access  Public
+router.get('/enums', async function(req, res, next) {
+	logger.info('GET Route: api/gameConfig/enums requested: get all');
+	if (req.timedout) {
+		next();
+	}
+	else {
+		try {
+			res.status(200).json(actionAndEffortTypes);
 		}
 		catch (err) {
 			logger.error(err.message, { meta: err.stack });
