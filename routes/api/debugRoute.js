@@ -10,6 +10,7 @@ const { Character } = require('../../models/character');
 const { createAction, submitAction, deleteAction, editAction } = require('../../game/actions');
 const nexusEvent = require('../../middleware/events/events'); // Local event triggers
 const { Action } = require('../../models/action');
+const auth = require('../../middleware/config/auth');
 
 // Mongoose Model Import
 
@@ -106,7 +107,7 @@ router.delete('/delete', async function(req, res) {
 router.patch('/massRefresh', async function(req, res) {
 	try {
 		nexusEvent.emit('respondClient', 'logout', [ ]);
-		res.status(200).send(`yeets`);
+		res.status(200).send('yeets');
 	}
 	catch (err) {
 		res.status(500).send(err);

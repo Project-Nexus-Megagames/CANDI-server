@@ -10,6 +10,7 @@ const { Asset } = require('../../models/asset'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { assets } = require('../../config/startingData');
+const auth = require('../../middleware/config/auth');
 
 // @route   GET api/assets
 // @Desc    Get all assets
@@ -86,7 +87,7 @@ router.post('/', async function(req, res, next) {
 // @route   DELETE api/assets/:id
 // @Desc    Delete an asset
 // @access  Public
-router.delete('/:id', async function(req, res, next) {
+router.delete('/:id', auth, async function(req, res, next) {
 	logger.info('DEL Route: Asset api/delete:id call made...');
 	if (req.timedout) {
 		next();
@@ -115,7 +116,7 @@ router.delete('/:id', async function(req, res, next) {
 // @route   PATCH api/assets/deleteAll
 // @desc    Delete All assets
 // @access  Public
-router.patch('/deleteAll', async function(req, res) {
+router.patch('/deleteAll', auth, async function(req, res) {
 	const data = await Asset.deleteMany();
 	return res.status(200).send(`We wiped out ${data.delCount} Assets`);
 });
