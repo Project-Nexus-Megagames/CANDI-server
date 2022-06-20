@@ -10,6 +10,7 @@ const { Character } = require('../../models/character');
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { removeEffort, addEffort } = require('../../game/actions');
+const auth = require('../../middleware/config/auth');
 
 // let oops = 0;
 
@@ -109,7 +110,7 @@ router.post('/', async function(req, res, next) {
 // @Desc    Delete an action
 // @access  Public
 // DEPRECIATED
-router.delete('/:id', async function(req, res, next) {
+router.delete('/:id', auth, async function(req, res, next) {
 	logger.info('DEL Route: api/agent:id call made...');
 	if (req.timedout) {
 		next();
@@ -141,7 +142,7 @@ router.delete('/:id', async function(req, res, next) {
 // @desc    Delete All actions
 // @access  Public
 
-router.patch('/deleteAll', async function(req, res) {
+router.patch('/deleteAll', auth, async function(req, res) {
 	const data = await Action.deleteMany();
 	return res.status(200).send(`We wiped out ${data.delCount} Actions`);
 });
