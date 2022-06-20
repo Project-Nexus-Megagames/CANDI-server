@@ -472,7 +472,7 @@ async function effectAction(data) {
 				old = await Location.findById(el);
 				if (!old.unlockedBy.includes(owner)) {
 					old.unlockedBy.push(owner);
-					await action.addEffect({ description: `New location unlocked: ${old.name} `, type: 'location',	status: 'Temp-Hidden'	});
+					await action.addEffect({ description: `New location unlocked: ${old.name} `, type: 'location',	status: 'Private'	});
 					locsForMessage = locsForMessage + old.name + ', ';
 					await old.save();
 					const loc = await old.populateMe();
