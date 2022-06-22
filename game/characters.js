@@ -6,7 +6,7 @@ const { default: axios } = require('axios');
 
 async function modifyCharacter(data) {
 	const { _id } = data;
-	const character = await Character.findById(_id);
+	let character = await Character.findById(_id);
 
 	try {
 		if (character === null) {
@@ -26,7 +26,7 @@ async function modifyCharacter(data) {
 			}
 
 			await character.save();
-			character.populate('assets').populate('lentAssets');
+			character = await character.populateMe();
 			nexusEvent.emit('respondClient', 'update', [ character ]);
 			return ({ message : `Character ${character.characterName} edited`, type: 'success' });
 		}
