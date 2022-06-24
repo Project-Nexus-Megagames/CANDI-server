@@ -7,11 +7,11 @@ const Schema = mongoose.Schema; // Destructure of Schema
 const ActionTypeSchema = new Schema({
 	model: { type: String, default: 'ActionType' },
 	type: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true },
-	minEffort: { type: Number, required: true },
-	maxEffort: { type: Number, required: true },
+	minEffort: { type: Number, required: true, default: 0 },
+	maxEffort: { type: Number, required: true, default: 0 },
 	effortTypes: [{ type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true }],
 	traitTypes: [{ type: String }],
-	maxTraits: { type: Number, required: true },
+	maxTraits: { type: Number, required: true, default: 0 },
 	public: { type: Boolean, default: false, required: true }
 });
 
@@ -24,7 +24,7 @@ const EffortTypeSchema = new Schema ({
 
 const GameConfigSchema = new Schema({
 	model: { type: String, default: 'GameConfig' },
-	name: { type: String, required: true },
+	name: { type: String, required: true, default: 'Quack' },
 	description: { type: String, required: false },
 	actionTypes: [ActionTypeSchema],
 	gamestate: {
