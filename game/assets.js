@@ -99,6 +99,7 @@ async function addAsset(data, user) {
 			throw Error(`Type '${data.asset.type}' is Invalid!`);
 		}
 
+		newAsset.status.hidden = true;
 		newAsset = await newAsset.save();
 		nexusEvent.emit('respondClient', 'create', [newAsset]);
 		// nexusEvent.emit('respondClient', 'update', [ character ]);
