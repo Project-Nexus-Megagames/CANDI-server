@@ -127,7 +127,7 @@ async function nextRound() {
 			character.effort = [];
 			for (const effort of config.gamestate.effortTypes) {
 				const type = effort.type;
-				const amount = effort.effortRestored;
+				const amount = effort.effortRestored; // TODO: how to handle one-use stuff; i.e. if I used 1 of my 2 efforts, I don't want it restored to 0
 				const restoredEffort = { type, amount };
 				character.effort.push(restoredEffort);
 			}

@@ -19,7 +19,7 @@ const EffortTypeSchema = new Schema ({
 	model: { type: String, default: 'EffortType' },
 	type: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true },
 	effortAmount: { type: Number, required: true, Default: 0 },
-	effortRestored:  { type: Number, required: true, Default: 0 } // TODO: something for one-use stuff; i.e. if I used 1 of my 2 efforts, I don't want it restored to 0
+	effortRestored:  { type: Number, required: true, Default: 0 }
 });
 
 const GameConfigSchema = new Schema({
@@ -27,9 +27,7 @@ const GameConfigSchema = new Schema({
 	name: { type: String, required: true, default: 'Quack' },
 	description: { type: String, required: false },
 	actionTypes: [ActionTypeSchema],
-	gamestate: {
-		effortTypes: [EffortTypeSchema]
-	},
+	effortTypes: [EffortTypeSchema],
 	actionAndEffortTypes: [{ type: String }]
 });
 

@@ -7,7 +7,6 @@ const _ = require('lodash');
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { GameConfig } = require('../../models/gameConfig');
-const { actionAndEffortTypes } = require('../../config/enums');
 
 
 // @route   GET api/gameConfig
@@ -21,28 +20,7 @@ router.get('/', async function(req, res, next) {
 	else {
 		try {
 			const config = await GameConfig.findOne();
-			config.actionAndEffortTypes = actionAndEffortTypes;
-			console.log(config);
 			res.status(200).json(config);
-		}
-		catch (err) {
-			logger.error(err.message, { meta: err.stack });
-			res.status(500).send(err.message);
-		}
-	}
-});
-
-// @route   GET api/gameConfig/enums
-// @Desc    Get gameConfig
-// @access  Public
-router.get('/enums', async function(req, res, next) {
-	logger.info('GET Route: api/gameConfig/enums requested: get all');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		try {
-			res.status(200).json(actionAndEffortTypes);
 		}
 		catch (err) {
 			logger.error(err.message, { meta: err.stack });
@@ -64,33 +42,31 @@ router.post('/', async function(req, res, next) {
 	else {
 		try {
 			const docs = await GameConfig.find();
-			if (docs.length < 1) {
-				let config = new GameConfig(req.body);
-				let dupesCheck = [];
-				for (const aT of config.actionTypes) {
-					dupesCheck.push(aT.type);
-					if (dupesCheck.length !== _.uniq(dupesCheck).length) {
-						dupesCheck = [];
-						return nexusError('ActionTypes must be unique', 400);
-					}
+			if 	(docs.length >= 1) {await GameConfig.deleteMany();}
+			let config = new GameConfig(req.body);
+			let dupesCheck = [];
+			for (const aT of config.actionTypes) {
+				dupesCheck.push(aT.type);
+				if (dupesCheck.length !== _.uniq(dupesCheck).length) {
+					dupesCheck = [];
+					return nexusError('ActionTypes must be unique', 400);
 				}
-				dupesCheck = [];
-				for (const eT of config.gamestate.effortTypes) {
-					dupesCheck.push(eT.type);
-					console.log(dupesCheck);
-					if (dupesCheck.length !== _.uniq(dupesCheck).length) {
-						dupesCheck = [];
-						return nexusError('EffortTypes must be unique', 400);
-					}
+			}
+			dupesCheck = [];
+			for (const eT of config.effortTypes) {
+				dupesCheck.push(eT.type);
+				console.log(dupesCheck);
+				if (dupesCheck.length !== _.uniq(dupesCheck).length) {
+					dupesCheck = [];
+					return nexusError('EffortTypes must be unique', 400);
 				}
-				config = await config.save();
-				logger.info('GameConfig  created.');
-				res.status(200).json(config);
 			}
-			else {
-				nexusError('GameConfig already exists!', 400);
-			}
+			config = await config.save();
+			logger.info('GameConfig  created.');
+			res.status(200).json(config);
 		}
+
+
 		catch (err) {
 			httpErrorHandler(res, err);
 		}
@@ -102,7 +78,7 @@ router.post('/', async function(req, res, next) {
 // @desc    Delete All comments
 // @access  Public
 
-router.patch('/delete', async function(req, res) {
+router.delete('/delete', async function(req, res) {
 	const data = await GameConfig.deleteMany();
 	return res.status(200).send(`We wiped out ${data.deletedCount} Configurations!`);
 });
