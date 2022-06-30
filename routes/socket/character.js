@@ -1,4 +1,4 @@
-const { modifyCharacter, modifyMemory, modifySupport, register, deleteCharacter, createCharacter, manageContacts, healInjury, shareContacts } = require('../../game/characters');
+const { modifyCharacter, modifyMemory, modifySupport, register, deleteCharacter, createCharacter, manageContacts, healInjury, shareContacts, pirate } = require('../../game/characters');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
 
 module.exports = {
@@ -27,6 +27,11 @@ module.exports = {
 			case 'register': {
 				// console.log(data);
 				response = await register(data);
+				break;
+			}
+			case 'pirate': {
+				// console.log(data);
+				response = await pirate(data);
 				break;
 			}
 			case 'delete': {
