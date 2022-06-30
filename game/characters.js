@@ -93,6 +93,36 @@ async function register(data) {
 	}
 }
 
+async function pirate(data) {
+	const { character, username, playerName, email } = data;
+	try {
+		const emailStuff = {
+			from: 'The Ghost of Black Bob',
+			to: email,
+			subject: 'A message from Black Bob',
+			html: `<p>Dear ${character}, 
+			<p>In the Omega Seas</p>
+			<p>A sleepless watcher guards my treasure</p>
+			<p>Speak the secret phrase</p>
+			<p>and the path to me cove will be revealed</p>
+			
+			<b>Secret Phrase:</b>
+			 
+			<h5>The [T:47] [PWDDA1:39] sails on the [POTS1:05] [TMR6:33] </h5>
+
+			<p style="color:#FFFFFF">The key lays behind the waving flag</p>	`
+		};
+		await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
+
+		return ({ message : `A MESSAGE FROM BEYOND HAS BEEN SENT...`, type: 'success' });
+
+	}
+	catch (err) {
+		logger.error(`message : Server Error: ${err.message}`);
+		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
+	}
+}
+
 async function modifyMemory(data) {
 	const { id, memories } = data;
 	let character = await Character.findById(id);
@@ -205,4 +235,4 @@ async function shareContacts(data) {
 	return { message: 'Contacts successfully shared!', type: 'success' };
 }
 
-module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, manageContacts, healInjury, shareContacts };
+module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, manageContacts, healInjury, shareContacts, pirate };

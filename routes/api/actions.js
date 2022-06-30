@@ -75,6 +75,25 @@ router.get('/:id', async (req, res, next) => {
 	}
 });
 
+router.get('/special/:id', async (req, res) => {
+	logger.info('GET Route: api/asset/:id requested...');
+	const id = req.params.id;
+	try {
+		const asset = await Action.findById(id)
+			.populate('comments')
+			.populate('creator');
+		if (asset != null) {
+			res.status(200).json(asset);
+		}
+		else {
+			nexusError(`The asset with the ID ${id} was not found!`, 404);
+		}
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
 // @route   POST api/actions
 // @Desc    Post a new action
 // @access  Public
