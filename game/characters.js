@@ -108,7 +108,7 @@ async function pirate(data) {
 			
 			<b>Secret Phrase:</b>
 			 
-			<h5>The [T:47] [PWDDA1:39] sails on the [POTS1:05] [TMR6:33] </h5>
+			<h5>The [TT:47] [PWDDA1:38] sails on the [POTS1:05] [TMR6:33] </h5>
 
 			<p style="color:#FFFFFF">The key lays behind the waving flag</p>	`
 		};
