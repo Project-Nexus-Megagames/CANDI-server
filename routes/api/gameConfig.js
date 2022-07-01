@@ -41,6 +41,7 @@ router.post('/', async function(req, res, next) {
 	}
 	else {
 		try {
+			// TODO: pull this into the socket
 			const docs = await GameConfig.find();
 			if 	(docs.length >= 1) {await GameConfig.deleteMany();}
 			let config = new GameConfig(req.body);
