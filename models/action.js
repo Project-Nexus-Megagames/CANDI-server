@@ -87,7 +87,8 @@ ActionSchema.methods.submit = async function(submission) {
 		await character.expendEffort(this.submission.effort);
 	}
 
-	const action = await this.save();
+	let action = await this.save();
+	action = await action.populateMe();
 
 	nexusEvent.emit('respondClient', 'update', [ action, character, ...changed ]);
 	return ({ message : `${action.type} Submission Success`, type: 'success' });
@@ -170,7 +171,7 @@ ActionSchema.methods.addEffect = async function(effect) {
 ActionSchema.methods.populateMe = function() {
 	return this
 		.populate('comments')
-		.populate('creator')
+		.populate('creator', 'characterTitle characterName playerName')
 		.execPopulate();
 };
 

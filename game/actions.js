@@ -40,8 +40,6 @@ async function createAction(data, user) {
 			throw Error('New actions must at least 1 controller assigned to it...');
 		}
 
-		console.log(data);
-
 		const { type, creator, controllers, name, numberOfInjuries } = data;
 
 		const character = await Character.findById(creator);
@@ -63,7 +61,6 @@ async function createAction(data, user) {
 		action = await action.save();
 		// console.log(action)
 		await action.submit(data.submission);
-		await action.populateMe();
 
 		const log = new History({
 			docType: 'action',
@@ -77,8 +74,6 @@ async function createAction(data, user) {
 		await log.save();
 
 		logger.info(`${action.type} "${action._id}" created.`);
-
-		nexusEvent.emit('respondClient', 'create', [action]);
 		return { message: `${action.type} Creation Success`, type: 'success' };
 	}
 	catch (err) {
@@ -185,7 +180,7 @@ async function editSubObject(data, user) {
 		}
 
 		action = await action.save();
-		await action.populateMe();
+		action = await action.populateMe();
 
 		await log.save();
 		logger.info(`Result with the id ${id} was edited via Socket!`);
@@ -276,21 +271,20 @@ async function deleteAction(data, user) {
 			});
 
 			const character = await Character.findById(action.creator);
-			await character.restoreEffort(action.submission.effort);
-			nexusEvent.emit('respondClient', 'update', [character]);
+
+			if (!character) {
+				console.log(`Character '${action.creator}' is not getting their effort back!!!`)
+			}
+			else {
+				await character.restoreEffort(action.submission.effort);
+			}
+
+
 
 			for (const item of action.submission.assets) {
-				if (
-					!action.submission.assets.some(
-						(el) => el.toString() === item.toString()
-					)
-				) {
-					let asset = await Asset.findById(item);
-					asset
-						? (asset = await asset.unuse())
-						: console.log('Avoided un-using a thing!');
-					changed.push(asset);
-				}
+				let asset = await Asset.findById(item);
+				asset	? asset = await asset.unuse() : console.log('Avoided un-using a thing!');
+				changed.push(asset);
 			}
 
 			action = await Action.findByIdAndDelete(id);
@@ -381,9 +375,8 @@ async function editAction(data, user) {
 		new: true
 	}).populate('creator');
 
-	let character = await Character.findById(action.creator._id).populate('lentAssets');
-	character = await character.expendEffort(action.submission.effort - oldAction.submission.effort);
-	nexusEvent.emit('respondClient', 'update', [character]);
+	const character = await Character.findById(action.creator._id);
+	await character.expendEffort(action.submission.effort - oldAction.submission.effort);
 
 	// let comment = new Comment({
 	// 	body: `${user} edited this action...`,

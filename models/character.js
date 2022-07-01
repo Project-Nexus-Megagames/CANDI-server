@@ -1,4 +1,5 @@
 const mongoose = require('mongoose'); // Mongo DB object modeling module
+const nexusEvent = require('../middleware/events/events'); // Local event triggers
 
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
@@ -44,7 +45,7 @@ CharacterSchema.methods.expendEffort = async function(amount) {
 		let character = await this.save();
 		character = await character.populateMe();
 
-		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
+		nexusEvent.emit('respondClient', 'update', [character]);
 		return character;
 	}
 	catch (err) {
@@ -56,10 +57,10 @@ CharacterSchema.methods.restoreEffort = async function(amount) {
 	try {
 		this.effort = this.effort + amount;
 		// console.log(amount);
-		if (this.effort > 2) this.effort = 2;
+		if (this.effort > 3) this.effort = 3;
 		let character = await this.save();
 		character = await character.populateMe();
-		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
+		nexusEvent.emit('respondClient', 'update', [character]);
 		return character;
 	}
 	catch (err) {
