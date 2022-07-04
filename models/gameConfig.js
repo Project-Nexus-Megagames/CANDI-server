@@ -1,15 +1,14 @@
 const mongoose = require('mongoose'); // Mongo DB object modeling module
-const { actionAndEffortTypes } = require('../config/enums');
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
 
 // TODO remove enum stuff
 const ActionTypeSchema = new Schema({
 	model: { type: String, default: 'ActionType' },
-	type: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true },
+	type: { type: String, default: 'Normal', required: true, unique: true },
 	minEffort: { type: Number, required: true, default: 0 },
 	maxEffort: { type: Number, required: true, default: 0 },
-	effortTypes: [{ type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true }],
+	effortTypes: [{ type: String, default: 'Normal', required: true, unique: true }],
 	assetType: [{ type: String }], // type of assets that can be accepted by the actions
 	maxAssets: { type: Number, required: true, default: 0 },
 	status: [ { type: String }], // status array, e.g. for 'public' or 'campaign'
@@ -18,7 +17,7 @@ const ActionTypeSchema = new Schema({
 
 const EffortTypeSchema = new Schema ({
 	model: { type: String, default: 'EffortType' },
-	type: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true },
+	type: { type: String, default: 'Normal', required: true, unique: true },
 	effortAmount: { type: Number, required: true, Default: 0 },
 	effortRestored:  { type: Number, required: true, Default: 0 } // TODO scrap that for now; just restore it to 'EffortAmount'
 });
