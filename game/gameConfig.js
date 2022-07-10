@@ -4,7 +4,7 @@ const nexusEvent = require('../middleware/events/events'); // Local event trigge
 const { GameConfig } = require('../models/gameConfig');
 const { logger } = require('../middleware/log/winston');
 const { History } = require('../models/history');
-const nexusError = require('../../middleware/util/throwError');
+const nexusError = require('../middleware/util/throwError');
 const _ = require('lodash');
 
 async function createGameConfig(data, user) {
