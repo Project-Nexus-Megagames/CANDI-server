@@ -8,7 +8,7 @@ const ActionTypeSchema = new Schema({
 	type: { type: String, default: 'Normal', required: true },
 	minEffort: { type: Number, required: true, default: 0 },
 	maxEffort: { type: Number, required: true, default: 0 },
-	effortTypes: [{ type: String, default: 'Normal', required: true }],
+	effortType: { type: String, default: 'Normal', required: true },
 	assetType: [{ type: String }], // type of assets that can be accepted by the actions
 	maxAssets: { type: Number, required: true, default: 0 },
 	status: [ { type: String }], // status array, e.g. for 'public' or 'campaign'
