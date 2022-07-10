@@ -27,7 +27,6 @@ const GameConfigSchema = new Schema({
 	description: { type: String, required: false },
 	actionTypes: [ActionTypeSchema],
 	effortTypes: [EffortTypeSchema]
-	// actionAndEffortTypes: [{ type: String }] // TODO: maybe remove that and change the workflow, so that we configure effort types first and then actions and pull types from efforts
 });
 
 GameConfigSchema.methods.populateMe = function() {

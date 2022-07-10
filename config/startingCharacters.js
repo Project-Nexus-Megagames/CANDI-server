@@ -15,7 +15,7 @@ const characters = [
 		pronouns: 'She/Her',
 		characterName: 'Apprentice Tech Wizard',
 		tags: ['Control'],
-		email: 'franziska.schulz@gmail.com',
+		email: 'franzi.megagames@gmail.com',
 		timeZone: 'GMT (UTC+0)',
 		bio: '',
 		username: 'Franzi',
