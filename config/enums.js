@@ -1,8 +1,8 @@
-const actionAndEffortTypes = [
-	'Normal',
-	'Agenda',
-	'Explore',
-	'Feed'
-];
+// const actionAndEffortTypes = [
+// 	'Default',
+// 	'Agenda',
+// 	'Explore',
+// 	'Feed'
+// ];
 
-module.exports = { actionAndEffortTypes };
+// module.exports = { actionAndEffortTypes };

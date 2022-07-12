@@ -1,5 +1,7 @@
 const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
+const fs = require('fs');
+
 
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
 const httpErrorHandler = require('../../middleware/util/httpError'); // Middleware that parses errors and status for Express responses
@@ -106,10 +108,32 @@ router.delete('/delete', async function(req, res) {
 router.patch('/massRefresh', async function(req, res) {
 	try {
 		nexusEvent.emit('respondClient', 'logout', [ ]);
-		res.status(200).send(`yeets`);
+		res.status(200).send('yeets');
 	}
 	catch (err) {
 		res.status(500).send(err);
 	}
 });
+
+router.post('/backup', async function(req, res) {
+	try {
+		const jsonData = await Action.find();
+		JSON.stringify(jsonData);
+		const now = new Date().toDateString();
+		fs.writeFile(`./backups/backup-${now}.json`, jsonData, 'utf8', function(err) {
+			if (err) {
+				console.log('An error occured while writing JSON Object to File.');
+				return console.log(err);
+			}
+
+		});
+
+		res.status(200).json(jsonData);
+	}
+	catch (err) {
+		res.status(500).send(err);
+	}
+});
+
+
 module.exports = router;

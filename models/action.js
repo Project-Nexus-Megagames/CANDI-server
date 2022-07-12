@@ -6,7 +6,7 @@ const mongoose = require('mongoose'); // Mongo DB object modeling module
 const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
-const { actionAndEffortTypes } = require('../config/enums');
+// const { actionAndEffortTypes } = require('../config/enums');
 
 // MODEL Imports
 const { Character } = require('./character');
@@ -18,7 +18,7 @@ const submissionSchema = new Schema({
 	model: { type: String, default: 'Submission' },
 	description: { type: String, required: true }, // Description of the ACTION
 	intent: { type: String, required: true }, // Intended result of the ACTION
-	effortType: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true, unique: true },
+	effortType: { type: String, default: 'Normal', required: true }, //  enum: actionAndEffortTypes,
 	effort: { type: Number, required: true, default: 0 }, // Initial effort allocated
 	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }] // Characters involved in the ACTION
@@ -46,13 +46,11 @@ const effectSchema = new Schema({
 const ActionSchema = new Schema({
 	model:  { type: String, default: 'Action' }, // Model for the DOC
 	name: { type: String },
-	type: { type: String, default: 'Normal', enum: actionAndEffortTypes, required: true },
+	type: { type: String, default: 'Normal', required: true }, //  enum: actionAndEffortTypes, <- Disabling this so Actions are more permissive
 	round: { type: Number }, // Round Number for the ACTION
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
-	numberOfInjuries: { type: Number, required: true, default: 0 }, // The number of injuries the character has when submitting an action
 	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
 	controllers: [{ type: String }], // Controllers assigned to handle this ACTION
-	progress: { type: Number, default: 0, min: 0, max: 100 }, // % of compleation | Goes to 100% automatically when control posts a RESULT
 	tags: [{ type: String }], // Any tags added by control
 	submission: submissionSchema, // Player submission that created the ACTION
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
@@ -84,14 +82,9 @@ ActionSchema.methods.submit = async function(submission) {
 
 	this.markModified('submission.assets');
 
-	const character = await Character.findById(this.creator).populate('assets').populate('lentAssets');
-	if (this.submission.effort > 0) {
-		await character.expendEffort(this.submission.effort);
-	}
-
 	const action = await this.save();
 
-	nexusEvent.emit('respondClient', 'update', [ action, character, ...changed ]);
+	nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
 	return ({ message : `${action.type} Submission Success`, type: 'success' });
 };
 

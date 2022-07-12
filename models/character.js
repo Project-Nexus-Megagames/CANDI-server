@@ -1,4 +1,5 @@
 const mongoose = require('mongoose'); // Mongo DB object modeling module
+const nexusError = require('../middleware/util/throwError');
 
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
@@ -43,10 +44,15 @@ const CharacterSchema = new Schema({
 });
 
 
-CharacterSchema.methods.expendEffort = async function(amount) {
+CharacterSchema.methods.expendEffort = async function(amount, type) {
 	try {
-		// console.log(amount);
-		this.effort = this.effort - amount;
+		console.log(amount, type)
+		if (!amount || !type) throw Error('expendEffort() must have type and amount..');
+		const effort = this.effort.find(ef => ef.type.toLowerCase() === type.toLowerCase());
+		if (!effort) throw Error(`Effort for type ${type} is undefined`);
+		if (effort.amount < amount) throw Error(`Not enough Effort for type ${type}: ${effort.amount} < ${amount}`);
+		effort.amount = effort.amount - amount;
+
 		let character = await this.save();
 		character = await character.populateMe();
 
@@ -55,6 +61,7 @@ CharacterSchema.methods.expendEffort = async function(amount) {
 	}
 	catch (err) {
 		console.log(err); // Add proper error handling for CANDI
+		throw Error(err);
 	}
 };
 

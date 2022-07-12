@@ -42,7 +42,7 @@ async function createAction(data, user) {
 
 		console.log(data);
 
-		const { type, creator, controllers, name, numberOfInjuries } = data;
+		const { type, creator, controllers, name, numberOfInjuries, submission } = data;
 
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
@@ -62,6 +62,10 @@ async function createAction(data, user) {
 
 		action = await action.save();
 		// console.log(action)
+		if (submission.effort > 0) {
+			await character.expendEffort(submission.effort, type);
+		}
+
 		await action.submit(data.submission);
 		await action.populateMe();
 
@@ -332,8 +336,6 @@ async function controlOverride(data, user) {
 			};
 		}
 
-		console.log(asset);
-		console.log(action.submission.assets[0] == asset);
 		const i = action.submission.assets.findIndex((el) => el == asset);
 		if (i > -1) {
 			action.submission.assets.splice(i, 1);
