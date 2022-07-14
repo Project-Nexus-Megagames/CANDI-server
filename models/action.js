@@ -9,17 +9,22 @@ const nexusEvent = require('../middleware/events/events'); // Local event trigge
 // const { actionAndEffortTypes } = require('../config/enums');
 
 // MODEL Imports
-const { Character } = require('./character');
 const { Asset } = require('./asset');
 const { Comment } = require('./comment');
 // const { History } = require('./history');
+
+const effortSchema = new Schema({
+	model: { type: String, default: 'Effort' },
+	effortType: { type: String, default: 'Normal', required: true },
+	amount: { type: Number, required: true, default: 0 }
+});
 
 const submissionSchema = new Schema({
 	model: { type: String, default: 'Submission' },
 	description: { type: String, required: true }, // Description of the ACTION
 	intent: { type: String, required: true }, // Intended result of the ACTION
-	effortType: { type: String, default: 'Normal', required: true }, //  enum: actionAndEffortTypes,
-	effort: { type: Number, required: true, default: 0 }, // Initial effort allocated
+	effortType: { type: String, default: 'Normal', required: true },
+	effort: [effortSchema], // Initial effort allocated
 	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }] // Characters involved in the ACTION
 }, { timestamps: true });
