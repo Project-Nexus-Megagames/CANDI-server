@@ -24,7 +24,7 @@ const submissionSchema = new Schema({
 	description: { type: String, required: true }, // Description of the ACTION
 	intent: { type: String, required: true }, // Intended result of the ACTION
 	effortType: { type: String, default: 'Normal', required: true },
-	effort: [effortSchema], // Initial effort allocated
+	effort: effortSchema, // Initial effort allocated
 	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }] // Characters involved in the ACTION
 }, { timestamps: true });
@@ -60,8 +60,7 @@ const ActionSchema = new Schema({
 	submission: submissionSchema, // Player submission that created the ACTION
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
 	results: [resultSchema], // Controller generated result of the ACTION
-	effects: [effectSchema], // Mechanical effects of the ACTION,
-	effort: effortSchema
+	effects: [effectSchema]// Mechanical effects of the ACTION,
 });
 
 ActionSchema.methods.submit = async function(submission) {
