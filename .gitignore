@@ -106,3 +106,4 @@ dist
 # Discord
 botSettings.json
 config/startingCharacters.js
+.vscode/launch.json
