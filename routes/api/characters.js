@@ -203,18 +203,20 @@ router.patch('/cleanSupporters', async (req, res, next) => {
 	else {
 		const { id } = req.body;
 		try {
-			const character = await Character.findById(id);
+			const characters = await Character.find().where("knownContacts").in(null);
 			const record = [];
 
-			for (const supporter of character.supporters) {
-				if (!record.some(el => el === supporter)) {
-					record.push(supporter);
-				}
+			for (let character of characters) {
+				character.knownContacts = character.knownContacts.filter(el => el !== null)
+				console.log(character)
+				await character.save();
 			}
 
-			character.supporters = record;
-			await character.save();
-			res.status(200).json(character);
+
+
+			// character.supporters = record;
+			// await character.save();
+			res.status(200).json(characters);
 		}
 		catch (err) {
 			httpErrorHandler(res, err);

@@ -46,6 +46,8 @@ async function createAction(data, user) {
 		const actions = await Action.find({ creator });
 		const gamestate = await GameState.findOne();
 
+		if (gamestate.status !== 'Active') throw Error('Cannot create Actions during downtime... wait how did you do this?');
+
 		let action = new Action({
 			type,
 			name:
@@ -364,6 +366,10 @@ async function controlOverride(data, user) {
 }
 
 async function editAction(data, user) {
+
+	const gamestate = await GameState.findOne();
+	if (gamestate.status !== 'Active') throw Error('Cannot edit Actions during downtime... wait how did you do this?');
+
 	const { id } = data;
 	const changed = [];
 	const oldAction = await Action.findById(id);
