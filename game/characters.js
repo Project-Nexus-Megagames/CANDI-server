@@ -188,6 +188,9 @@ async function createCharacter(data) {
 
 async function manageContacts(data) {
 	const { charId, contacts } = data;
+
+	if (contacts.some(el => el === null)) return ({ message : `ERROR: NULL contact`, type: 'success' });
+
 	let character = await Character.findById(charId);
 	character.knownContacts = contacts;
 	await character.save();
