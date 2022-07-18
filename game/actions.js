@@ -12,15 +12,17 @@ const { Location } = require('../models/location');
 
 async function removeEffort(data) {
 	let character = await Character.findOne({ characterName: data.creator });
+	console.log('remove effort called', data);
 	character = await character.expendEffort(data.effort);
 	return character;
 }
 
 async function addEffort(data) {
+	console.log(data);
 	let character = await Character.findOne({ characterName: data.creator })
 		.populate('assets')
 		.populate('lentAssets');
-	character = await character.restoreEffort(data.effort);
+	character = await character.restoreEffort(data.effort, data.type);
 	return character;
 }
 
@@ -62,8 +64,8 @@ async function createAction(data, user) {
 
 		action = await action.save();
 		// console.log(action)
-		if (submission.effort > 0) {
-			await character.expendEffort(submission.effort, type);
+		if (submission.effort.amount > 0) {
+			await character.expendEffort(submission.effort.amount, submission.effort.effortType);
 		}
 
 		await action.submit(data.submission);

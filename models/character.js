@@ -1,5 +1,4 @@
 const mongoose = require('mongoose'); // Mongo DB object modeling module
-const nexusError = require('../middleware/util/throwError');
 
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
@@ -46,7 +45,6 @@ const CharacterSchema = new Schema({
 
 CharacterSchema.methods.expendEffort = async function(amount, type) {
 	try {
-		console.log(amount, type)
 		if (!amount || !type) throw Error('expendEffort() must have type and amount..');
 		const effort = this.effort.find(ef => ef.type.toLowerCase() === type.toLowerCase());
 		if (!effort) throw Error(`Effort for type ${type} is undefined`);
@@ -65,10 +63,10 @@ CharacterSchema.methods.expendEffort = async function(amount, type) {
 	}
 };
 
-CharacterSchema.methods.restoreEffort = async function(amount) {
+CharacterSchema.methods.restoreEffort = async function(amount, type) {
 	try {
 		this.effort = this.effort + amount;
-		// console.log(amount);
+		console.log(amount, type);
 		if (this.effort > 2) this.effort = 2;
 		let character = await this.save();
 		character = await character.populateMe();
