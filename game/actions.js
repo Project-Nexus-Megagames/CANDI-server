@@ -388,7 +388,7 @@ async function editAction(data, user) {
 	}).populate('creator');
 
 	let character = await Character.findById(action.creator._id).populate('lentAssets');
-	character = await character.expendEffort(action.submission.effort - oldAction.submission.effort);
+	character = await character.expendEffort(action.submission.effort.amount - oldAction.submission.effort.amount);
 	nexusEvent.emit('respondClient', 'update', [character]);
 
 	// let comment = new Comment({
