@@ -63,11 +63,13 @@ CharacterSchema.methods.expendEffort = async function(amount, type) {
 	}
 };
 
-CharacterSchema.methods.restoreEffort = async function(amount, type) {
+CharacterSchema.methods.restoreEffort = async function(amount, type, config) {
 	try {
-		this.effort = this.effort + amount;
-		console.log(amount, type);
-		if (this.effort > 2) this.effort = 2;
+		const effort = this.effort.find(ef => ef.type.toLowerCase() === type.toLowerCase());
+		if (!effort) throw Error(`Effort for type ${type} is undefined`);
+		const configEffort = config.find(ef => ef.type.toLowerCase === type.toLowerCase);
+		effort.amount = effort.amount + amount;
+		if (effort.amount > configEffort.effortAmount) effort.amount = configEffort.effortAmount;
 		let character = await this.save();
 		character = await character.populateMe();
 		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
@@ -81,6 +83,7 @@ CharacterSchema.methods.restoreEffort = async function(amount, type) {
 CharacterSchema.methods.populateMe = async function() {
 	return this
 		.populate('knownContacts')
+		.populate('effort')
 		.execPopulate();
 };
 

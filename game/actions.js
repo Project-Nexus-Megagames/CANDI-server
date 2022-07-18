@@ -9,6 +9,7 @@ const { History } = require('../models/history');
 const { GameState } = require('../models/gamestate');
 const { addAsset } = require('./assets');
 const { Location } = require('../models/location');
+const { GameConfig } = require('../models/gameConfig');
 
 async function removeEffort(data) {
 	let character = await Character.findOne({ characterName: data.creator });
@@ -282,7 +283,8 @@ async function deleteAction(data, user) {
 			});
 
 			const character = await Character.findById(action.creator);
-			await character.restoreEffort(action.submission.effort);
+			const config = await GameConfig.findOne();
+			await character.restoreEffort(action.submission.effort.amount, action.submission.effort.effortType, config.effortTypes);
 			nexusEvent.emit('respondClient', 'update', [character]);
 
 			for (const item of action.submission.assets) {
