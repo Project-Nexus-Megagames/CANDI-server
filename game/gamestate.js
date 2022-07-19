@@ -125,10 +125,9 @@ async function nextRound() {
 		for (const character of await Character.find()) {
 			character.lentAssets = [];
 			character.effort = [];
-			console.log(config.effortTypes)
 			for (const effort of config.effortTypes) {
 				const type = effort.type;
-				const amount = effort.effortAmount; // TODO: how to handle one-use stuff; i.e. if I used 1 of my 2 efforts, I don't want it restored to 0
+				const amount = effort.effortAmount;
 				const restoredEffort = { type, amount };
 				character.effort.push(restoredEffort);
 			}
