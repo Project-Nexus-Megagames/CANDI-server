@@ -22,7 +22,7 @@ require('./middleware/config/config')(); // Bootup for special configurations
 require('./middleware/production/prod')(app); // Production compression and middleware
 // require('./middleware/discord')(); // Signs on the discord bot...
 
-app.use((err, req, res, next) => {
+app.use((err) => {
 	logger.error(`Response Teimout and Terminated: ${err}`);
 	// res.status(500).send('Response timeout!!!');
 });

@@ -7,6 +7,8 @@ const connectString =
   dbName +
   '?retryWrites=true&w=majority';
 
+
 module.exports = {
 	mongoURI: connectString
+
 };
