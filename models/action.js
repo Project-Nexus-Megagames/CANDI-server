@@ -62,7 +62,8 @@ const ActionSchema = new Schema({
 	effects: [effectSchema]// Mechanical effects of the ACTION,
 });
 
-ActionSchema.methods.submit = async function(submission) {
+ActionSchema.methods.submit = async function(submission, submittedActionType, config) {
+	console.log(submission);
 	// Expects description, intent, effort, assets, collaborators
 	if (!submission.description) throw Error('A submission must have a description...');
 	if (!submission.intent) throw Error('You must have an intent for an action...');
@@ -71,11 +72,22 @@ ActionSchema.methods.submit = async function(submission) {
 
 	const { description, intent, effort } = submission;
 
+	console.log('SUBMISSION', submission);
+
 	this.submission = {
 		description, intent, effort
 	};
 
 	const changed = [];
+
+	const actionType = config.find(el => el.type.toLowerCase() === submittedActionType.toLowerCase());
+	if (!actionType) throw Error(`Action for type ${submittedActionType} is undefined`);
+	const allowedAssets = actionType.assetType;
+
+	for (const type of submission.assets) {
+		const allowed = allowedAssets.find(el => el === type.toLowerCase());
+		if (!allowed) throw Error (`Asset of type ${type} not allowed for ${submittedActionType}!`);
+	}
 
 	for (const id of submission.assets) {
 		this.submission.assets.push(id);

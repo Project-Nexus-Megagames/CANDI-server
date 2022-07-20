@@ -50,6 +50,7 @@ async function createAction(data, user) {
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
 		const gamestate = await GameState.findOne();
+		const config = await GameConfig.findOne();
 
 		let action = new Action({
 			type,
@@ -69,7 +70,7 @@ async function createAction(data, user) {
 			await character.expendEffort(submission.effort.amount, submission.effort.effortType);
 		}
 
-		await action.submit(data.submission);
+		await action.submit(data.submission, data.type, config.actionTypes);
 		await action.populateMe();
 
 		const log = new History({
