@@ -289,17 +289,12 @@ async function deleteAction(data, user) {
 			nexusEvent.emit('respondClient', 'update', [character]);
 
 			for (const item of action.submission.assets) {
-				if (
-					!action.submission.assets.some(
-						(el) => el.toString() === item.toString()
-					)
-				) {
-					let asset = await Asset.findById(item.id);
-					asset
-						? (asset = await asset.unuse())
-						: console.log('Avoided un-using a thing!');
-					changed.push(asset);
-				}
+				let asset = await Asset.findById(item);
+				asset
+					? (asset = await asset.unuse())
+					: console.log('Avoided un-using a thing!');
+				changed.push(asset);
+
 			}
 
 			action = await Action.findByIdAndDelete(id);

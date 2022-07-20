@@ -71,9 +71,6 @@ ActionSchema.methods.submit = async function(submission, submittedActionType, co
 	// this.markModified('status');
 
 	const { description, intent, effort } = submission;
-
-	console.log('SUBMISSION', submission);
-
 	this.submission = {
 		description, intent, effort
 	};
