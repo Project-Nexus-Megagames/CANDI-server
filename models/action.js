@@ -84,14 +84,12 @@ ActionSchema.methods.submit = async function(submission, submittedActionType, co
 	if (!actionType) throw Error(`Action for type ${submittedActionType} is undefined`);
 	const allowedAssets = actionType.assetType;
 
-	for (const type of submission.assets) {
-		const allowed = allowedAssets.find(el => el === type.toLowerCase());
-		if (!allowed) throw Error (`Asset of type ${type} not allowed for ${submittedActionType}!`);
-	}
-
 	for (const id of submission.assets) {
-		this.submission.assets.push(id);
+
 		let asset = await Asset.findById(id);
+		const allowed = allowedAssets.find(el => el === asset.type.toLowerCase());
+		if (!allowed) throw Error (`Asset of type ${asset.type} not allowed for ${submittedActionType}!`);
+		this.submission.assets.push(id);
 		asset = await asset.use();
 		changed.push(asset);
 	}

@@ -294,7 +294,7 @@ async function deleteAction(data, user) {
 						(el) => el.toString() === item.toString()
 					)
 				) {
-					let asset = await Asset.findById(item);
+					let asset = await Asset.findById(item.id);
 					asset
 						? (asset = await asset.unuse())
 						: console.log('Avoided un-using a thing!');
