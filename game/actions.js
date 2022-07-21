@@ -65,13 +65,15 @@ async function createAction(data, user) {
 		});
 
 		action = await action.save();
+
+		await action.submit(data.submission, data.type, config.actionTypes);
+		await action.populateMe();
+
 		// console.log(action)
 		if (submission.effort.amount > 0) {
 			await character.expendEffort(submission.effort.amount, submission.effort.effortType);
 		}
 
-		await action.submit(data.submission, data.type, config.actionTypes);
-		await action.populateMe();
 
 		const log = new History({
 			docType: 'action',
