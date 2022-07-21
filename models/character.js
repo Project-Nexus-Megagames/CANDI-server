@@ -3,6 +3,7 @@ const mongoose = require('mongoose'); // Mongo DB object modeling module
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
+const nexusEvent = require('../middleware/events/events'); // Local event triggers
 
 const injurySchema = new Schema({
 	submodel: { type: String, default: 'Injury' },
@@ -45,7 +46,7 @@ const CharacterSchema = new Schema({
 
 CharacterSchema.methods.expendEffort = async function(amount, type) {
 	try {
-		if (!amount || !type) throw Error('expendEffort() must have type and amount..');
+		if (!amount || !type) throw Error(`expendEffort() must have type and amount. amount: '${amount}' - type: '${type}'`);
 		const effort = this.effort.find(ef => ef.type.toLowerCase() === type.toLowerCase());
 		if (!effort) throw Error(`Effort for type ${type} is undefined`);
 		if (effort.amount < amount) throw Error(`Not enough Effort for type ${type}: ${effort.amount} < ${amount}`);
@@ -54,6 +55,7 @@ CharacterSchema.methods.expendEffort = async function(amount, type) {
 		let character = await this.save();
 		character = await character.populateMe();
 
+		nexusEvent.emit('respondClient', 'update', [ character ]);
 		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
 		return character;
 	}
@@ -72,7 +74,8 @@ CharacterSchema.methods.restoreEffort = async function(amount, type, config) {
 		if (effort.amount > configEffort.effortAmount) effort.amount = configEffort.effortAmount;
 		let character = await this.save();
 		character = await character.populateMe();
-		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
+
+		nexusEvent.emit('respondClient', 'update', [ character ]);
 		return character;
 	}
 	catch (err) {
