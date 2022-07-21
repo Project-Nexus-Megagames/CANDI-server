@@ -43,8 +43,6 @@ async function createAction(data, user) {
 			throw Error('New actions must at least 1 controller assigned to it...');
 		}
 
-		console.log(data);
-
 		const { type, creator, controllers, name, numberOfInjuries, submission } = data;
 
 		const character = await Character.findById(creator);
