@@ -25,7 +25,7 @@ router.get('/', async function(req, res, next) {
 		try {
 			const actions = await Action.find()
 				.populate('comments')
-				.populate('creator');
+				.populate('creator', 'characterName');
 			res.status(200).json(actions);
 		}
 		catch (err) {
@@ -54,14 +54,14 @@ router.get('/:id', async (req, res, next) => {
 			else if (myCharacter.tags.some(el => el === 'Control')) { // if the user is control
 				const actions = await Action.find()
 					.populate('comments')
-					.populate('creator');
+					.populate('creator', 'characterName');
 				// console.log(projects);
 				res.status(200).json(actions);
 			}
 			else {
 				const actions = await Action.find({ creator: myCharacter._id })
 					.populate('comments')
-					.populate('creator');
+					.populate('creator', 'characterName');
 				// console.log(projects);
 				res.status(200).json(actions);
 			}
