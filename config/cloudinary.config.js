@@ -8,13 +8,17 @@ cloudinary.config({
 	api_secret: 'babAGl2HyVe3461iY05PiEcHcqQ'
 });
 
-
 const storage = new CloudinaryStorage({
 	cloudinary,
+
 	allowedFormats: ['jpg', 'png'],
 	filename: function(req, file, cb) {
 		cb(null, file.originalname);
-	}
+	},
+	params: {
+		transformation:  { width: 200, crop: 'scale' },
+		folder: 'goblinCity' }
+
 });
 
 const uploadCloud = multer({ storage });
