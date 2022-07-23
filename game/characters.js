@@ -4,8 +4,19 @@ const { logger } = require('../middleware/log/winston');
 const { default: axios } = require('axios');
 
 
-async function modifyCharacter(data) {
-	const { _id } = data;
+async function modifyCharacter(receivedData) {
+
+
+	// async function createCharacter(receivedData) {
+	//	try {
+	//		const { data, imageURL } = receivedData;
+	//		console.log('DATA', data);
+	//		console.log('imageURL', imageURL);
+	//		let newElement = new Character(data);
+	//		newElement.profilePicture = imageURL;
+	const { data, imageURL } = receivedData;
+	console.log('DATA', data);
+	const _id = data._id;
 	const character = await Character.findById(_id);
 
 	try {
@@ -24,7 +35,9 @@ async function modifyCharacter(data) {
 					console.log(`Detected invalid edit: ${el} is ${data[el]}`);
 				}
 			}
-
+			if (imageURL && imageURL !== '') {
+				character.profilePicture = imageURL;
+			}
 			await character.save();
 			character.populate('assets').populate('lentAssets');
 			nexusEvent.emit('respondClient', 'update', [ character ]);
