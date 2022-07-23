@@ -40,7 +40,8 @@ const CharacterSchema = new Schema({
 	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
 	color: { type: String, default: 'ffffff' },
 	knownContacts: [{ type: Schema.Types.ObjectId, ref: 'Character' }],
-	injuries: [injurySchema]
+	injuries: [injurySchema],
+	profilePicture: { type: String }
 });
 
 

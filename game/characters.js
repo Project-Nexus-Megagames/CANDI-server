@@ -133,17 +133,22 @@ async function deleteCharacter(data) {
 	}
 }
 
-async function createCharacter(data) {
+async function createCharacter(receivedData) {
 	try {
+		const { data, imageURL } = receivedData;
+		console.log('DATA', data);
+		console.log('imageURL', imageURL);
 		let newElement = new Character(data);
+		newElement.profilePicture = imageURL;
 		const docs = await Character.find({ characterName: data.characterName });
 		if (docs.length < 1) {
 			newElement = await newElement.save();
-			const charavter = await Character.findById(newElement._id).populate('assets').populate('lentAssets');
+			const character = await Character.findById(newElement._id).populate('assets').populate('lentAssets');
+
 
 			logger.info(`Character "${newElement.characterName}" created.`);
 
-			nexusEvent.emit('respondClient', 'create', [ charavter ]);
+			nexusEvent.emit('respondClient', 'create', [ character ]);
 			return ({ message : 'Character Creation Success', type: 'success' });
 		}
 		else {
