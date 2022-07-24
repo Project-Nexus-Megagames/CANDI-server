@@ -5,19 +5,7 @@ const { History } = require('../models/history');
 
 async function modifyAsset(data, user) {
 	try {
-		const {
-			_id,
-			name,
-			description,
-			uses,
-			used,
-			owner,
-			hidden,
-			lendable,
-			level,
-			dice,
-			tags
-		} = data;
+		const {	_id, name, description, uses, used, owner, status, lendable, level, dice, tags } = data;
 		const asset = await Asset.findById(_id).populate('with');
 
 		if (asset === null) {
@@ -36,9 +24,9 @@ async function modifyAsset(data, user) {
 			asset.level = level;
 			asset.dice = dice;
 			asset.owner = owner;
-			asset.status.used = used;
-			asset.status.hidden = hidden;
-			asset.status.lendable = lendable;
+
+			asset.status = status;
+
 			asset.tags = tags;
 
 			await asset.save();
