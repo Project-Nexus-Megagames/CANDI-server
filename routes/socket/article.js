@@ -9,7 +9,8 @@ module.exports = {
 			logger.info(`${client.username} has made a ${req.action} request in the ${req.route} route!`);
 			switch(req.action) {
 			case('post'): {
-				const { publisher, location, headline, body, tags, imageSrc } = req.data.article;
+				const { location, headline, body, tags, imageSrc } = req.data.article;
+				const { publisher } = req.data;
 
 				await Article.post({
 					publisher,

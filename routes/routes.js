@@ -9,6 +9,7 @@ const home = require('../routes/public/home');
 // Desc - API routes are the raw HTTP GET/POST/DEL access to our models
 const character = require('./api/characters');
 const action = require('./api/actions');
+const article = require('./api/articles');
 const asset = require('./api/assets');
 const location = require('./api/locations');
 const gamestate = require('./api/gamestate');
@@ -27,6 +28,7 @@ module.exports = function(app) {
 	app.use(bodyParser.json()); // Tells Express to use Body Parser for JSON
 	app.use('/api/characters', character);
 	app.use('/api/actions', action);
+	app.use('/api/articles', article);
 	app.use('/api/assets', asset);
 	app.use('/api/locations', location);
 	app.use('/api/gamestate', gamestate);

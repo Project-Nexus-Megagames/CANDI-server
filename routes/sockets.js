@@ -21,8 +21,6 @@ for (const file of socketFiles) {
 	}
 }
 
-console.log(socketMap);
-
 module.exports = function(server) {
 	logger.info('Socket.io servers initialized...');
 	const io = require('socket.io')(server, {

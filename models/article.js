@@ -16,7 +16,7 @@ const ArticleSchema = new Schema({
 		turnNum: { type: Number },
 		clock: { type: String }
 	},
-	location: { type: Schema.Types.ObjectId, ref: 'Location' },
+	// location: { type: Schema.Types.ObjectId, ref: 'Location' },
 	dateline: { type: String },
 	headline: { type: String, required: true, minlength: 1, maxlength: 100 },
 	body: { type: String, minlength: 1, maxlength: 1000 },
@@ -27,16 +27,7 @@ const ArticleSchema = new Schema({
 		user: { type: String },
 		emoji: { type: String }
 	}],
-	comments: [{
-		user: { type: String },
-		comment: { type: String },
-		timestamp: {
-			turn: { type: String },
-			phase: { type: String },
-			turnNum: { type: Number },
-			clock: { type: String }
-		}
-	}]
+	comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }], // User comments and system generated info
 }, { timestamps: true });
 
 ArticleSchema.statics.post = async function(article) {
@@ -44,15 +35,12 @@ ArticleSchema.statics.post = async function(article) {
 	let newArticle = new Article(article);
 
 	newArticle.date = Date.now();
-	newArticle.timestamp = 'TODO put timestamp here';
 
-
-	await newArticle.validateArticle();
 	newArticle = await newArticle.save();
 	newArticle = await newArticle.populateMe();
 
-	nexusEvent.emit('request', 'create', [ newArticle ]);
-	logger.info(`The ${this.headline} article has been created`);
+	nexusEvent.emit('request', 'update', [ newArticle ]);
+	logger.info(`The ${newArticle.headline} article has been created`);
 	return newArticle;
 };
 
@@ -64,7 +52,7 @@ ArticleSchema.methods.edit = async function(articleUpdate) {
 	this.tags = articleUpdate.tags;
 	this.imageSrc = articleUpdate.imageSrc;
 
-	await this.validateArticle();
+	// await this.validateArticle();
 	let article = await this.save();
 	article = await article.populateMe();
 

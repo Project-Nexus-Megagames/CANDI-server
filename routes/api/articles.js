@@ -7,12 +7,9 @@ const httpErrorHandler = require('../../middleware/util/httpError'); // Middlewa
 const nexusError = require('../../middleware/util/throwError'); // Project Nexus middleware for error handling
 
 // Function Import
-const clock = require('../../wts/gameClock/gameClock');
 
 // Mongoose Model Import
 const { Article } = require('../../models/article');
-const { Team } = require('../../models/team');
-const { Site } = require('../../models/site');
 
 // @route   GET api/articles
 // @Desc    Get all articles
@@ -21,8 +18,8 @@ router.get('/', async (req, res) => {
 	logger.info('GET Route: api/articles requested...');
 	try {
 		const articles = await Article.find()
-			.populate('publisher', 'name shortName')
-			.populate('location', 'name dateline')
+			.populate('publisher', 'characterName playerName')
+			.populate('location', 'name')
 			.sort('date: 1');
 		res.status(200).json(articles);
 	}
@@ -40,8 +37,8 @@ router.get('/:id', validateObjectId, async (req, res) => {
 	const id = req.params.id;
 	try {
 		const article = await Article.findById(id)
-			.populate('publisher', 'name shortName')
-			.populate('location', 'name dateline');
+			.populate('publisher', 'characterName playerName')
+			.populate('location', 'name');
 		if (article != null) {
 			res.status(200).json(article);
 		}
@@ -63,19 +60,19 @@ router.post('/', async (req, res) => {
 
 	try {
 		newArticle.date = new Date();
-		const retTimestamp = clock.getTimeStamp();
-		if (retTimestamp) {
-			newArticle.timestamp = retTimestamp;
-		}
-		else {
-			newArticle.timestamp = req.body.timestamp;
-		}
+		// const retTimestamp = clock.getTimeStamp();
+		// if (retTimestamp) {
+		// 	newArticle.timestamp = retTimestamp;
+		// }
+		// else {
+		// 	newArticle.timestamp = req.body.timestamp;
+		// }
 
 		logger.info(`new Article time stamp ${newArticle.timestamp}`);
 		const location = await Site.findById(newArticle.location);
 		newArticle.dateline = location.dateline;
 		logger.info(`new Article time stamp ${newArticle.timestamp}`);
-		await newArticle.validateArticle();
+		// await newArticle.validateArticle();
 		logger.info(`new Article time stamp ${newArticle.timestamp}`);
 
 		const docs = await Article.find({ headline: newArticle.headline, publisher: newArticle.publisher });
