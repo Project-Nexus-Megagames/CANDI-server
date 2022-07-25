@@ -12,7 +12,8 @@ const ActionTypeSchema = new Schema({
 	assetType: [{ type: String }], // type of assets that can be accepted by the actions
 	maxAssets: { type: Number, required: true, default: 0 },
 	status: [ { type: String }], // status array, e.g. for 'public' or 'campaign'
-	icon: { type: String }
+	icon: { type: String },
+	public: { type: Boolean }
 });
 
 const EffortTypeSchema = new Schema ({
