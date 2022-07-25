@@ -23,7 +23,7 @@ const logger = createLogger({
 		// Errors only File
 		new transports.File({ filename: 'nexus-error.log', level: 'error' }),
 		// Info / Warnings / Errors combined
-		new transports.File({ filename: 'nexus-combined.log', level: 'info' }),
+		// new transports.File({ filename: 'nexus-combined.log', level: 'info' }),
 		// Debug / Verbose/ Http / Info / Warnings / Errors combined
 		new transports.File({
 			filename: 'nexus-debug-combined.log',
@@ -36,15 +36,15 @@ const logger = createLogger({
 			metaKey: 'meta',
 			collection: 'errors',
 			options: { useUnifiedTopology: true }
-		}),
-		// Info / Warnings / Errors combined
-		new transports.MongoDB({
-			db: dbURI,
-			level: 'info',
-			metaKey: 'meta',
-			collection: 'infos',
-			options: { useUnifiedTopology: true }
 		})
+		// Info / Warnings / Errors combined
+		// new transports.MongoDB({
+		//	db: dbURI,
+		//	level: 'info',
+		//	metaKey: 'meta',
+		//	collection: 'infos',
+		//	options: { useUnifiedTopology: true }
+		// })
 	]
 });
 
