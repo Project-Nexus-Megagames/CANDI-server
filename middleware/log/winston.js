@@ -2,8 +2,12 @@ const errorDebugger = require('debug')('app:error');
 const winston = require('winston');
 // may need to comment out line below if we have problems with integration testing
 require('winston-mongodb');
+const config = require('config');
+
+
+const dbName = config.get('dbName');
 // const dbURI = require('../mongoDB/keys').mongoURI;
-const dbURI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@candi.zx3mbs8.mongodb.net/?retryWrites=true&w=majority`;
+const dbURI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@candi.zx3mbs8.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 
 const { createLogger, format, transports } = winston;
 
