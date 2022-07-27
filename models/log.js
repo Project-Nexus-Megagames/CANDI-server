@@ -25,7 +25,6 @@ const ControlLog = Log.discriminator(
 	})
 );
 
-
 const NextRoundLog = Log.discriminator(
 	'NextRoundLog',
 	new Schema({

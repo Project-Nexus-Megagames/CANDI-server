@@ -18,6 +18,7 @@ const comment = require('./api/comment');
 const debugRoute = require('./api/debugRoute');
 const gameConfig = require('./api/gameConfig');
 const cloudinaryUpload = require('./api/cloudinaryUpload');
+const log = require('./api/log');
 
 // Route Function
 module.exports = function(app) {
@@ -37,6 +38,7 @@ module.exports = function(app) {
 	app.use('/api/debugRoute', debugRoute);
 	app.use('/api/gameConfig', gameConfig);
 	app.use('/api/imageUpload', cloudinaryUpload);
+	app.use('/api/log', log);
 
 	app.use('/', home);
 };
