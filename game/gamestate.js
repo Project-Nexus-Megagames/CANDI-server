@@ -10,6 +10,7 @@ const { NextRoundLog, ControlLog } = require('../models/log');
 const { d10, d8, d6, d4 } = require('../scripts/util/dice');
 
 async function modifyGameState(data, user) {
+	const controlLog = new ControlLog();
 	const { round, status, endTime } = data;
 	let gamestate = await GameState.findOne();
 	try {
@@ -28,6 +29,13 @@ async function modifyGameState(data, user) {
 
 		await log.save();
 
+		controlLog.message = `New Round: ${round}. New Status: ${status}. New EndTime: ${endTime}`;
+		controlLog.round = gamestate.round;
+		controlLog.control = user;
+		controlLog.controlAction = 'GameState';
+
+		await controlLog.save();
+
 		nexusEvent.emit('respondClient', 'update', [gamestate]);
 		return { message: 'Gamestate edit Success', type: 'success' };
 	}
@@ -39,15 +47,15 @@ async function modifyGameState(data, user) {
 
 async function closeRound(control) {
 	const controlLog = new ControlLog();
-	console.log('CONTROL', control);
 	const gamestate = await GameState.findOne();
 	try {
 		gamestate.status = 'Resolution';
 		await gamestate.save();
 
-		controlLog.message = `Round ${gamestate.round} Closed`;
+		controlLog.message = `Round ${gamestate.round} Closed.`;
 		controlLog.round = gamestate.round;
 		controlLog.control = control;
+		controlLog.controlAction = 'GameState';
 
 		await controlLog.save();
 
@@ -105,6 +113,7 @@ async function calculateDie(action) {
 
 async function nextRound(control) {
 	const nextRoundLog = new NextRoundLog();
+	const controlLog = new ControlLog();
 	const gamestate = await GameState.findOne();
 	const config = await GameConfig.findOne();
 	try {
@@ -200,7 +209,11 @@ async function nextRound(control) {
 		await gamestate.save();
 		nextRoundLog.control = control;
 		nextRoundLog.round = gamestate.round;
-		console.log(nextRoundLog);
+		controlLog.control = control;
+		controlLog.message = `Resolutions were published. Next Round was triggered. New Round: ${gamestate.round}`;
+		controlLog.controlAction = 'GameState';
+
+		await controlLog.save();
 		await nextRoundLog.save();
 
 		nexusEvent.emit('respondClient', 'update', [

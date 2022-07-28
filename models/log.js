@@ -2,7 +2,6 @@ const mongoose = require('mongoose'); // Mongo DB object modeling module
 
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
-const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const LogSchema = new Schema({
 	model:  { type: String, default: 'Log' }
@@ -23,7 +22,8 @@ const ControlLog = Log.discriminator(
 		round: { type: Number },
 		message: { type: String },
 		character: { type: String, default: 'No character associated with this control voodoo' },
-		action: { type: String, default: 'No action associated with this control voodoo' }
+		action: { type: String, default: 'No action associated with this control voodoo' },
+		controlAction: { type: String, default: 'This should not be possible.' }
 	})
 );
 
