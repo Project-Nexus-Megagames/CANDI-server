@@ -5,9 +5,7 @@ const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const LogSchema = new Schema({
-	model:  { type: String, default: 'Log' },
-	account: { type: String, required: true, default: 'No Account provided :/' },
-	creator: { type: ObjectId, ref: 'Character' }
+	model:  { type: String, default: 'Log' }
 }, { timestamps: true });
 
 LogSchema.methods.populateMe = function() {
@@ -21,7 +19,7 @@ const Log = mongoose.model('Log', LogSchema);
 const ControlLog = Log.discriminator(
 	'ControlLog',
 	new Schema({
-		submodel: { type: String, default: 'MissionLog' }
+		submodel: { type: String, default: 'ControlLog' }
 	})
 );
 
@@ -29,7 +27,9 @@ const NextRoundLog = Log.discriminator(
 	'NextRoundLog',
 	new Schema({
 		submodel: { type: String, default: 'GameState' },
-		logMessages: [{ type: String }]
+		logMessages: [{ type: String }],
+		round: { type: Number },
+		control: { type: String }
 	})
 );
 

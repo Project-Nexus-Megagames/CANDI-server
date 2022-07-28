@@ -22,7 +22,7 @@ module.exports = {
 			}
 			case 'nextRound': {
 				// console.log(data);
-				response = await nextRound();
+				response = await nextRound(data);
 				break;
 			}
 			case 'easterEgg': {

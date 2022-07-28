@@ -95,7 +95,7 @@ async function calculateDie(action) {
 	return response;
 }
 
-async function nextRound() {
+async function nextRound(control) {
 	const nextRoundLog = new NextRoundLog();
 	const gamestate = await GameState.findOne();
 	const config = await GameConfig.findOne();
@@ -105,6 +105,7 @@ async function nextRound() {
 		// Find all hidden resolutions and unhide them
 		const assets = [];
 		const actions = [];
+
 		for (const asset of await Asset.find({ 'status.lent': true }).populate(
 			'with'
 		)) {
@@ -189,6 +190,9 @@ async function nextRound() {
 		gamestate.status = 'Active';
 		gamestate.round = gamestate.round + 1;
 		await gamestate.save();
+		nextRoundLog.control = control;
+		nextRoundLog.round = gamestate.round;
+		console.log(nextRoundLog);
 		await nextRoundLog.save();
 
 		nexusEvent.emit('respondClient', 'update', [
