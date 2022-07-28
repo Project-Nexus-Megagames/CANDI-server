@@ -6,7 +6,7 @@ const { Character } = require('../models/character');
 const { GameState } = require('../models/gamestate');
 const { GameConfig } = require('../models/gameConfig');
 const { History } = require('../models/history');
-const { NextRoundLog } = require('../models/log');
+const { NextRoundLog, ControlLog } = require('../models/log');
 const { d10, d8, d6, d4 } = require('../scripts/util/dice');
 
 async function modifyGameState(data, user) {
@@ -37,11 +37,19 @@ async function modifyGameState(data, user) {
 	}
 }
 
-async function closeRound() {
+async function closeRound(control) {
+	const controlLog = new ControlLog();
+	console.log('CONTROL', control);
 	const gamestate = await GameState.findOne();
 	try {
 		gamestate.status = 'Resolution';
 		await gamestate.save();
+
+		controlLog.message = `Round ${gamestate.round} Closed`;
+		controlLog.round = gamestate.round;
+		controlLog.control = control;
+
+		await controlLog.save();
 
 		nexusEvent.emit('respondClient', 'update', [gamestate]);
 		return { message: 'Round Closed Success', type: 'success' };

@@ -17,7 +17,7 @@ module.exports = {
 			}
 			case 'closeRound': {
 				// console.log(data);
-				response = await closeRound();
+				response = await closeRound(data);
 				break;
 			}
 			case 'nextRound': {

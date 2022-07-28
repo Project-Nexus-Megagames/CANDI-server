@@ -10,7 +10,6 @@ const LogSchema = new Schema({
 
 LogSchema.methods.populateMe = function() {
 	return this
-		.populate('creator', 'characterName')
 		.execPopulate();
 };
 
@@ -19,14 +18,19 @@ const Log = mongoose.model('Log', LogSchema);
 const ControlLog = Log.discriminator(
 	'ControlLog',
 	new Schema({
-		submodel: { type: String, default: 'ControlLog' }
+		submodel: { type: String, default: 'ControlLog' },
+		control: { type: String },
+		round: { type: Number },
+		message: { type: String },
+		character: { type: String, default: 'No character associated with this control voodoo' },
+		action: { type: String, default: 'No action associated with this control voodoo' }
 	})
 );
 
 const NextRoundLog = Log.discriminator(
 	'NextRoundLog',
 	new Schema({
-		submodel: { type: String, default: 'GameState' },
+		submodel: { type: String, default: 'NextRoundLog' },
 		logMessages: [{ type: String }],
 		round: { type: Number },
 		control: { type: String }
