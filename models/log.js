@@ -21,8 +21,9 @@ const ControlLog = Log.discriminator(
 		control: { type: String },
 		round: { type: Number },
 		message: { type: String },
-		character: { type: String, default: 'No character associated with this control voodoo' },
-		action: { type: String, default: 'No action associated with this control voodoo' },
+		affectedCharacter: { type: String, default: 'No character associated with this control voodoo' },
+		affectedThing: { type: String, default: 'No affected Thing associated with this control voodoo' },
+		affectedAction: { type: String, default: 'No Action associated with this control voodoo' },
 		controlAction: { type: String, default: 'This should not be possible.' }
 	})
 );

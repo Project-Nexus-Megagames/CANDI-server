@@ -10,6 +10,7 @@ const { GameState } = require('../models/gamestate');
 const { addAsset } = require('./assets');
 const { Location } = require('../models/location');
 const { GameConfig } = require('../models/gameConfig');
+const { ControlLog } = require('../models/log');
 
 async function removeEffort(data) {
 	let character = await Character.findOne({ characterName: data.creator });
@@ -357,6 +358,16 @@ async function controlOverride(data, user) {
 			});
 
 			await log.save();
+
+			const controlLog = new ControlLog({
+				controlAction: 'ActionOverride',
+				control: user,
+				affectedThing: item.name,
+				affectedAction: action.name,
+				message: `Removed ${item.name} from action ${action.name}`
+			});
+
+			await controlLog.save();
 
 			logger.info(`Asset ${asset} removed`);
 			nexusEvent.emit('respondClient', 'update', [action]);
