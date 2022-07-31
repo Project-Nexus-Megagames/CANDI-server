@@ -2,6 +2,7 @@ const nexusEvent = require('../middleware/events/events'); // Local event trigge
 const { Character } = require('../models/character');
 const { logger } = require('../middleware/log/winston');
 const { default: axios } = require('axios');
+const { ControlLog } = require('../models/log');
 
 
 async function modifyCharacter(receivedData) {
@@ -15,7 +16,6 @@ async function modifyCharacter(receivedData) {
 	//		let newElement = new Character(data);
 	//		newElement.profilePicture = imageURL;
 	const { data, imageURL } = receivedData;
-	console.log('DATA', data);
 	const _id = data._id;
 	const character = await Character.findById(_id);
 
@@ -148,9 +148,7 @@ async function deleteCharacter(data) {
 
 async function createCharacter(receivedData) {
 	try {
-		const { data, imageURL } = receivedData;
-		console.log('DATA', data);
-		console.log('imageURL', imageURL);
+		const { data, imageURL, loggedInUser: control } = receivedData;
 		let newElement = new Character(data);
 		newElement.profilePicture = imageURL;
 		const docs = await Character.find({ characterName: data.characterName });
@@ -158,8 +156,16 @@ async function createCharacter(receivedData) {
 			newElement = await newElement.save();
 			const character = await Character.findById(newElement._id).populate('assets').populate('lentAssets');
 
-
 			logger.info(`Character "${newElement.characterName}" created.`);
+
+			const controlLog = new ControlLog({
+				control: control.username,
+				affectedCharacter: data.characterName,
+				controlAction: 'CharacterCreated',
+				message: 'New Character: ' + data.characterName + ' was created'
+			});
+
+			await controlLog.save();
 
 			nexusEvent.emit('respondClient', 'create', [ character ]);
 			return ({ message : 'Character Creation Success', type: 'success' });
