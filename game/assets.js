@@ -2,10 +2,11 @@ const nexusEvent = require('../middleware/events/events'); // Local event trigge
 const { logger } = require('../middleware/log/winston');
 const { Asset, GodBond, MortalBond } = require('../models/asset');
 const { History } = require('../models/history');
+const { ControlLog } = require('../models/log');
 
 async function modifyAsset(data, user) {
 	try {
-		const {	_id, name, description, uses, used, owner, status, lendable, level, dice, tags } = data;
+		const {	_id, name, description, uses, used, owner, status, lendable, level, dice, tags, loggedInUser } = data;
 		const asset = await Asset.findById(_id).populate('with');
 
 		if (asset === null) {
@@ -39,6 +40,16 @@ async function modifyAsset(data, user) {
 			});
 			await log.save();
 
+			const controlLog = new ControlLog({
+				control: loggedInUser.username,
+				affectedThing: data.name,
+				controlAction: 'Asset',
+				message: 'Asset: ' + data.name + ' was modified'
+			});
+
+			await controlLog.save();
+
+
 			nexusEvent.emit('respondClient', 'update', [asset]);
 			return { message: `${asset.name} edited`, type: 'success' };
 		}
@@ -52,6 +63,7 @@ async function modifyAsset(data, user) {
 async function addAsset(data, user) {
 	try {
 		const { asset, arcane } = data;
+		console.log(data);
 		let newAsset;
 		switch (data.asset.type) {
 		case 'Asset':
@@ -88,6 +100,17 @@ async function addAsset(data, user) {
 		}
 
 		newAsset = await newAsset.save();
+
+		const controlLog = new ControlLog({
+			control: data.loggedInUser.username,
+			affectedThing: asset.name,
+			affectedCharacter: asset.owner,
+			controlAction: 'Asset',
+			message: 'Asset: ' + asset.name + ' was created for ' + asset.owner
+		});
+
+		await controlLog.save();
+
 		nexusEvent.emit('respondClient', 'create', [newAsset]);
 		// nexusEvent.emit('respondClient', 'update', [ character ]);
 

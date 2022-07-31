@@ -15,7 +15,7 @@ async function modifyCharacter(receivedData) {
 	//		console.log('imageURL', imageURL);
 	//		let newElement = new Character(data);
 	//		newElement.profilePicture = imageURL;
-	const { data, imageURL } = receivedData;
+	const { data, imageURL, loggedInUser: control } = receivedData;
 	const _id = data._id;
 	const character = await Character.findById(_id);
 
@@ -40,6 +40,16 @@ async function modifyCharacter(receivedData) {
 			}
 			await character.save();
 			character.populate('assets').populate('lentAssets');
+
+			const controlLog = new ControlLog({
+				control: control.username,
+				affectedCharacter: data.characterName,
+				controlAction: 'Character',
+				message: 'Character: ' + data.characterName + ' was modified'
+			});
+
+			await controlLog.save();
+
 			nexusEvent.emit('respondClient', 'update', [ character ]);
 			return ({ message : `Character ${character.characterName} edited`, type: 'success' });
 		}
@@ -161,7 +171,7 @@ async function createCharacter(receivedData) {
 			const controlLog = new ControlLog({
 				control: control.username,
 				affectedCharacter: data.characterName,
-				controlAction: 'CharacterCreated',
+				controlAction: 'Character',
 				message: 'New Character: ' + data.characterName + ' was created'
 			});
 
