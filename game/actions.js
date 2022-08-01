@@ -471,7 +471,7 @@ async function effectAction(data) {
 			await controlLog.save();
 			break;
 		case 'aspect':
-			old = await Character.findById(document._id);
+			old = await GameState.findOne();
 			controlLog.message = `Aspect for character ${old.username} was edited`;
 			await controlLog.save();
 			break;

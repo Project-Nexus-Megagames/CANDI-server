@@ -13,6 +13,11 @@ const GameStateSchema = new Schema({
 	tag: { type: String, unique: true },
 	hunger: { type: Number, default: 100 },
 	happiness: { type: Number, default: 100 },
+	gcHappiness: { type: Number, default: 0 },
+	gcHealth: { type: Number, default: 0 },
+	gcSecurity: { type: Number, default: 0 },
+	gcDiplomacy: { type: Number, default: 0 },
+	gcPolitics: { type: Number, default: 0 }
 });
 
 const GameState = mongoose.model('GameState', GameStateSchema);
