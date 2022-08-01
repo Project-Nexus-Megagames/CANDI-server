@@ -104,7 +104,7 @@ async function addAsset(data, user) {
 		const controlLog = new ControlLog({
 			control: data.loggedInUser.username,
 			affectedThing: asset.name,
-			affectedCharacter: asset.owner,
+			affectedCharacter: asset.owner !== undefined ? asset.owner : asset.ownerCharacter,
 			controlAction: 'Asset',
 			message: 'Asset: ' + asset.name + ' was created for ' + asset.owner
 		});

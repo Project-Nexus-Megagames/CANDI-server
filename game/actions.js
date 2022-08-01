@@ -452,8 +452,9 @@ function capitalizeFirstLetter(string) {
 
 async function effectAction(data) {
 	try {
-		const { type, document, owner, arcane } = data;
+		const { type, document, owner, arcane, loggedInUser } = data;
 		const action = await Action.findById(data.action);
+		const controlLog = new ControlLog({ controlAction: 'ActionEffect', control: loggedInUser.username, affectedAction: action.name });
 		if (!action) throw Error('No Action for Effect!');
 		let response;
 		let old;
@@ -461,15 +462,21 @@ async function effectAction(data) {
 		switch (type) {
 		case 'asset':
 			old = await Asset.findById(document._id).populate('with');
+			controlLog.message = `Asset ${old.name} was edited`;
+			await controlLog.save();
 			break;
 		case 'bond':
 			old = await Asset.findById(document._id).populate('with');
+			controlLog.message = `Bond ${old.name} was edited`;
+			await controlLog.save();
 			break;
 		case 'aspect':
 			old = await Character.findById(document._id);
+			controlLog.message = `Aspect for character ${old.username} was edited`;
+			await controlLog.save();
 			break;
 		case 'new':
-			response = await addAsset({ asset: document, arcane });
+			response = await addAsset({ asset: document, arcane, loggedInUser });
 			response.type === 'success'
 				? await action.addEffect({
 					description: `New ${document.type} created: ${document.name} ${
@@ -479,6 +486,8 @@ async function effectAction(data) {
 					status: 'Temp-Hidden'
 					  })
 				: null;
+			controlLog.message = `New ${document.type} created: ${document.name} for ${owner}`;
+			await controlLog.save();
 			return response;
 		case 'map': {
 			let locsForMessage = '';
@@ -487,9 +496,11 @@ async function effectAction(data) {
 				if (!old.unlockedBy.includes(owner)) {
 					old.unlockedBy.push(owner);
 					await action.addEffect({ description: `New location unlocked: ${old.name} `, type: 'location',	status: 'Temp-Hidden'	});
+					controlLog.message = `New location unlocked: ${old.name} for ${owner} `;
 					locsForMessage = locsForMessage + old.name + ', ';
 					await old.save();
 					const loc = await old.populateMe();
+					await controlLog.save();
 					nexusEvent.emit('respondClient', 'update', [loc]);
 				}
 			}
@@ -507,9 +518,11 @@ async function effectAction(data) {
 				type: 'character',
 				status: 'Temp-Hidden'
 			});
+			controlLog.message = `New character(s) unlocked for ${old.characterName} `;
 			await old.save();
 			const char = await old.populateMe();
 			nexusEvent.emit('respondClient', 'update', [char]);
+			await controlLog.save();
 			return { message: 'Character(s) successfully unlocked', type: 'success' };
 		}
 		case 'addInjury': {
@@ -523,8 +536,10 @@ async function effectAction(data) {
 				status: 'Temp-Hidden'
 			});
 			await old.save();
+			controlLog.message = `Injury added to ${old.characterName} `;
 			const char = await old.populateMe();
 			nexusEvent.emit('respondClient', 'update', [char]);
+			await controlLog.save();
 			return { message: `1 Injury added to ${char.characterName}` };
 		}
 		case 'healInjuries': {
@@ -539,9 +554,11 @@ async function effectAction(data) {
 				type: 'injury',
 				status: 'Temp-Hidden'
 			});
+			controlLog.message = `Injury healed of ${old.characterName} `;
 			await old.save();
 			const char = await old.populateMe();
 			nexusEvent.emit('respondClient', 'update', [char]);
+			await controlLog.save();
 			return { message: `${injuryCount} injuries healed!`, type: 'success' };
 		}
 
@@ -589,6 +606,7 @@ async function effectAction(data) {
 
 		await old.save();
 		nexusEvent.emit('respondClient', 'update', [old]);
+
 
 		for (const effect of effects) {
 			await action.addEffect(effect);
