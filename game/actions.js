@@ -475,6 +475,8 @@ async function effectAction(data) {
 			controlLog.message = ' ';
 			for (const el in aspects) {
 				if (old[el] !== aspects[el]) {
+					if (aspects[el] > 10) aspects[el] = 10;
+					if (aspects[el] < -10) aspects[el] = -10;
 					await action.addEffect({
 						description: `${el} changed from ${old[el]} to ${aspects[el]} `,
 						type: 'aspect',
@@ -484,10 +486,8 @@ async function effectAction(data) {
 					old[el] = aspects[el];
 				}
 			}
-			console.log('HERE', old);
 			await controlLog.save();
 			await old.save();
-
 			return;
 		case 'new':
 			response = await addAsset({ asset: document, arcane, loggedInUser });
