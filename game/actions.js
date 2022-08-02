@@ -452,7 +452,7 @@ function capitalizeFirstLetter(string) {
 
 async function effectAction(data) {
 	try {
-		const { type, document, owner, arcane, loggedInUser } = data;
+		const { type, document, owner, arcane, loggedInUser, aspects } = data;
 		const action = await Action.findById(data.action);
 		const controlLog = new ControlLog({ controlAction: 'ActionEffect', control: loggedInUser.username, affectedAction: action.name });
 		if (!action) throw Error('No Action for Effect!');
@@ -472,9 +472,23 @@ async function effectAction(data) {
 			break;
 		case 'aspect':
 			old = await GameState.findOne();
-			controlLog.message = `Aspect for character ${old.username} was edited`;
+			controlLog.message = ' ';
+			for (const el in aspects) {
+				if (old[el] !== aspects[el]) {
+					await action.addEffect({
+						description: `${el} changed from ${old[el]} to ${aspects[el]} `,
+						type: 'aspect',
+						status: 'Temp-Hidden'
+					});
+					controlLog.message = controlLog.message + ` Aspect ${el} was changed from ${old[el]} to ${aspects[el]}.`;
+					old[el] = aspects[el];
+				}
+			}
+			console.log('HERE', old);
 			await controlLog.save();
-			break;
+			await old.save();
+
+			return;
 		case 'new':
 			response = await addAsset({ asset: document, arcane, loggedInUser });
 			response.type === 'success'
