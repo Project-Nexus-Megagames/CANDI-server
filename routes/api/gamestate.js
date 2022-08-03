@@ -119,7 +119,7 @@ router.post('/initGameState', async function(req, res) {
 		hunger: 100,
 		happiness: 100,
 		discovered: false,
-		round: 1,
+		round: 0,
 		tag: 'GC' });
 	try {
 		for (const el in aspects) {
