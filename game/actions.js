@@ -452,7 +452,7 @@ function capitalizeFirstLetter(string) {
 
 async function effectAction(data) {
 	try {
-		const { type, document, owner, arcane, loggedInUser, aspects } = data;
+		const { type, document, owner, arcane, loggedInUser } = data;
 		const action = await Action.findById(data.action);
 		const controlLog = new ControlLog({ controlAction: 'ActionEffect', control: loggedInUser.username, affectedAction: action.name });
 		if (!action) throw Error('No Action for Effect!');
@@ -473,17 +473,18 @@ async function effectAction(data) {
 		case 'aspect':
 			old = await GameState.findOne();
 			controlLog.message = ' ';
-			for (const el in aspects) {
-				if (old[el] !== aspects[el]) {
-					if (aspects[el] > 10) aspects[el] = 10;
-					if (aspects[el] < -10) aspects[el] = -10;
+			for (const el in document) {
+				if (parseInt(document[el]) !== 0) {
+					const oldAspectValue = old[el];
+					old[el] = old[el] + parseInt(document[el]);
+					if (old[el] > 10) old[el] = 10;
+					if (old[el] < -10) old[el] = -10;
 					await action.addEffect({
-						description: `${el} changed from ${old[el]} to ${aspects[el]} `,
+						description: `${el} changed from ${oldAspectValue} to ${old[el]} `,
 						type: 'aspect',
 						status: 'Temp-Hidden'
 					});
-					controlLog.message = controlLog.message + ` Aspect ${el} was changed from ${old[el]} to ${aspects[el]}.`;
-					old[el] = aspects[el];
+					controlLog.message = controlLog.message + ` Aspect ${el} was changed from ${oldAspectValue} to ${old[el]}.`;
 				}
 			}
 			await controlLog.save();
