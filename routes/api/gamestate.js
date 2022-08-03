@@ -5,6 +5,7 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const validateObjectId = require('../../middleware/util/validateObjectId'); // Middleware that validates object ID's in HTTP perameters
 const httpErrorHandler = require('../../middleware/util/httpError'); // Middleware that parses errors and status for Express responses
 const nexusError = require('../../middleware/util/throwError'); // Project Nexus middleware for error handling
+const { aspects } = require('../../config/startingData');
 
 // Mongoose Model Import
 const { GameState } = require('../../models/gamestate');
@@ -111,6 +112,28 @@ router.patch('/deleteAll', async function(req, res) {
 	console.log(data);
 	return res.status(200).send(`We wiped out ${data.deletedCount} GameStates!`);
 });
+
+router.post('/initGameState', async function(req, res) {
+	logger.info('POST Route: api/gamestate call made...');
+	let newGameState = new GameState({ status: 'Active',
+		hunger: 100,
+		happiness: 100,
+		discovered: false,
+		round: 1,
+		tag: 'GC' });
+	try {
+		for (const el in aspects) {
+			newGameState[el] = aspects[el];
+		}
+		newGameState = await newGameState.save();
+		const locat = await GameState.findOne();
+		res.status(200).json(locat);
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
 
 // This was for Bitsy. RIP Bitsy, you were too good for this world
 // setInterval(async () => {

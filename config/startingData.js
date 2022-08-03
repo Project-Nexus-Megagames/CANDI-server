@@ -7,6 +7,14 @@ const assets = [
 	// },
 ];
 
+const aspects = {
+	gcHealth: 0,
+	gcHappiness: 0,
+	gcPolitics: 0,
+	gcDiplomacy: 0,
+	gcSecurity: 0
+};
+
 const locations = [
 	{
 		name: 'A1',
@@ -135,4 +143,4 @@ const locations = [
 	}
 ];
 
-module.exports = { assets, locations };
+module.exports = { assets, locations, aspects };

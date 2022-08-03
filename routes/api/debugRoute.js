@@ -25,8 +25,10 @@ router.post('/reset', async function(req, res) {
 		await	axios.patch('http://localhost:5000/api/history/deleteAll');
 		await	axios.patch('http://localhost:5000/api/locations/deleteAll');
 		await	axios.patch('http://localhost:5000/api/comment/deleteAll');
+		await	axios.patch('http://localhost:5000/api/gamestate/deleteAll');
 
-		// await	axios.post('http://localhost:5000/api/assets/initAssets');
+		// await	axios.post('http://localhost:5000/api/assets/initAssets')
+		await	axios.post('http://localhost:5000/api/gamestate/initGameState');
 		await	axios.post('http://localhost:5000/api/characters/initCharacters');
 		await	axios.post('http://localhost:5000/api/locations/initLocations');
 		/*
