@@ -8,10 +8,8 @@ const dbName = config.get('dbName');
 const dbURI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@candi.zx3mbs8.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 
 const mongo_options = {
-	useFindAndModify: false,
 	useUnifiedTopology: true,
-	useNewUrlParser: true,
-	useCreateIndex: true
+	useNewUrlParser: true
 };
 
 // MongoDB Connection Function | Using Mongoose
