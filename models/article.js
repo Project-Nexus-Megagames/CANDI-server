@@ -165,7 +165,7 @@ ArticleSchema.methods.delete = async function() {
 
 ArticleSchema.methods.populateMe = async function() {
 	return this.populate('publisher', 'name shortName')
-		.populate('location', 'name dateline')
+		// .populate('location', 'name dateline')
 		.execPopulate();
 };
 

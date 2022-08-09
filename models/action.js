@@ -28,6 +28,15 @@ const submissionSchema = new Schema({
 	collaborators: [{ type: ObjectId, ref: 'Character' }] // Characters involved in the ACTION
 }, { timestamps: true });
 
+const attachmentScema = new Schema({
+	model: { type: String, default: 'Attachment' },
+	title: { type: String, required: true, minLength: 1, maxLength: 100 },
+	body: { type: String, minLength: 1, maxLength: 1000 },
+	tags: [String],
+	status: [String],
+	comment: [{ type: Schema.Types.ObjectId, ref: 'Comment' }]
+}, { timestamps: true });
+
 const resultSchema = new Schema({
 	model: { type: String, default: 'Result' },
 	status: { type: String, default: 'Temp-Hidden', enum: ['Public', 'Private', 'Temp-Hidden'] },
@@ -57,10 +66,11 @@ const ActionSchema = new Schema({
 	controllers: [{ type: String }], // Controllers assigned to handle this ACTION
 	tags: [{ type: String }], // Any tags added by control
 	submission: submissionSchema, // Player submission that created the ACTION
+	attachments: [attachmentScema],
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
 	results: [resultSchema], // Controller generated result of the ACTION
 	effects: [effectSchema]// Mechanical effects of the ACTION,
-});
+}, { timestamps: true });
 
 ActionSchema.methods.submit = async function(submission, submittedActionType, config) {
 	console.log(submission);
@@ -171,6 +181,20 @@ ActionSchema.methods.addEffect = async function(effect) {
 	console.log(`Effect Successfully added to ${action.name}`);
 	return ({ message : `Effect Successfully added to ${action.name}`, type: 'success' });
 
+};
+
+ActionSchema.methods.addAttachment = async function(attachment) {
+	if (!attachment.title) throw Error('Attachments must have a title');
+
+	this.attachments.push(attachment);
+	this.markModified('attachments');
+	const action = await this.save();
+
+	await action.populateMe();
+	nexusEvent.emit('respondClient', 'update', [ action ]);
+	console.log(`Attachment successfully added to ${action.name}`);
+
+	return ({ message : `Attachment added to ${action.name}`, type: 'success' });
 };
 
 ActionSchema.methods.populateMe = function() {
