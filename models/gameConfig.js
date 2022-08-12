@@ -2,7 +2,7 @@ const mongoose = require('mongoose'); // Mongo DB object modeling module
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
 
-// TODO remove enum stuff
+// TODO Add option for "attachment" (e.g. article, agenda)
 const ActionTypeSchema = new Schema({
 	model: { type: String, default: 'ActionType' },
 	type: { type: String, default: 'Normal', required: true },
@@ -11,9 +11,10 @@ const ActionTypeSchema = new Schema({
 	effortTypes: [{ type: String, default: 'Normal', required: true }],
 	assetType: [{ type: String }], // type of assets that can be accepted by the actions
 	maxAssets: { type: Number, required: true, default: 0 },
-	status: [ { type: String }], // status array, e.g. for 'public' or 'campaign'
+	status: [{ type: String }], // status array, e.g. for 'public' or 'campaign'
 	icon: { type: String },
-	public: { type: Boolean }
+	public: { type: Boolean, default: false },
+	hasAttachment: { type: Boolean, default: false }
 });
 
 const EffortTypeSchema = new Schema ({
