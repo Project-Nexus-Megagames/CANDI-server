@@ -33,9 +33,7 @@ const GameConfigSchema = new Schema({
 
 GameConfigSchema.methods.populateMe = function() {
 	return this
-		.populate('actionTypes')
-		.populate('effortTypes')
-		.execPopulate();
+		.populate(['actionTypes', 'effortTypes']);
 };
 
 const GameConfig = mongoose.model('GameConfig', GameConfigSchema);

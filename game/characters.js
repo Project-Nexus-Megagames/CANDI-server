@@ -39,7 +39,7 @@ async function modifyCharacter(receivedData) {
 				character.profilePicture = imageURL;
 			}
 			await character.save();
-			character.populate('assets').populate('lentAssets');
+			character.populate('lentAssets');
 
 			const controlLog = new ControlLog({
 				control: control.username,
@@ -63,7 +63,7 @@ async function modifyCharacter(receivedData) {
 
 async function modifySupport(data) {
 	const { id, supporter } = data;
-	let character = await Character.findById(id).populate('assets').populate('lentAssets');
+	let character = await Character.findById(id).populate('lentAssets');
 
 	if (character === null) {
 		return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
@@ -88,7 +88,7 @@ async function modifySupport(data) {
 async function register(data) {
 	const { character, username, playerName, email } = data;
 	try {
-		let regChar = await Character.findById(character).populate('assets').populate('lentAssets');
+		let regChar = await Character.findById(character).populate('lentAssets');
 
 		if (regChar === null) {
 			return ({ message : `Could not find a character for id "${character}"`, type: 'error' });
@@ -138,7 +138,7 @@ async function modifyMemory(data) {
 async function deleteCharacter(data) {
 	try {
 		const id = data.id;
-		let element = await Character.findById(id).populate('assets').populate('lentAssets');
+		let element = await Character.findById(id).populate('lentAssets');
 		if (element != null) {
 			element = await Character.findByIdAndDelete(id);
 			logger.info(`Character with the id ${id} was deleted via Socket!`);
@@ -164,7 +164,7 @@ async function createCharacter(receivedData) {
 		const docs = await Character.find({ characterName: data.characterName });
 		if (docs.length < 1) {
 			newElement = await newElement.save();
-			const character = await Character.findById(newElement._id).populate('assets').populate('lentAssets');
+			const character = await Character.findById(newElement._id).populate('lentAssets');
 
 			logger.info(`Character "${newElement.characterName}" created.`);
 

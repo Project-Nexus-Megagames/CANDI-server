@@ -27,7 +27,7 @@ const ArticleSchema = new Schema({
 		user: { type: String },
 		emoji: { type: String }
 	}],
-	comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }], // User comments and system generated info
+	comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }] // User comments and system generated info
 }, { timestamps: true });
 
 ArticleSchema.statics.post = async function(article) {
@@ -46,7 +46,7 @@ ArticleSchema.statics.post = async function(article) {
 
 ArticleSchema.methods.edit = async function(articleUpdate) {
 	this.publisher = articleUpdate.publisher;
-	this.location = articleUpdate.location;
+	// this.location = articleUpdate.location;
 	this.headline = articleUpdate.headline;
 	this.body = articleUpdate.body;
 	this.tags = articleUpdate.tags;
@@ -164,9 +164,8 @@ ArticleSchema.methods.delete = async function() {
 };
 
 ArticleSchema.methods.populateMe = async function() {
-	return this.populate('publisher', 'name shortName')
-		// .populate('location', 'name dateline')
-		.execPopulate();
+	return this.populate(['publisher', 'name shortName']);
+
 };
 
 const Article = mongoose.model('article', ArticleSchema);

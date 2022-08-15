@@ -8,8 +8,7 @@ const LogSchema = new Schema({
 }, { timestamps: true });
 
 LogSchema.methods.populateMe = function() {
-	return this
-		.execPopulate();
+	return this.populate();
 };
 
 const Log = mongoose.model('Log', LogSchema);

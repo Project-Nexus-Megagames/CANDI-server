@@ -86,8 +86,7 @@ CharacterSchema.methods.restoreEffort = async function(amount, type, config) {
 
 CharacterSchema.methods.populateMe = async function() {
 	return this
-		.populate('knownContacts')
-		.populate('effort')
+		.populate(['knownContacts', 'effort'])
 		.execPopulate();
 };
 

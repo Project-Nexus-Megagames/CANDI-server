@@ -18,8 +18,7 @@ router.get('/', async (req, res) => {
 	logger.info('GET Route: api/articles requested...');
 	try {
 		const articles = await Article.find()
-			.populate('publisher', 'characterName playerName')
-			.populate('location', 'name')
+			.populate(['publisher', 'characterName playerName', 'location', 'name'])
 			.sort('date: 1');
 		res.status(200).json(articles);
 	}
@@ -69,8 +68,8 @@ router.post('/', async (req, res) => {
 		// }
 
 		logger.info(`new Article time stamp ${newArticle.timestamp}`);
-		const location = await Site.findById(newArticle.location);
-		newArticle.dateline = location.dateline;
+		// const location = await Site.findById(newArticle.location);
+		// newArticle.dateline = location.dateline;
 		logger.info(`new Article time stamp ${newArticle.timestamp}`);
 		// await newArticle.validateArticle();
 		logger.info(`new Article time stamp ${newArticle.timestamp}`);
@@ -80,7 +79,7 @@ router.post('/', async (req, res) => {
 		if (docs.length < 1) {
 			newArticle = await newArticle.save();
 			// TODO: Team.populate is NOT working ... avoiding error on logger.info
-			await Team.populate(newArticle, { path: 'publisher', model: 'Team', select: 'name' });
+			// await Team.populate(newArticle, { path: 'publisher', model: 'Team', select: 'name' });
 			if (newArticle.team) {
 				logger.info(`${newArticle.headline} article created for ${newArticle.team.name} ...`);
 			}
@@ -121,7 +120,7 @@ router.delete('/:id', validateObjectId, async (req, res) => {
 // @route   PATCH api/articles/deleteAll
 // @desc    Delete All Articles
 // @access  Public
-router.patch('/deleteAll', async function (req, res) {
+router.patch('/deleteAll', async function(req, res) {
 	const data = await Article.deleteMany();
 	console.log(data);
 	return res.status(200).send(`We wiped out ${data.deletedCount} Articles!`);

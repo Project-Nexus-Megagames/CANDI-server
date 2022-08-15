@@ -1,7 +1,7 @@
 {
   "name": "candi_duskcity_server",
   "version": "0.0.1",
-  "description": "The CANDI Server to handle actions for Dusk City Megagame ",
+  "description": "The CANDI App for whatever PbEM game is running",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
