@@ -44,7 +44,7 @@ async function createAction(data, user) {
 			throw Error('New actions must at least 1 controller assigned to it...');
 		}
 
-		const { type, creator, controllers, name, numberOfInjuries, submission } = data;
+		const { type, creator, controllers, name, numberOfInjuries, submission, attachments } = data;
 
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
@@ -58,6 +58,7 @@ async function createAction(data, user) {
 					? `${character.playerName} action ${actions.length + 1}`
 					: name,
 			round: gamestate.round,
+			attachments,
 			creator,
 			controllers,
 			numberOfInjuries

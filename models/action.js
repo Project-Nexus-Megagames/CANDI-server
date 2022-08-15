@@ -197,11 +197,8 @@ ActionSchema.methods.addAttachment = async function(attachment) {
 	return ({ message : `Attachment added to ${action.name}`, type: 'success' });
 };
 
-ActionSchema.methods.populateMe = function() {
-	return this
-		.populate('comments')
-		.populate('creator')
-		.execPopulate();
+ActionSchema.methods.populateMe = async function() {
+	return await this.populate(['comments', 'creator']);
 };
 
 const Action = mongoose.model('Action', ActionSchema);
