@@ -112,8 +112,8 @@ async function calculateDie(action) {
 }
 
 async function nextRound(control) {
-	const nextRoundLog = new NextRoundLog();
-	const controlLog = new ControlLog();
+	let nextRoundLog = new NextRoundLog();
+	let controlLog = new ControlLog();
 	const gamestate = await GameState.findOne();
 	const config = await GameConfig.findOne();
 	try {
@@ -214,13 +214,15 @@ async function nextRound(control) {
 		controlLog.message = `Resolutions were published. Next Round was triggered. New Round: ${gamestate.round}`;
 		controlLog.controlAction = 'GameState';
 
-		await controlLog.save();
-		await nextRoundLog.save();
+		controlLog = await controlLog.save();
+		nextRoundLog = await nextRoundLog.save();
 
 		nexusEvent.emit('respondClient', 'update', [
 			gamestate,
 			...assets,
-			...actions
+			...actions,
+			nextRoundLog,
+			controlLog
 		]);
 		return { message: 'Gamestate pushed!', type: 'success' };
 	}
