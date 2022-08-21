@@ -23,9 +23,10 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
+			console.log('[DEBUG] - Being used...');
 			const actions = await Action.find()
 				.populate('comments')
-				.populate('creator', 'characterName');
+				.populate('creator');
 			res.status(200).json(actions);
 		}
 		catch (err) {
@@ -54,14 +55,14 @@ router.get('/:id', async (req, res, next) => {
 			else if (myCharacter.tags.some(el => el === 'Control')) { // if the user is control
 				const actions = await Action.find()
 					.populate('comments')
-					.populate('creator', 'characterName');
+					.populate('creator');
 				// console.log(projects);
 				res.status(200).json(actions);
 			}
 			else {
 				const actions = await Action.find({ creator: myCharacter._id })
 					.populate('comments')
-					.populate('creator', 'characterName');
+					.populate('creator');
 				// console.log(projects);
 				res.status(200).json(actions);
 			}

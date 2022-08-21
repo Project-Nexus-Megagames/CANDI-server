@@ -99,6 +99,9 @@ module.exports = {
 			case 'deleteSubObject': {
 				// console.log(data);
 				response = await deleteSubObject(data, client.username);
+				response.type === 'success'
+					? client.emit('actionCommentDeleted', data.id)
+					: null;
 				break;
 			}
 			case 'updateSubObject': {

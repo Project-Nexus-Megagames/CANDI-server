@@ -86,8 +86,7 @@ CharacterSchema.methods.restoreEffort = async function(amount, type, config) {
 
 CharacterSchema.methods.populateMe = async function() {
 	return this
-		.populate(['knownContacts', 'effort'])
-		.execPopulate();
+		.populate(['knownContacts', 'effort']);
 };
 
 const Character = mongoose.model('Character', CharacterSchema);

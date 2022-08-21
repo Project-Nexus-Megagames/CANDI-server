@@ -148,6 +148,7 @@ async function nextRound(control) {
 			character.lentAssets = [];
 			character.effort = [];
 			nextRoundLog.logMessages.push(`Restoring effort and auto-healing injuries of ${character.characterName}`);
+			// TODO if character has "news" tag give them 1 article effort / round
 			for (const effort of config.effortTypes) {
 				const type = effort.type;
 				const amount = effort.effortAmount;

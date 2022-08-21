@@ -156,10 +156,14 @@ async function deleteSubObject(data, user) {
 		action.comments.splice(comment, 1);
 		action = await action.save();
 		await action.populateMe();
-
+		console.log(action.populated('comments'));
 		await log.save();
 		logger.info(`Comment with the id ${id} was deleted via Socket!`);
 		nexusEvent.emit('respondClient', 'update', [action]);
+		return {
+			message: `Comment with the id ${id} was deleted via Socket!`,
+			type: 'success'
+		};
 	} // if
 }
 

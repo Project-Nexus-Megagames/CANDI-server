@@ -21,7 +21,7 @@ const LocationSchema = new Schema({
 
 LocationSchema.methods.populateMe = function() {
 	return this
-		.populate(['unlockedBy', 'characterName playerName']);
+		.populate(['unlockedBy']);
 };
 
 const Location = mongoose.model('Location', LocationSchema);

@@ -21,7 +21,7 @@ router.get('/', async function(req, res, next) {
 	else {
 		try {
 			const locat = await Location.find()
-				.populate(['unlockedBy', 'characterName playerName']);
+				.populate('unlockedBy');
 			res.status(200).json(locat);
 		}
 		catch (err) {

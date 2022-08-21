@@ -28,15 +28,6 @@ const submissionSchema = new Schema({
 	collaborators: [{ type: ObjectId, ref: 'Character' }] // Characters involved in the ACTION
 }, { timestamps: true });
 
-const attachmentSchema = new Schema({
-	model: { type: String, default: 'Attachment' },
-	title: { type: String, required: true, minLength: 1, maxLength: 100 },
-	body: { type: String, minLength: 1, maxLength: 10000 },
-	tags: [String], 	// eg. for now can be used for 'agenda' or 'article'
-	status: [String], // eg. for use for "draft" or "published" state
-	comment: [{ type: Schema.Types.ObjectId, ref: 'Comment' }] // Allows for anyone to comment on the attachment
-}, { timestamps: true });
-
 const resultSchema = new Schema({
 	model: { type: String, default: 'Result' },
 	status: { type: String, default: 'Temp-Hidden', enum: ['Public', 'Private', 'Temp-Hidden'] },
@@ -66,7 +57,6 @@ const ActionSchema = new Schema({
 	controllers: [{ type: String }], // Controllers assigned to handle this ACTION
 	tags: [{ type: String }], // Any tags added by control
 	submission: submissionSchema, // Player submission that created the ACTION
-	attachments: [attachmentSchema],
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
 	results: [resultSchema], // Controller generated result of the ACTION
 	effects: [effectSchema]// Mechanical effects of the ACTION,
@@ -198,7 +188,9 @@ ActionSchema.methods.addAttachment = async function(attachment) {
 };
 
 ActionSchema.methods.populateMe = async function() {
-	return await this.populate(['comments', 'creator']);
+	// TODO: THIS IS A CORRECT POPULATE!!!!
+	console.log('[DEBUG] - Populating Action....');
+	await this.populate(['comments', 'creator']);
 };
 
 const Action = mongoose.model('Action', ActionSchema);

@@ -93,7 +93,10 @@ module.exports = function(server) {
 	});
 
 	nexusEvent.on('updateActions', async () => {
-		const actions = await Action.find().populate('creator');
+		console.log('Updating...');
+		const actions = await Action.find()
+			.populate('comments')
+			.populate('creator');
 		io.emit('updateActions', actions);
 	});
 
