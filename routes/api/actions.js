@@ -23,7 +23,6 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			console.log('[DEBUG] - Being used...');
 			const actions = await Action.find()
 				.populate('comments')
 				.populate('creator');

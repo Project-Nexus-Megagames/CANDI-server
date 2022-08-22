@@ -51,6 +51,17 @@ async function createAction(data, user) {
 		const gamestate = await GameState.findOne();
 		const config = await GameConfig.findOne();
 
+		const actionType = config.actionTypes.find(el => el.type.toLowerCase() === data.type.toLowerCase());
+		if (!actionType) throw Error(`Action for type ${data.type} is undefined`);
+		const allowedAssets = actionType.assetType;
+
+		for (const id of data.submission.assets) {
+
+			const asset = await Asset.findById(id);
+			const allowed = allowedAssets.find(el => el === asset.type.toLowerCase());
+			if (!allowed) throw Error (`Asset of type ${asset.type} not allowed for ${data.type}!`);
+		}
+
 		let action = new Action({
 			type,
 			name:

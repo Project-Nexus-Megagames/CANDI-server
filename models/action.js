@@ -100,6 +100,7 @@ ActionSchema.methods.submit = async function(submission, submittedActionType, co
 };
 
 ActionSchema.methods.comment = async function(comment) {
+	console.log('NEW COMMENT', comment);
 	// Expects body, author, type
 	if (!comment.body) throw Error('A comment must have a body...');
 	if (!comment.commentor) throw Error('A comment must have an commentor...');
@@ -189,7 +190,6 @@ ActionSchema.methods.addAttachment = async function(attachment) {
 
 ActionSchema.methods.populateMe = async function() {
 	// TODO: THIS IS A CORRECT POPULATE!!!!
-	console.log('[DEBUG] - Populating Action....');
 	await this.populate(['comments', 'creator']);
 };
 

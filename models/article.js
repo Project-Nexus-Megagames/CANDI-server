@@ -113,7 +113,6 @@ ArticleSchema.methods.edit = async function() {
 
 ArticleSchema.methods.populateMe = async function() {
 	// TODO: THIS IS A CORRECT POPULATE!!!!
-	console.log('[DEBUG] - Populating Action....');
 	await this.populate(['comments', 'creator']);
 };
 
