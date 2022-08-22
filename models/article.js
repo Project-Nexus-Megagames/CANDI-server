@@ -15,24 +15,16 @@ const { Asset } = require('./asset');
 const { Comment } = require('./comment');
 // const { History } = require('./history');
 
-const articleSchema = new Schema({
-	model: { type: String, default: 'Attachment' },
-	title: { type: String, required: true, minLength: 1, maxLength: 100 },
-	body: { type: String, minLength: 1, maxLength: 10000 },
-	image: { type: String }
-}, { timestamps: true });
-
 
 const ArticleSchema = new Schema({
 	model:  { type: String, default: 'Action' }, // Model for the DOC
-	name: { type: String },
-	type: { type: String, default: 'Normal', required: true }, //  enum: actionAndEffortTypes, <- Disabling this so Actions are more permissive
+	type: { type: String, default: 'News', required: true }, //  enum: actionAndEffortTypes, <- Disabling this so Actions are more permissive
 	round: { type: Number }, // Round Number for the ACTION
+	title: { type: String, required: true, minLength: 1, maxLength: 100 },
+	body: { type: String, minLength: 1, maxLength: 10000 },
+	image: { type: String },
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
-	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
-	controllers: [{ type: String }], // Controllers assigned to handle this ACTION
 	tags: [{ type: String }], // Any tags added by control
-	article: articleSchema, // Player submission that created the ACTION
 	comments: [{ type: ObjectId, ref: 'Comment' }] // User comments and system generated info
 }, { timestamps: true });
 

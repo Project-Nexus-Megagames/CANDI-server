@@ -1,6 +1,7 @@
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
 
 const { Article } = require('../../models/article');
+const { GameState } = require('../../models/gamestate');
 
 module.exports = {
 	name: 'article',
@@ -9,17 +10,18 @@ module.exports = {
 			logger.info(`${client.username} has made a ${req.action} request in the ${req.route} route!`);
 			switch(req.action) {
 			case('post'): {
-				const { location, headline, body, tags, imageSrc } = req.data.article;
-				const { publisher } = req.data;
+				const { title, body, image, creator } = req.data;
 
-				await Article.post({
-					publisher,
-					location,
-					headline,
+				const gamestate = await GameState.findOne();
+
+				const article = new Article({
+					creator,
+					round: gamestate.round,
+					title,
 					body,
-					tags,
-					imageSrc
+					image
 				});
+				await article.save();
 				client.emit('alert', { type: 'success', message: 'Posted Article' });
 				break;
 			}
