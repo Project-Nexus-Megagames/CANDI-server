@@ -23,7 +23,9 @@ module.exports = {
 					image
 				});
 				const newArticle = await article.save();
-				nexusEvent.emit('respondClient', { type: 'update', data: [newArticle] });
+				await newArticle.populateMe();
+				// nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
+				nexusEvent.emit('respondClient', 'update', [newArticle]);
 				client.emit('alert', { type: 'success', message: 'Posted Article' });
 				break;
 			}
