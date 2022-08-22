@@ -2,7 +2,7 @@ const { logger } = require('../../middleware/log/winston'); // middleware/error.
 
 const { Article } = require('../../models/article');
 const { GameState } = require('../../models/gamestate');
-const { NexusEvent } = require('../../middleware/events/events');
+const nexusEvent = require('../../middleware/events/events');
 
 module.exports = {
 	name: 'article',
@@ -23,7 +23,7 @@ module.exports = {
 					image
 				});
 				const newArticle = await article.save();
-				NexusEvent.emit('respondClient', { type: 'update', data: [newArticle] });
+				nexusEvent.emit('respondClient', { type: 'update', data: [newArticle] });
 				client.emit('alert', { type: 'success', message: 'Posted Article' });
 				break;
 			}
