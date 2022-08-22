@@ -8,6 +8,51 @@ cloudinary.config({
 	api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+const storageSmall = new CloudinaryStorage({
+	cloudinary,
+
+	allowedFormats: ['jpg', 'png'],
+	filename: function(req, file, cb) {
+		cb(null, file.originalname);
+	},
+	params: {
+		transformation:  { width: 200, crop: 'scale' },
+		folder: 'goblinCity' }
+
+});
+
+const uploadCloudSmall = multer({ storageSmall });
+
+const storageMedium = new CloudinaryStorage({
+	cloudinary,
+
+	allowedFormats: ['jpg', 'png'],
+	filename: function(req, file, cb) {
+		cb(null, file.originalname);
+	},
+	params: {
+		transformation:  { width: 200, crop: 'scale' },
+		folder: 'goblinCity' }
+
+});
+
+const uploadCloudMedium = multer({ storageMedium });
+
+const storageLarge = new CloudinaryStorage({
+	cloudinary,
+
+	allowedFormats: ['jpg', 'png'],
+	filename: function(req, file, cb) {
+		cb(null, file.originalname);
+	},
+	params: {
+		transformation:  { width: 200, crop: 'scale' },
+		folder: 'goblinCity' }
+
+});
+
+const uploadCloudLarge = multer({ storageLarge });
+
 const storage = new CloudinaryStorage({
 	cloudinary,
 
@@ -23,4 +68,4 @@ const storage = new CloudinaryStorage({
 
 const uploadCloud = multer({ storage });
 
-module.exports = uploadCloud;
+module.exports = { uploadCloudSmall, uploadCloud, uploadCloudMedium, uploadCloudLarge };
