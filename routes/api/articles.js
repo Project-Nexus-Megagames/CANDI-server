@@ -18,8 +18,7 @@ router.get('/', async (req, res) => {
 	logger.info('GET Route: api/articles requested...');
 	try {
 		const articles = await Article.find()
-			.populate('publisher')
-			.sort('date: 1');
+			.populate('creator', ['characterName', 'profilePicture']);
 		res.status(200).json(articles);
 	}
 	catch (err) {
@@ -36,8 +35,7 @@ router.get('/:id', validateObjectId, async (req, res) => {
 	const id = req.params.id;
 	try {
 		const article = await Article.findById(id)
-			.populate('publisher')
-			.populate('location', 'name');
+			.populate('creator', ['characterName', 'profilePicture']);
 		if (article != null) {
 			res.status(200).json(article);
 		}
