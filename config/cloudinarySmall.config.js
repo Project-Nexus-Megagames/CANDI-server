@@ -16,10 +16,10 @@ const storage = new CloudinaryStorage({
 		cb(null, file.originalname);
 	},
 	params: {
-		transformation: [ { if: 'w  > 500' }, { width: 500, crop: 'scale' }, { if: 'end' }],
+		transformation: [ { if: 'w  > 200' }, { width: 200, crop: 'scale' }, { if: 'end' }],
 		folder: 'goblinCity' }
 });
 
-const uploadCloud = multer({ storage });
+const uploadCloudSmall = multer({ storage });
 
-module.exports = uploadCloud;
+module.exports = uploadCloudSmall;

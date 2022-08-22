@@ -20,6 +20,6 @@ const storage = new CloudinaryStorage({
 		folder: 'goblinCity' }
 });
 
-const uploadCloud = multer({ storage });
+const uploadCloudSmall = multer({ storage });
 
-module.exports = uploadCloud;
+module.exports = uploadCloudSmall;
