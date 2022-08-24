@@ -3,6 +3,7 @@ const { logger } = require('../../middleware/log/winston'); // middleware/error.
 const { Article } = require('../../models/article');
 const { GameState } = require('../../models/gamestate');
 const nexusEvent = require('../../middleware/events/events');
+const { Character } = require('../../models/character');
 
 module.exports = {
 	name: 'article',
@@ -14,6 +15,7 @@ module.exports = {
 				const { title, body, image, creator } = req.data;
 
 				const gamestate = await GameState.findOne();
+				const character = await Character.findById(creator);
 
 				const article = new Article({
 					creator,
@@ -27,7 +29,12 @@ module.exports = {
 				// nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
 				nexusEvent.emit('respondClient', 'update', [newArticle]);
 				client.emit('alert', { type: 'success', message: 'Posted Article' });
+
+				await character.expendEffort('1', 'Article');
+
 				break;
+
+
 			}
 			case('edit'): {
 				const { id } = req.data;
