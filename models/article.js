@@ -17,7 +17,7 @@ const { Comment } = require('./comment');
 
 
 const ArticleSchema = new Schema({
-	model:  { type: String, default: 'Action' }, // Model for the DOC
+	model:  { type: String, default: 'Article' }, // Model for the DOC
 	type: { type: String, default: 'News', required: true }, //  enum: actionAndEffortTypes, <- Disabling this so Actions are more permissive
 	round: { type: Number }, // Round Number for the ACTION
 	title: { type: String, required: true, minLength: 1, maxLength: 100 },

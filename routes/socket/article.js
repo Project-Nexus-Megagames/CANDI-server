@@ -1,6 +1,8 @@
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
 const { Article } = require('../../models/article');
 const { GameState } = require('../../models/gamestate');
+const nexusEvent = require('../../middleware/events/events');
+const { Character } = require('../../models/character');
 
 module.exports = {
 	name: 'article',
@@ -12,6 +14,7 @@ module.exports = {
 				const { title, body, image, creator } = req.data;
 
 				const gamestate = await GameState.findOne();
+				const character = await Character.findById(creator);
 
 				const article = new Article({
 					creator,
@@ -20,10 +23,17 @@ module.exports = {
 					body,
 					image
 				});
-				await article.save();
-				// TODO: [JOHN] - Add updates
+				const newArticle = await article.save();
+				await newArticle.populateMe();
+				// nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
+				nexusEvent.emit('respondClient', 'update', [newArticle]);
 				client.emit('alert', { type: 'success', message: 'Posted Article' });
+
+				await character.expendEffort('1', 'Article');
+
 				break;
+
+
 			}
 			// FIXME: [JOHN] - Editing with Franzi
 			case('edit'): {
