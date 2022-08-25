@@ -25,7 +25,7 @@ router.get('/', async function(req, res, next) {
 		try {
 			const actions = await Action.find()
 				.populate('comments')
-				.populate('creator');
+				.populate('creator', 'characterName username playerName');
 			res.status(200).json(actions);
 		}
 		catch (err) {
