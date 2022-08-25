@@ -190,7 +190,7 @@ ActionSchema.methods.addAttachment = async function(attachment) {
 
 ActionSchema.methods.populateMe = async function() {
 	// TODO: THIS IS A CORRECT POPULATE!!!!
-	await this.populate(['comments', 'creator'], ['creator', 'characterName username playerName']);
+	await this.populate(['comments', 'creator']);
 };
 
 const Action = mongoose.model('Action', ActionSchema);
