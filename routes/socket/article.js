@@ -38,16 +38,9 @@ module.exports = {
 			// FIXME: [JOHN] - Editing with Franzi
 			case('edit'): {
 				const { id } = req.data;
-				const { title, body, image, creator } = req.data.article;
-
-				const article = await Article.findById(id);
-
-				await article.edit({
-					title,
-					body,
-					image,
-					creator
-				});
+				const article = await Article.findOneAndUpdate({ _id: id }, req.data.article, { new: true });
+				await article.populateMe();
+				nexusEvent.emit('respondClient', 'update', [article]);
 				client.emit('alert', { type: 'success', message: 'Edited Article' });
 				break;
 			}
@@ -105,6 +98,7 @@ module.exports = {
 				const article = await Article.findById(id);
 
 				await article.delete();
+				nexusEvent.emit('respondClient', 'delete', [article]);
 				client.emit('alert', { type: 'success', message: 'Deleted Article' });
 				break;
 			}
