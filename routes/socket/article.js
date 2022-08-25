@@ -1,5 +1,4 @@
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
-
 const { Article } = require('../../models/article');
 const { GameState } = require('../../models/gamestate');
 
@@ -22,26 +21,27 @@ module.exports = {
 					image
 				});
 				await article.save();
+				// TODO: [JOHN] - Add updates
 				client.emit('alert', { type: 'success', message: 'Posted Article' });
 				break;
 			}
+			// FIXME: [JOHN] - Editing with Franzi
 			case('edit'): {
 				const { id } = req.data;
-				const { publisher, location, headline, body, tags, imageSrc } = req.data.article;
+				const { title, body, image, creator } = req.data.article;
 
 				const article = await Article.findById(id);
 
 				await article.edit({
-					publisher,
-					location,
-					headline,
+					title,
 					body,
-					tags,
-					imageSrc
+					image,
+					creator
 				});
 				client.emit('alert', { type: 'success', message: 'Edited Article' });
 				break;
 			}
+			// FIXME: [JOHN] - This is Copy-pasta... fix me please?
 			case('publish'): {
 				const { id } = req.data;
 
@@ -51,6 +51,7 @@ module.exports = {
 				client.emit('alert', { type: 'success', message: 'Published Article' });
 				break;
 			}
+			// FIXME: [JOHN] - This is Copy-pasta... fix me please?
 			case('react'): {
 				const { id, user, emoji } = req.data;
 
@@ -67,6 +68,7 @@ module.exports = {
 				}
 				break;
 			}
+			// FIXME: [JOHN] - This is Copy-pasta... fix me please?
 			case('comment'): {
 				const { id, user, comment } = req.data;
 
@@ -76,6 +78,7 @@ module.exports = {
 				client.emit('alert', { type: 'success', message: 'Posted Comment' });
 				break;
 			}
+			// FIXME: [JOHN] - This is Copy-pasta... fix me please?
 			case('deleteComment'): {
 				const { id, commentId } = req.data;
 
@@ -85,6 +88,7 @@ module.exports = {
 				client.emit('alert', { type: 'success', message: 'Deleted Comment' });
 				break;
 			}
+			// FIXME: [JOHN] - This is Copy-pasta... review me please?
 			case('delete'): {
 				const { id } = req.data;
 
