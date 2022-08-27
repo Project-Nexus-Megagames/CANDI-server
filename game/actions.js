@@ -76,7 +76,7 @@ async function createAction(data, user) {
 		});
 
 		action = await action.save();
-
+		nexusEvent.emit('respondClient', 'create', [action]);
 		await action.submit(data.submission, data.type, config.actionTypes);
 		await action.populateMe();
 
@@ -99,7 +99,7 @@ async function createAction(data, user) {
 
 		logger.info(`${action.type} "${action._id}" created.`);
 
-		nexusEvent.emit('respondClient', 'create', [action]);
+		// nexusEvent.emit('respondClient', 'create', [action]);
 		return { message: `${action.type} Creation Success`, type: 'success' };
 	}
 	catch (err) {
