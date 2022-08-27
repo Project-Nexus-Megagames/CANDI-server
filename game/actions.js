@@ -404,7 +404,7 @@ async function editAction(data, user) {
 	const changed = [];
 	const oldAction = await Action.findById(id);
 
-	console.log(data.submission.effort)
+	console.log(data.submission.effort);
 
 	if (!id) throw Error('Actions must have an _id...');
 	if (oldAction === undefined) throw Error('Could not find oldAction');
@@ -416,9 +416,8 @@ async function editAction(data, user) {
 	if (action.submission.effort.amount !== oldAction.submission.effort.amount) {
 		let character = await Character.findById(action.creator._id).populate('lentAssets');
 		character = await character.expendEffort(action.submission.effort.amount - oldAction.submission.effort.amount, action.submission.effort.effortType);
-		nexusEvent.emit('respondClient', 'update', [character]);		
+		nexusEvent.emit('respondClient', 'update', [character]);
 	}
-
 
 
 	// let comment = new Comment({

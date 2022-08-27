@@ -71,23 +71,20 @@ module.exports = {
 				}
 				break;
 			}
-			// FIXME: [JOHN] - This is Copy-pasta... fix me please?
+
 			case('comment'): {
-				const { id, user, comment } = req.data;
-
+				const { id, comment } = req.data;
 				const article = await Article.findById(id);
-
-				await article.comment(user, comment);
+				await article.comment(comment);
 				client.emit('alert', { type: 'success', message: 'Posted Comment' });
 				break;
 			}
-			// FIXME: [JOHN] - This is Copy-pasta... fix me please?
+
 			case('deleteComment'): {
-				const { id, commentId } = req.data;
-
+				const { id, comment } = req.data;
 				const article = await Article.findById(id);
-
-				await article.deleteComment(commentId);
+				await article.deleteComment(comment);
+				logger.info(`Comment with the id ${id} was deleted via Socket!`);
 				client.emit('alert', { type: 'success', message: 'Deleted Comment' });
 				break;
 			}

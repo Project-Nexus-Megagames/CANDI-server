@@ -76,19 +76,28 @@ ArticleSchema.methods.comment = async function(comment) {
 	// Expects body, author, type
 	if (!comment.body) throw Error('A comment must have a body...');
 	if (!comment.commentor) throw Error('A comment must have an commentor...');
-
 	let post = new Comment(comment);
-
 	post = await post.save();
 	this.comments.push(post._id);
 	this.markModified('comments');
+	const article = await this.save();
+	await article.populateMe();
+	nexusEvent.emit('respondClient', 'update', [ article ]);
+	return ({ message : `${article.type} Comment Success`, type: 'success' });
+};
 
-	const action = await this.save();
+ArticleSchema.methods.deleteComment = async function(commentId) {
+	if (!commentId) throw Error ('No comment to delete');
+	const comment = this.comments.findIndex(el => el._id.toHexString() === commentId);
+	this.comments.splice(comment, 1);
+	const article = await this.save();
+	await article.populateMe();
+	nexusEvent.emit('respondClient', 'update', [article]);
+	return {
+		message: `Comment with the id ${commentId} was deleted via Socket!`,
+		type: 'success'
+	};
 
-	await action.populateMe();
-
-	nexusEvent.emit('respondClient', 'update', [ action ]);
-	return ({ message : `${action.type} Comment Success`, type: 'success' });
 };
 
 /**
