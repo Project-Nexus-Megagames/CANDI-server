@@ -5,8 +5,6 @@ const uploadCloudSmall = require('../../config/cloudinarySmall.config');
 const uploadCloudLarge = require('../../config/cloudinaryLarge.config');
 const uploadCloudMedium = require('../../config/cloudinaryMedium.config');
 
-// TODO: add different router.post (/medium, /small)
-// and 3 different config files for fileloader middleware
 router.post('/', uploadCloud.single('file'), (req, res, next) => {
 	if (!req.file) {
 		next(new Error('No file uploaded!'));
