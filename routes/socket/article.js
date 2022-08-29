@@ -11,7 +11,7 @@ module.exports = {
 			logger.info(`${client.username} has made a ${req.action} request in the ${req.route} route!`);
 			switch(req.action) {
 			case('post'): {
-				const { title, body, image, creator } = req.data;
+				const { title, body, image, creator, tags } = req.data;
 
 				const gamestate = await GameState.findOne();
 				const character = await Character.findById(creator);
@@ -21,7 +21,8 @@ module.exports = {
 					round: gamestate.round,
 					title,
 					body,
-					image
+					image,
+					tags
 				});
 				const newArticle = await article.save();
 				await newArticle.populateMe();
@@ -32,9 +33,29 @@ module.exports = {
 				await character.expendEffort('1', 'Article');
 
 				break;
-
-
 			}
+
+			case('draft'): {
+				const { title, body, image, creator, tags } = req.data;
+				const gamestate = await GameState.findOne();
+				const article = new Article({
+					creator,
+					round: gamestate.round,
+					title,
+					body,
+					image,
+					tags: [...tags, 'Draft']
+				});
+				const newArticle = await article.save();
+				await newArticle.populateMe();
+				// nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
+				nexusEvent.emit('respondClient', 'update', [newArticle]);
+				client.emit('alert', { type: 'success', message: 'Posted Article' });
+
+
+				break;
+			}
+
 			// FIXME: [JOHN] - Editing with Franzi
 			case('edit'): {
 				const { id } = req.data;
@@ -46,11 +67,32 @@ module.exports = {
 			}
 			// FIXME: [JOHN] - This is Copy-pasta... fix me please?
 			case('publish'): {
-				const { id } = req.data;
+				const gamestate = await GameState.findOne();
 
-				const article = await Article.findById(id);
+				let character = {};
+				let article = {};
 
+				if (req.data.id) {
+					article = await Article.findOneAndUpdate({ _id: req.data.id }, req.data.article, { new: true });
+					character = await Character.findById(req.data.article.creator);
+				}
+				else {
+					const { title, body, image, creator, tags } = req.data;
+					article = new Article({
+						creator,
+						round: gamestate.round,
+						title,
+						body,
+						image,
+						tags
+					});
+					article = await article.save();
+					character = await Character.findById(creator);
+				}
 				await article.publish();
+				await article.populateMe();
+				await character.expendEffort('1', 'Article');
+				nexusEvent.emit('respondClient', 'update', [article]);
 				client.emit('alert', { type: 'success', message: 'Published Article' });
 				break;
 			}

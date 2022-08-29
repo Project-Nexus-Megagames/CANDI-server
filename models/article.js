@@ -103,17 +103,15 @@ ArticleSchema.methods.deleteComment = async function(commentId) {
 /**
  * This is the PUBLISH method
  */
-ArticleSchema.methods.finalize = async function() {
-	if (!this.status.some(el => el === 'Published')) this.status.push('Published');
-	if (this.status.some(el => el === 'Draft')) {
-		const i = this.status.findIndex(el => el === 'Draft');
-		if (i > -1) this.status.splice(i, 1);
+ArticleSchema.methods.publish = async function() {
+	if (!this.tags.some(el => el === 'Published')) this.tags.push('Published');
+	if (this.tags.some(el => el === 'Draft')) {
+		const i = this.tags.findIndex(el => el === 'Draft');
+		if (i > -1) this.tags.splice(i, 1);
 	}
-	this.markModified('status');
+	this.markModified('tags');
 
-	const action = await this.save();
-
-	nexusEvent.emit('respondClient', 'update', [ action ]);
+	await this.save();
 };
 
 ArticleSchema.methods.edit = async function() {
