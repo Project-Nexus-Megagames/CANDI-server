@@ -115,6 +115,18 @@ ArticleSchema.methods.publish = async function() {
 	await this.save();
 };
 
+ArticleSchema.methods.setToDraft = async function() {
+	if (!this.tags.some(el => el === 'Draft')) this.tags.push('Draft');
+	if (this.tags.some(el => el === 'Published')) {
+		const i = this.tags.findIndex(el => el === 'Published');
+		if (i > -1) this.tags.splice(i, 1);
+	}
+	this.markModified('tags');
+
+	await this.save();
+};
+
+
 ArticleSchema.methods.edit = async function() {
 	return;
 };

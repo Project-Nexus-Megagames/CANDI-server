@@ -65,7 +65,18 @@ module.exports = {
 				client.emit('alert', { type: 'success', message: 'Edited Article' });
 				break;
 			}
-			// FIXME: [JOHN] - This is Copy-pasta... fix me please?
+
+			case('resetToDraft'): {
+				const { id } = req.data;
+				const updatedArticle = { ...req.data.article, publishDate: '' };
+				const article = await Article.findOneAndUpdate({ _id: id }, updatedArticle, { new: true });
+				await article.setToDraft();
+				await article.populateMe();
+				nexusEvent.emit('respondClient', 'update', [article]);
+				client.emit('alert', { type: 'success', message: 'Edited Article' });
+				break;
+			}
+
 			case('publish'): {
 				const gamestate = await GameState.findOne();
 
