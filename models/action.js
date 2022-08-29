@@ -59,7 +59,8 @@ const ActionSchema = new Schema({
 	submission: submissionSchema, // Player submission that created the ACTION
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
 	results: [resultSchema], // Controller generated result of the ACTION
-	effects: [effectSchema]// Mechanical effects of the ACTION,
+	effects: [effectSchema], // Mechanical effects of the ACTION,
+	publishDate: { type: Date } // published Date for the Agenda
 }, { timestamps: true });
 
 ActionSchema.methods.submit = async function(submission, submittedActionType, config) {

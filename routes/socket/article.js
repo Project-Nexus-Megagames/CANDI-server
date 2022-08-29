@@ -73,7 +73,8 @@ module.exports = {
 				let article = {};
 
 				if (req.data.id) {
-					article = await Article.findOneAndUpdate({ _id: req.data.id }, req.data.article, { new: true });
+					const updatedArticle = { ...req.data.article, publishDate: Date.now() };
+					article = await Article.findOneAndUpdate({ _id: req.data.id }, updatedArticle, { new: true });
 					character = await Character.findById(req.data.article.creator);
 				}
 				else {
@@ -84,7 +85,8 @@ module.exports = {
 						title,
 						body,
 						image,
-						tags
+						tags,
+						publishDate: Date.now()
 					});
 					article = await article.save();
 					character = await Character.findById(creator);

@@ -25,7 +25,8 @@ const ArticleSchema = new Schema({
 	image: { type: String },
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
 	tags: [{ type: String }], // Any tags added by control
-	comments: [{ type: ObjectId, ref: 'Comment' }] // User comments and system generated info
+	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
+	publishDate: { type: Date }
 }, { timestamps: true });
 
 /**
