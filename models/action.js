@@ -133,7 +133,7 @@ ActionSchema.methods.publish = async function() {
 	}
 	this.markModified('tags');
 
-	await this.save();
+	return await this.save();
 };
 
 ActionSchema.methods.setToDraft = async function() {

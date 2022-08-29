@@ -10,6 +10,7 @@ const {
 const { addArrayValue } = require('../../middleware/util/arrayCalls');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
 const { Action } = require('../../models/action');
+const nexusEvent = require('../../middleware/events/events');
 
 module.exports = {
 	name: 'action',
@@ -47,6 +48,18 @@ module.exports = {
 					: null;
 				break;
 			}
+			case('publish'): {
+				let action = await Action.findById(req.id);
+				action.publishDate = Date.now();
+
+				action = await action.save();
+				await action.publish();
+				await action.populateMe();
+				nexusEvent.emit('respondClient', 'update', [action]);
+				client.emit('alert', { type: 'success', message: 'Published Agenda' });
+				break;
+			}
+
 			case 'result': {
 				// Expects data.id <<Action ref>>
 				// Expects data.result <<Result object>> { description, resolver, dice }

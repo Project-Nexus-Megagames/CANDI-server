@@ -404,7 +404,7 @@ async function editAction(data, user) {
 	const changed = [];
 	const oldAction = await Action.findById(id);
 
-	console.log(data.submission.effort);
+	console.log(data.submission?.effort);
 
 	if (!id) throw Error('Actions must have an _id...');
 	if (oldAction === undefined) throw Error('Could not find oldAction');
