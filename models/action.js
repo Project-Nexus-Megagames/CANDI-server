@@ -120,18 +120,33 @@ ActionSchema.methods.comment = async function(comment) {
 	return ({ message : `${action.type} Comment Success`, type: 'success' });
 };
 
-ActionSchema.methods.finalize = async function() {
-	// if (!this.status.some(el => el === 'Published')) this.status.push('Published');
-	// if (this.status.some(el => el === 'Draft')) {
-	// 	const i = this.status.findIndex(el => el === 'Draft');
-	// 	if (i > -1) this.status.splice(i, 1);
-	// }
-	this.markModified('status');
 
-	const action = await this.save();
+/**
+ * This is the PUBLISH method
+ */
+// FIXME: Copy & paste
+ActionSchema.methods.publish = async function() {
+	if (!this.tags.some(el => el === 'Published')) this.tags.push('Published');
+	if (this.tags.some(el => el === 'Draft')) {
+		const i = this.tags.findIndex(el => el === 'Draft');
+		if (i > -1) this.tags.splice(i, 1);
+	}
+	this.markModified('tags');
 
-	nexusEvent.emit('respondClient', 'update', [ action ]);
+	await this.save();
 };
+
+ActionSchema.methods.setToDraft = async function() {
+	if (!this.tags.some(el => el === 'Draft')) this.tags.push('Draft');
+	if (this.tags.some(el => el === 'Published')) {
+		const i = this.tags.findIndex(el => el === 'Published');
+		if (i > -1) this.tags.splice(i, 1);
+	}
+	this.markModified('tags');
+
+	await this.save();
+};
+
 
 ActionSchema.methods.edit = async function() {
 	return;
