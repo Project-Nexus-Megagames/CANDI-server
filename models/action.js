@@ -124,7 +124,6 @@ ActionSchema.methods.comment = async function(comment) {
 /**
  * This is the PUBLISH method
  */
-// FIXME: Copy & paste
 ActionSchema.methods.publish = async function() {
 	if (!this.tags.some(el => el === 'Published')) this.tags.push('Published');
 	if (this.tags.some(el => el === 'Draft')) {

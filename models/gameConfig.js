@@ -2,7 +2,6 @@ const mongoose = require('mongoose'); // Mongo DB object modeling module
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
 
-// TODO Add option for "attachment" (e.g. article, agenda)
 const ActionTypeSchema = new Schema({
 	model: { type: String, default: 'ActionType' },
 	type: { type: String, default: 'Normal', required: true },
@@ -13,8 +12,7 @@ const ActionTypeSchema = new Schema({
 	maxAssets: { type: Number, required: true, default: 0 },
 	status: [{ type: String }], // status array, e.g. for 'public' or 'campaign'
 	icon: { type: String },
-	public: { type: Boolean, default: false },
-	hasAttachment: { type: Boolean, default: false }
+	public: { type: Boolean, default: false }
 });
 
 const EffortTypeSchema = new Schema ({
@@ -40,11 +38,5 @@ const GameConfig = mongoose.model('GameConfig', GameConfigSchema);
 const ActionType = mongoose.model('ActionType', ActionTypeSchema);
 const EffortType = mongoose.model('EffortType', EffortTypeSchema);
 
-// TODO write post-Schema validator method that is called pre.save
-// https://mongoosejs.com/docs/4.x/docs/validation.html
-// have defaults for every required value!
-// first let them have populate the action types and effort types
-// Then the rest....
-// add name of action icon to schema
 
 module.exports = { GameConfig, ActionType, EffortType };
