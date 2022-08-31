@@ -3,6 +3,7 @@ const { Character } = require('../models/character');
 const { logger } = require('../middleware/log/winston');
 const { default: axios } = require('axios');
 const { ControlLog } = require('../models/log');
+const { GameConfig } = require('../models/gameConfig');
 
 
 async function modifyCharacter(receivedData) {
@@ -159,6 +160,8 @@ async function deleteCharacter(data) {
 async function createCharacter(receivedData) {
 	try {
 		const { data, imageURL, loggedInUser: control } = receivedData;
+		const config = await GameConfig.findOne();
+
 		let newElement = new Character(data);
 		newElement.profilePicture = imageURL;
 		const docs = await Character.find({ characterName: data.characterName });
@@ -167,6 +170,14 @@ async function createCharacter(receivedData) {
 			const character = await Character.findById(newElement._id).populate('lentAssets');
 
 			logger.info(`Character "${newElement.characterName}" created.`);
+
+			character.effort = [];
+			for (const effort of config.effortTypes) {
+				const type = effort.type;
+				const amount = effort.effortAmount;
+				const restoredEffort = { type, amount };
+				character.effort.push(restoredEffort);
+			}
 
 			const controlLog = new ControlLog({
 				control: control.username,
