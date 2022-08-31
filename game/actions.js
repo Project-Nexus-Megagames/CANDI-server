@@ -79,7 +79,9 @@ async function createAction(data, user) {
 		await action.submit(data.submission, data.type, config.actionTypes);
 		await action.populateMe();
 
-		nexusEvent.emit('respondClient', 'create', [action]);
+
+		nexusEvent.emit('respondClient', 'update', [action]);
+
 
 		// console.log(action)
 		if (submission.effort.amount > 0) {
