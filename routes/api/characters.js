@@ -11,6 +11,7 @@ const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { characters, npcs } = require('../../config/startingCharacters');
 const { Asset } = require('../../models/asset');
+const auth = require('../../middleware/config/auth');
 
 // @route   GET api/characters
 // @Desc    Get all characters
@@ -43,7 +44,7 @@ router.get('/:id', validateObjectId, async (req, res, next) => {
 	else {
 		const id = req.params.id;
 		try {
-			const character = await Character.findById(id);
+			const character = await Character.findById(id).populate('knownContacts', 'characterName');
 			if (character != null) {
 				res.status(200).json(character);
 			}
@@ -101,7 +102,7 @@ router.post('/', async function(req, res, next) {
 // @route   DELETE api/characters/:id
 // @Desc    Delete an character
 // @access  Public
-router.delete('/:id', async function(req, res, next) {
+router.delete('/:id', auth, async function(req, res, next) {
 	logger.info('DEL Route: api/agent:id call made...');
 	if (req.timedout) {
 		next();
@@ -131,7 +132,7 @@ router.delete('/:id', async function(req, res, next) {
 // @route   PATCH api/characters/deleteAll
 // @desc    Delete All Agents
 // @access  Public
-router.patch('/deleteAll', async function(req, res) {
+router.patch('/deleteAll', auth, async function(req, res) {
 	const data = await Character.deleteMany();
 	return res.status(200).send(`We wiped out ${data.deletedCount} Characters!`);
 });
@@ -202,18 +203,20 @@ router.patch('/cleanSupporters', async (req, res, next) => {
 	else {
 		const { id } = req.body;
 		try {
-			const character = await Character.findById(id);
+			const characters = await Character.find().where("knownContacts").in(null);
 			const record = [];
 
-			for (const supporter of character.supporters) {
-				if (!record.some(el => el === supporter)) {
-					record.push(supporter);
-				}
+			for (let character of characters) {
+				character.knownContacts = character.knownContacts.filter(el => el !== null)
+				console.log(character)
+				await character.save();
 			}
 
-			character.supporters = record;
-			await character.save();
-			res.status(200).json(character);
+
+
+			// character.supporters = record;
+			// await character.save();
+			res.status(200).json(characters);
 		}
 		catch (err) {
 			httpErrorHandler(res, err);

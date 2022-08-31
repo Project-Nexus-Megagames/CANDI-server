@@ -99,6 +99,7 @@ async function addAsset(data, user) {
 			throw Error(`Type '${data.asset.type}' is Invalid!`);
 		}
 
+		newAsset.status.hidden = true;
 		newAsset = await newAsset.save();
 
 		const controlLog = new ControlLog({
