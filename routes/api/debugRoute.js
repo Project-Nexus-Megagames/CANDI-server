@@ -118,6 +118,7 @@ router.patch('/massRefresh', async function(req, res) {
 });
 
 router.post('/backup', async function(req, res) {
+	console.log('Backup Initiated')
 	try {
 		const jsonData = await Action.find();
 		JSON.stringify(jsonData);

@@ -504,7 +504,7 @@ async function effectAction(data) {
 					await action.addEffect({
 						description: `${el} changed from ${oldAspectValue} to ${old[el]} `,
 						type: 'aspect',
-						status: 'Temp-Hidden'
+						status: 'Private'
 					});
 					controlLog.message = controlLog.message + ` Aspect ${el} was changed from ${oldAspectValue} to ${old[el]}.`;
 				}
