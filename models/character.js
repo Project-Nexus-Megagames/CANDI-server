@@ -70,7 +70,7 @@ CharacterSchema.methods.restoreEffort = async function(amount, type, config) {
 	try {
 		const effort = this.effort.find(ef => ef.type.toLowerCase() === type.toLowerCase());
 		if (!effort) throw Error(`Effort for type ${type} is undefined`);
-		const configEffort = config.find(ef => ef.type.toLowerCase === type.toLowerCase);
+		const configEffort = config.find(ef => ef.type.toLowerCase() === type.toLowerCase());
 		effort.amount = effort.amount + amount;
 		if (effort.amount > configEffort.effortAmount) effort.amount = configEffort.effortAmount;
 		let character = await this.save();
