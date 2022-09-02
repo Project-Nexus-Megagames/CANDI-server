@@ -513,6 +513,7 @@ async function effectAction(data) {
 			}
 			await controlLog.save();
 			await old.save();
+			nexusEvent.emit('respondClient', 'update', [old]);
 			return;
 		case 'new':
 			response = await addAsset({ asset: document, arcane, loggedInUser });
