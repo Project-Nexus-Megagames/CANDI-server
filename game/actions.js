@@ -273,16 +273,16 @@ async function editSubObject(data, user) {
 			data.comment._id,
 			data.comment,
 			{ new: true }
-		).populate('creator');
+		).populate('commentor');
 		action = await Action.findById(id);
 		action = await action.save();
 		await action.populateMe();
 
 		await log.save();
-		logger.info(`Comment with the id ${id} was edited via Socket!`);
+		logger.info(`Comment with the id ${data.comment._id} was edited via Socket!`);
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return {
-			message: `Comment with the id ${id} was edited via Socket!`,
+			message: `Comment with the id ${data.comment._id} was edited via Socket!`,
 			type: 'success'
 		};
 	} // if
