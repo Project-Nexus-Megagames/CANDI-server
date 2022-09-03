@@ -476,7 +476,7 @@ function capitalizeFirstLetter(string) {
 
 async function effectAction(data) {
 	try {
-		const { type, document, owner, arcane, loggedInUser } = data;
+		const { type, document, owner, arcane, loggedInUser, effector } = data;
 		const action = await Action.findById(data.action);
 		const controlLog = new ControlLog({ controlAction: 'ActionEffect', control: loggedInUser.username, affectedAction: action.name });
 		if (!action) throw Error('No Action for Effect!');
@@ -506,7 +506,8 @@ async function effectAction(data) {
 					await action.addEffect({
 						description: `${el} changed from ${oldAspectValue} to ${old[el]} `,
 						type: 'aspect',
-						status: 'Private'
+						status: 'Private',
+						effector
 					});
 					controlLog.message = controlLog.message + ` Aspect ${el} was changed from ${oldAspectValue} to ${old[el]}.`;
 				}
@@ -523,7 +524,8 @@ async function effectAction(data) {
 						document.level ? `(${document.level})` : `(${document.dice})`
 					}`,
 					type: document.type,
-					status: 'Temp-Hidden'
+					status: 'Temp-Hidden',
+					effector
 					  })
 				: null;
 			controlLog.message = `New ${document.type} created: ${document.name} for ${owner}`;
@@ -535,7 +537,8 @@ async function effectAction(data) {
 				old = await Location.findById(el);
 				if (!old.unlockedBy.includes(owner)) {
 					old.unlockedBy.push(owner);
-					await action.addEffect({ description: `New location unlocked: ${old.name} `, type: 'location',	status: 'Temp-Hidden'	});
+					await action.addEffect({ description: `New location unlocked: ${old.name} `, type: 'location',	status: 'Temp-Hidden', effector
+				});
 					controlLog.message = `New location unlocked: ${old.name} for ${owner} `;
 					locsForMessage = locsForMessage + old.name + ', ';
 					await old.save();
@@ -556,7 +559,8 @@ async function effectAction(data) {
 			await action.addEffect({
 				description: 'New character(s) unlocked',
 				type: 'character',
-				status: 'Temp-Hidden'
+				status: 'Temp-Hidden',
+				effector
 			});
 			controlLog.message = `New character(s) unlocked for ${old.characterName} `;
 			await old.save();
@@ -573,7 +577,8 @@ async function effectAction(data) {
 			await action.addEffect({
 				description: `${name} added to ${old.characterName} `,
 				type: 'injury',
-				status: 'Temp-Hidden'
+				status: 'Temp-Hidden',
+				effector
 			});
 			await old.save();
 			controlLog.message = `Injury added to ${old.characterName} `;
@@ -592,7 +597,8 @@ async function effectAction(data) {
 			await action.addEffect({
 				description: `${injuryCount} injuries healed for ${old.characterName}. `,
 				type: 'injury',
-				status: 'Temp-Hidden'
+				status: 'Temp-Hidden',
+				effector
 			});
 			controlLog.message = `Injury healed of ${old.characterName} `;
 			await old.save();
@@ -633,7 +639,8 @@ async function effectAction(data) {
 					} `,
 					type: old.model,
 					bond: old._id,
-					status: type === 'aspect' ? 'Private' : 'Temp-Hidden'
+					status: type === 'aspect' ? 'Private' : 'Temp-Hidden',
+					effector
 				});
 				old[el] = document[el];
 			}

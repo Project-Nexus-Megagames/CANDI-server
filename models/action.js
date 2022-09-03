@@ -190,8 +190,12 @@ ActionSchema.methods.addEffect = async function(effect) {
 	if (!effect.description) throw Error('Effects must have a description..');
 	if (!effect.type) throw Error('Effects must have type attched..');
 	// if (!effect[effect.type.toLowerCase()]) throw Error(`${effect.type} effects must have ${effect.type.toLowerCase()} attached...`);
+	let post = new Effect(effect);
 
-	this.effects.push(effect);
+	post = await post.save();
+
+	await post.populate('effector', 'characterName profilePicture');
+	this.effects.push(post);
 	this.markModified('effects');
 	const action = await this.save();
 	await action.populateMe();
@@ -221,7 +225,15 @@ ActionSchema.methods.populateMe = async function() {
 	await this.populate([{
 		path: 'comments',
 		populate: { path: 'commentor', select: 'characterName profilePicture' }
-	}, { path: 'creator', select: 'characterName username playerName profilePicture' }]);
+	}, { path: 'creator', select: 'characterName username playerName profilePicture' },
+	{
+		path: 'effects',
+		populate: { path: 'effector', select: 'characterName profilePicture' }
+	},
+	{
+		path: 'results',
+		populate: { path: 'resolver', select: 'characterName profilePicture' }
+	}]);
 };
 
 const Action = mongoose.model('Action', ActionSchema);

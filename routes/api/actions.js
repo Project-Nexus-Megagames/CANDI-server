@@ -27,7 +27,9 @@ router.get('/', async function(req, res, next) {
 				.populate({
 					path: 'comments',
 					populate: { path: 'commentor', select: 'characterName profilePicture' }
-				}).populate('creator', 'characterName username playerName profilePicture');
+				}).populate('creator', 'characterName username playerName profilePicture')
+				.populate({ path: 'results', populate: { path: 'resolver', select: 'characterName profilePicture' } })
+				.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture' } });
 			res.status(200).json(actions);
 		}
 
