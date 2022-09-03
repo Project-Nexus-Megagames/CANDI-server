@@ -31,7 +31,7 @@ const submissionSchema = new Schema({
 const resultSchema = new Schema({
 	model: { type: String, default: 'Result' },
 	status: { type: String, default: 'Temp-Hidden', enum: ['Public', 'Private', 'Temp-Hidden'] },
-	resolver: { type: String, required: true },
+	resolver: { type: ObjectId, ref: 'Character' },
 	ready: { type: Boolean, default: true },
 	description: { type: String, default: 'None yet...', required: true }, // Description of the result
 	dice: { type: String, default: 'None' }
@@ -63,6 +63,9 @@ const ActionSchema = new Schema({
 	effects: [effectSchema], // Mechanical effects of the ACTION,
 	publishDate: { type: Date } // published Date for the Agenda
 }, { timestamps: true });
+
+const Effect = mongoose.model('Effect', effectSchema);
+const Result = mongoose.model('Result', resultSchema);
 
 ActionSchema.methods.submit = async function(submission, submittedActionType, config) {
 	console.log(submission);
@@ -161,7 +164,13 @@ ActionSchema.methods.postResult = async function(result) {
 		if (!result.description) throw Error('Results must have a description..');
 		if (!result.dice) throw Error('Results must have dice information attched..');
 		// else if (!result.dice.roll) throw Error('Result must have final dice roll...');
-		this.results.push(result);
+		let post = new Result(result);
+
+		post = await post.save();
+
+		await post.populate('resolver', 'characterName profilePicture');
+
+		this.results.push(post);
 		this.markModified('results');
 
 		const action = await this.save();
