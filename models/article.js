@@ -133,7 +133,10 @@ ArticleSchema.methods.edit = async function() {
 
 ArticleSchema.methods.populateMe = async function() {
 	// TODO: THIS IS A CORRECT POPULATE!!!!
-	await this.populate(['comments', 'creator']);
+	await this.populate([{
+		path: 'comments',
+		populate: { path: 'commentor', select: 'characterName profilePicture' }
+	}, { path: 'creator', select: 'characterName username playerName profilePicture' }]);
 };
 
 const Article = mongoose.model('article', ArticleSchema);

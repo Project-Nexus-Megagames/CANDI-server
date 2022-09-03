@@ -40,6 +40,7 @@ const resultSchema = new Schema({
 const effectSchema = new Schema({
 	model: { type: String, default: 'Effect' },
 	status: { type: String, default: 'Temp-Hidden', enum: ['Public', 'Private', 'Temp-Hidden'] },
+	effector: { type: ObjectId, ref: 'Character' },
 	description: { type: String, default: 'It did a thing...', required: true }, // Description of the result
 	type: { type: String }, // Type of effect
 	action: { type: ObjectId, ref: 'Action' }, // Ref to any ACTION created by this ACTION
@@ -109,6 +110,9 @@ ActionSchema.methods.comment = async function(comment) {
 	let post = new Comment(comment);
 
 	post = await post.save();
+
+	await post.populateMe();
+
 	this.comments.push(post._id);
 	this.markModified('comments');
 
@@ -205,7 +209,10 @@ ActionSchema.methods.addAttachment = async function(attachment) {
 
 ActionSchema.methods.populateMe = async function() {
 	// TODO: THIS IS A CORRECT POPULATE!!!!
-	await this.populate(['comments', 'creator']);
+	await this.populate([{
+		path: 'comments',
+		populate: { path: 'commentor', select: 'characterName profilePicture' }
+	}, { path: 'creator', select: 'characterName username playerName profilePicture' }]);
 };
 
 const Action = mongoose.model('Action', ActionSchema);

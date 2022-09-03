@@ -18,7 +18,10 @@ router.get('/', async (req, res) => {
 	logger.info('GET Route: api/articles requested...');
 	try {
 		const articles = await Article.find()
-			.populate(['comments']).populate('creator', ['characterName', 'profilePicture']);
+			.populate({
+				path: 'comments',
+				populate: { path: 'commentor', select: 'characterName profilePicture' }
+			}).populate('creator', 'characterName username playerName profilePicture');
 		res.status(200).json(articles);
 	}
 	catch (err) {
