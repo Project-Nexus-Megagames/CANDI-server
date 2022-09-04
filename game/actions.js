@@ -115,6 +115,28 @@ async function createAction(data, user) {
 	}
 }
 
+async function supportAgenda(data) {
+	try {
+		let character = await Character.findById(data.supporter);
+		let action = await Action.findById(data.id);
+		console.log('Remove effort called', character?.characterName);
+		character = await character.expendEffort(1, 'Agenda');
+
+		await action.comment({
+			body: `${character.characterName} supports this!`,
+			status: 'Public',
+			commentor: character,
+			type: 'Info'
+		});
+
+		return { message: `${action.name} supported!`, type: 'success' };
+	}
+	catch(err) {
+		return { message: `Server Error: ${err.message}`, type: 'error' };
+	}
+
+}
+
 async function deleteSubObject(data, user) {
 	const id = data.id;
 	let action = await Action.findById(id);
@@ -675,5 +697,6 @@ module.exports = {
 	editAction,
 	deleteSubObject,
 	editSubObject,
-	effectAction
+	effectAction,
+	supportAgenda
 };
