@@ -103,7 +103,7 @@ router.post('/', async function(req, res, next) {
 // @Desc    Delete an character
 // @access  Public
 router.delete('/:id', auth, async function(req, res, next) {
-	logger.info('DEL Route: api/agent:id call made...');
+	logger.info('DEL Route: api/character:id call made...');
 	if (req.timedout) {
 		next();
 	}
@@ -115,7 +115,6 @@ router.delete('/:id', auth, async function(req, res, next) {
 				// await character.stripUpgrades();
 				character = await Character.findByIdAndDelete(id);
 				logger.info(`${character.name} with the id ${id} was deleted!`);
-				nexusEvent.emit('updateCharacters');
 				res.status(200).send(`${character.name} with the id ${id} was deleted!`);
 			}
 			else {

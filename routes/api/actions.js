@@ -116,7 +116,7 @@ router.post('/', async function(req, res, next) {
 // @access  Public
 // DEPRECIATED
 router.delete('/:id', async function(req, res, next) {
-	logger.info('DEL Route: api/agent:id call made...');
+	logger.info('DEL Route: api/action:id call made...');
 	if (req.timedout) {
 		next();
 	}

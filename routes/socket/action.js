@@ -5,7 +5,8 @@ const {
 	editAction,
 	controlOverride,
 	deleteSubObject,
-	editSubObject
+	editSubObject,
+	supportAgenda
 } = require('../../game/actions');
 const { addArrayValue } = require('../../middleware/util/arrayCalls');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
@@ -32,7 +33,13 @@ module.exports = {
 					: null;
 				break;
 			}
-			case 'comment': {
+			case 'support': {
+				// Expects data.id <<Action ref>>
+				// Expects data.supporter
+				response = await supportAgenda(data);
+				break;
+			}
+						case 'comment': {
 				// Expects data.id <<Action ref>>
 				// Expects data.comment <<Comment object>> { body, commentor, type, status }
 				// console.log(data);
