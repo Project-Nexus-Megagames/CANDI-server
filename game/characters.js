@@ -17,6 +17,7 @@ async function modifyCharacter(receivedData) {
 	//		let newElement = new Character(data);
 	//		newElement.profilePicture = imageURL;
 	const { data, imageURL, loggedInUser: control } = receivedData;
+	console.log(receivedData);
 	const _id = data._id;
 	const character = await Character.findById(_id);
 
