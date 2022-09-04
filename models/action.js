@@ -31,7 +31,7 @@ const submissionSchema = new Schema({
 const resultSchema = new Schema({
 	model: { type: String, default: 'Result' },
 	status: { type: String, default: 'Temp-Hidden', enum: ['Public', 'Private', 'Temp-Hidden'] },
-	resolver: { type: String, required: true },
+	resolver: { type: ObjectId, ref: 'Character' },
 	ready: { type: Boolean, default: true },
 	description: { type: String, default: 'None yet...', required: true }, // Description of the result
 	dice: { type: String, default: 'None' }
@@ -40,6 +40,7 @@ const resultSchema = new Schema({
 const effectSchema = new Schema({
 	model: { type: String, default: 'Effect' },
 	status: { type: String, default: 'Temp-Hidden', enum: ['Public', 'Private', 'Temp-Hidden'] },
+	effector: { type: ObjectId, ref: 'Character' },
 	description: { type: String, default: 'It did a thing...', required: true }, // Description of the result
 	type: { type: String }, // Type of effect
 	action: { type: ObjectId, ref: 'Action' }, // Ref to any ACTION created by this ACTION
@@ -62,6 +63,9 @@ const ActionSchema = new Schema({
 	effects: [effectSchema], // Mechanical effects of the ACTION,
 	publishDate: { type: Date } // published Date for the Agenda
 }, { timestamps: true });
+
+const Effect = mongoose.model('Effect', effectSchema);
+const Result = mongoose.model('Result', resultSchema);
 
 ActionSchema.methods.submit = async function(submission, submittedActionType, config) {
 	console.log(submission);
@@ -109,6 +113,9 @@ ActionSchema.methods.comment = async function(comment) {
 	let post = new Comment(comment);
 
 	post = await post.save();
+
+	await post.populateMe();
+
 	this.comments.push(post._id);
 	this.markModified('comments');
 
@@ -157,7 +164,13 @@ ActionSchema.methods.postResult = async function(result) {
 		if (!result.description) throw Error('Results must have a description..');
 		if (!result.dice) throw Error('Results must have dice information attched..');
 		// else if (!result.dice.roll) throw Error('Result must have final dice roll...');
-		this.results.push(result);
+		let post = new Result(result);
+
+		post = await post.save();
+
+		await post.populate('resolver', 'characterName profilePicture');
+
+		this.results.push(post);
 		this.markModified('results');
 
 		const action = await this.save();
@@ -177,8 +190,12 @@ ActionSchema.methods.addEffect = async function(effect) {
 	if (!effect.description) throw Error('Effects must have a description..');
 	if (!effect.type) throw Error('Effects must have type attched..');
 	// if (!effect[effect.type.toLowerCase()]) throw Error(`${effect.type} effects must have ${effect.type.toLowerCase()} attached...`);
+	let post = new Effect(effect);
 
-	this.effects.push(effect);
+	post = await post.save();
+
+	await post.populate('effector', 'characterName profilePicture');
+	this.effects.push(post);
 	this.markModified('effects');
 	const action = await this.save();
 	await action.populateMe();
@@ -205,7 +222,18 @@ ActionSchema.methods.addAttachment = async function(attachment) {
 
 ActionSchema.methods.populateMe = async function() {
 	// TODO: THIS IS A CORRECT POPULATE!!!!
-	await this.populate(['comments', 'creator']);
+	await this.populate([{
+		path: 'comments',
+		populate: { path: 'commentor', select: 'characterName profilePicture' }
+	}, { path: 'creator', select: 'characterName username playerName profilePicture' },
+	{
+		path: 'effects',
+		populate: { path: 'effector', select: 'characterName profilePicture' }
+	},
+	{
+		path: 'results',
+		populate: { path: 'resolver', select: 'characterName profilePicture' }
+	}]);
 };
 
 const Action = mongoose.model('Action', ActionSchema);
