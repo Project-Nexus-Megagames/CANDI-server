@@ -344,7 +344,7 @@ async function deleteAction(data, user) {
 
 			logger.info(`Action with the id ${id} was deleted via Socket!`);
 			nexusEvent.emit('respondClient', 'delete', [{ model: 'action', id }]);
-			nexusEvent.emit('respondClient', 'update', [changed]);
+			nexusEvent.emit('respondClient', 'update', changed);
 			return { message: 'Action Delete Success', type: 'success' };
 		}
 		else {
