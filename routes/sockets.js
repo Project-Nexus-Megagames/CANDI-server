@@ -127,6 +127,9 @@ module.exports = function(server) {
 		case 'bitsy':
 			io.emit('bitsy', { action: data.action });
 			break;
+		case 'notification':
+			io.emit('alert', { type: 'article', data });
+			break;
 		default:
 			logger.error('Scott Should never see this....');
 		}

@@ -112,7 +112,9 @@ ArticleSchema.methods.publish = async function() {
 	}
 	this.markModified('tags');
 
-	await this.save();
+	const article = await this.save();
+
+	nexusEvent.emit('respondClient', 'notification', article);
 };
 
 ArticleSchema.methods.setToDraft = async function() {
