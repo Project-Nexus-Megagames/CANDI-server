@@ -6,8 +6,8 @@ const { ControlLog } = require('../models/log');
 
 async function modifyAsset(data, user) {
 	try {
-		const {	_id, name, description, uses, used, owner, status, lendable, level, dice, tags, loggedInUser } = data;
-		const asset = await Asset.findById(_id).populate('with');
+		const {	_id, name, description, uses, used, owner, status, lendable, level, dice, tags, loggedInUser, type } = data;
+		const asset = await Asset.findById(_id);
 
 		if (asset === null) {
 			return {
@@ -21,6 +21,7 @@ async function modifyAsset(data, user) {
 		else {
 			asset.name = name;
 			asset.description = description;
+			asset.type = type;
 			asset.uses = uses;
 			asset.level = level;
 			asset.dice = dice;
