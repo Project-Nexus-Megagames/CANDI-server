@@ -361,6 +361,7 @@ async function deleteAction(data, user) {
 }
 
 async function controlOverride(data, user) {
+	const char = await Character.findOne({ username: user })
 	try {
 		const { id, asset } = data;
 		let action = await Action.findById(id);
@@ -386,7 +387,7 @@ async function controlOverride(data, user) {
 			item.unuse();
 			action.comment({
 				body: `Control Override: ${item.name} removed from action by Control.`,
-				commentor: 'Grunkle the Tech Goblin',
+				commentor: char,
 				type: 'Info'
 			});
 
@@ -411,7 +412,6 @@ async function controlOverride(data, user) {
 			await controlLog.save();
 
 			logger.info(`Asset ${asset} removed`);
-			nexusEvent.emit('respondClient', 'update', [action]);
 			return { message: `Asset ${asset} removed`, type: 'success' };
 		}
 		else {
@@ -505,14 +505,15 @@ async function effectAction(data) {
 		let response;
 		let old;
 		const effects = [];
+
 		switch (type) {
 		case 'asset':
-			old = await Asset.findById(document._id).populate('with');
+			old = await Asset.findById(document._id);
 			controlLog.message = `Asset ${old.name} was edited`;
 			await controlLog.save();
 			break;
 		case 'bond':
-			old = await Asset.findById(document._id).populate('with');
+			old = await Asset.findById(document._id);
 			controlLog.message = `Bond ${old.name} was edited`;
 			await controlLog.save();
 			break;
@@ -523,14 +524,19 @@ async function effectAction(data) {
 				if (parseInt(document[el]) !== 0) {
 					const oldAspectValue = old[el];
 					old[el] = old[el] + parseInt(document[el]);
-					if (old[el] > 10) old[el] = 10;
-					if (old[el] < -10) old[el] = -10;
 					await action.addEffect({
 						description: `${el} changed from ${oldAspectValue} to ${old[el]} `,
 						type: 'aspect',
 						status: 'Private',
 						effector
 					});
+
+					await action.comment({
+						body: `${el} has changed`,
+						commentor: effector,
+						type: 'Info'
+					});
+			
 					controlLog.message = controlLog.message + ` Aspect ${el} was changed from ${oldAspectValue} to ${old[el]}.`;
 				}
 			}

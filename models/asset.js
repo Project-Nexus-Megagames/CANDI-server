@@ -8,7 +8,7 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const AssetSchema = new Schema({
 	model: { type: String, default: 'Asset' },
-	type: { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth', 'Power', 'Territory', 'GodBond', 'MortalBond'] },
+	type: { type: String, default: 'Asset', enum: ['Asset', 'Trait', 'Wealth', 'Power', 'Territory', 'Title', 'MortalBond'] },
 	tags: [{ type: String }],
 	name: { type: String, required: true },
 	dice: { type: String, required: true, default: 'd6' },
