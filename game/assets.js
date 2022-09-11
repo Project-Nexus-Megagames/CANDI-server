@@ -1,6 +1,7 @@
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const { logger } = require('../middleware/log/winston');
 const { Asset, GodBond, MortalBond } = require('../models/asset');
+const { GameState } = require('../models/gamestate');
 const { History } = require('../models/history');
 const { ControlLog } = require('../models/log');
 
@@ -64,37 +65,29 @@ async function modifyAsset(data, user) {
 async function addAsset(data, user) {
 	try {
 		const { asset, arcane } = data;
-		console.log(data);
+		const gamestate = await GameState.findOne()
+		
+
 		let newAsset;
+		newAsset = new Asset(asset);
+		if (gamestate.status === 'Resolution') newAsset.status.hidden = true;
+
 		switch (data.asset.type) {
 		case 'Asset':
-			newAsset = new Asset(asset);
 			newAsset.status.lendable = true;
-			if (arcane) newAsset.tags.push('arcane');
 			break;
 		case 'Trait':
-			newAsset = new Asset(asset);
 			newAsset.status.lendable = false;
-			if (arcane) newAsset.tags.push('arcane');
 			break;
 		case 'Power':
-			newAsset = new Asset(asset);
 			newAsset.status.lendable = false;
 			break;
 		case 'Territory':
-			newAsset = new Asset(asset);
 			newAsset.status.lendable = true;
 			newAsset.uses = 999;
 			break;
-		case 'GodBond':
-			newAsset = new GodBond(asset);
+		case 'Title':
 			newAsset.status.lendable = false;
-			newAsset.uses = 999;
-			break;
-		case 'MortalBond':
-			newAsset = new MortalBond(asset);
-			newAsset.status.lendable = false;
-			newAsset.uses = 999;
 			break;
 		default:
 			throw Error(`Type '${data.asset.type}' is Invalid!`);
