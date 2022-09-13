@@ -1,5 +1,5 @@
 {
-  "name": "candi_duskcity_server",
+  "name": "candi_server",
   "version": "0.0.1",
   "description": "The CANDI App for whatever PbEM game is running",
   "main": "server.js",

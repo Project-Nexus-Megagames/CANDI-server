@@ -127,8 +127,13 @@ module.exports = {
 				break;
 			}
 
+			case('test'): {
+				const article = await Article.findById('6313e13d02baf99c624133c5');	
+				nexusEvent.emit('respondClient', 'notification', article);
+				break;
+			}
+
 			case('comment'): {
-				const { id, comment } = req.data;
 				const article = await Article.findById(id);
 				await article.comment(comment);
 				client.emit('alert', { type: 'success', message: 'Posted Comment' });

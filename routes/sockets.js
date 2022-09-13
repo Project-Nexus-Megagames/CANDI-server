@@ -10,7 +10,9 @@ const fs = require('fs'); // Node.js file system module
 
 const socketFiles = fs.readdirSync('./routes/socket/').filter(file => file.endsWith('.js')); // Loads spell files
 const socketMap = new Map();
+const serverVersion = config.get('version')
 
+logger.info(`Server version: ${serverVersion}`);
 logger.info('Mapping sockets...');
 for (const file of socketFiles) {
 	const sock = require(`./socket/${file}`);
@@ -121,8 +123,8 @@ module.exports = function(server) {
 		case 'create':
 			io.emit('createClients', data);
 			break;
-		case 'logout':
-			io.emit('alert', { type: 'logout', message: 'Logged Out' });
+		case 'refresh':
+			io.emit('alert', { type: 'refresh', message: 'Logged Out' });
 			break;
 		case 'bitsy':
 			io.emit('bitsy', { action: data.action });
