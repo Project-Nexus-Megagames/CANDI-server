@@ -1,18 +1,18 @@
-const { logger } = require("../../middleware/log/winston"); // middleware/error.js which is running [npm] winston for error handling
-const { Article } = require("../../models/article");
-const { GameState } = require("../../models/gamestate");
-const nexusEvent = require("../../middleware/events/events");
-const { Character } = require("../../models/character");
+const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
+const { Article } = require('../../models/article');
+const { GameState } = require('../../models/gamestate');
+const nexusEvent = require('../../middleware/events/events');
+const { Character } = require('../../models/character');
 
 module.exports = {
-	name: "article",
+	name: 'article',
 	async function(client, req) {
 		try {
 			logger.info(
 				`${client.username} has made a ${req.action} request in the ${req.route} route!`
 			);
 			switch (req.action) {
-				case "post": {
+				case 'post': {
 					const { title, body, image, creator, tags } = req.data;
 
 					const gamestate = await GameState.findOne();
@@ -29,15 +29,15 @@ module.exports = {
 					const newArticle = await article.save();
 					await newArticle.populateMe();
 					// nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
-					nexusEvent.emit("respondClient", "update", [newArticle]);
-					client.emit("alert", { type: "success", message: "Posted Article" });
+					nexusEvent.emit('respondClient', 'update', [newArticle]);
+					client.emit('alert', { type: 'success', message: 'Posted Article' });
 
-					await character.expendEffort("1", "Article");
+					await character.expendEffort('1', 'Article');
 
 					break;
 				}
 
-				case "draft": {
+				case 'draft': {
 					const { title, body, image, creator, tags } = req.data;
 					const gamestate = await GameState.findOne();
 					const article = new Article({
@@ -46,19 +46,19 @@ module.exports = {
 						title,
 						body,
 						image,
-						tags: [...tags, "Draft"]
+						tags: [...tags, 'Draft']
 					});
 					const newArticle = await article.save();
 					await newArticle.populateMe();
 					// nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
-					nexusEvent.emit("respondClient", "update", [newArticle]);
-					client.emit("alert", { type: "success", message: "Posted Article" });
+					nexusEvent.emit('respondClient', 'update', [newArticle]);
+					client.emit('alert', { type: 'success', message: 'Posted Article' });
 
 					break;
 				}
 
 				// FIXME: [JOHN] - Editing with Franzi
-				case "edit": {
+				case 'edit': {
 					const { id } = req.data;
 					const article = await Article.findOneAndUpdate(
 						{ _id: id },
@@ -66,14 +66,14 @@ module.exports = {
 						{ new: true }
 					);
 					await article.populateMe();
-					nexusEvent.emit("respondClient", "update", [article]);
-					client.emit("alert", { type: "success", message: "Edited Article" });
+					nexusEvent.emit('respondClient', 'update', [article]);
+					client.emit('alert', { type: 'success', message: 'Edited Article' });
 					break;
 				}
 
-				case "resetToDraft": {
+				case 'resetToDraft': {
 					const { id } = req.data;
-					const updatedArticle = { ...req.data.article, publishDate: "" };
+					const updatedArticle = { ...req.data.article, publishDate: '' };
 					const article = await Article.findOneAndUpdate(
 						{ _id: id },
 						updatedArticle,
@@ -81,12 +81,12 @@ module.exports = {
 					);
 					await article.setToDraft();
 					await article.populateMe();
-					nexusEvent.emit("respondClient", "update", [article]);
-					client.emit("alert", { type: "success", message: "Edited Article" });
+					nexusEvent.emit('respondClient', 'update', [article]);
+					client.emit('alert', { type: 'success', message: 'Edited Article' });
 					break;
 				}
 
-				case "publish": {
+				case 'publish': {
 					const gamestate = await GameState.findOne();
 
 					let character = {};
@@ -119,16 +119,16 @@ module.exports = {
 					}
 					await article.publish();
 					await article.populateMe();
-					await character.expendEffort("1", "Article");
-					nexusEvent.emit("respondClient", "update", [article]);
-					client.emit("alert", {
-						type: "success",
-						message: "Published Article"
+					await character.expendEffort('1', 'Article');
+					nexusEvent.emit('respondClient', 'update', [article]);
+					client.emit('alert', {
+						type: 'success',
+						message: 'Published Article'
 					});
 					break;
 				}
 				// FIXME: [JOHN] - This is Copy-pasta... fix me please?
-				case "react": {
+				case 'react': {
 					const { id, user, emoji } = req.data;
 
 					let article = await Article.findById(id);
@@ -138,51 +138,51 @@ module.exports = {
 					);
 					if (reacted) {
 						article = await article.unreact(user, emoji);
-						client.emit("alert", {
-							type: "success",
+						client.emit('alert', {
+							type: 'success',
 							message: `Unreacted with ${emoji}`
 						});
 					} else {
 						article = await article.react(user, emoji);
-						client.emit("alert", {
-							type: "success",
+						client.emit('alert', {
+							type: 'success',
 							message: `Reacted with ${emoji}`
 						});
 					}
 					break;
 				}
 
-				case "test": {
-					const article = await Article.findById("6313e13d02baf99c624133c5");
-					nexusEvent.emit("respondClient", "notification", article);
+				case 'test': {
+					const article = await Article.findById('6313e13d02baf99c624133c5');
+					nexusEvent.emit('respondClient', 'notification', article);
 					break;
 				}
 
-				case "comment": {
+				case 'comment': {
 					const { id, comment } = req.data;
 					const article = await Article.findById(id);
 					await article.comment(comment);
-					client.emit("alert", { type: "success", message: "Posted Comment" });
+					client.emit('alert', { type: 'success', message: 'Posted Comment' });
 					break;
 				}
 
-				case "deleteComment": {
+				case 'deleteComment': {
 					const { id, comment } = req.data;
 					const article = await Article.findById(id);
 					await article.deleteComment(comment);
 					logger.info(`Comment with the id ${id} was deleted via Socket!`);
-					client.emit("alert", { type: "success", message: "Deleted Comment" });
+					client.emit('alert', { type: 'success', message: 'Deleted Comment' });
 					break;
 				}
 				// FIXME: [JOHN] - This is Copy-pasta... review me please?
-				case "delete": {
+				case 'delete': {
 					const { id } = req.data;
 
 					const article = await Article.findById(id);
 
 					await article.delete();
-					nexusEvent.emit("respondClient", "delete", [article]);
-					client.emit("alert", { type: "success", message: "Deleted Article" });
+					nexusEvent.emit('respondClient', 'delete', [article]);
+					client.emit('alert', { type: 'success', message: 'Deleted Article' });
 					break;
 				}
 				default: {
@@ -191,8 +191,8 @@ module.exports = {
 				}
 			}
 		} catch (error) {
-			client.emit("alert", {
-				type: "error",
+			client.emit('alert', {
+				type: 'error',
 				message: error.message ? error.message : error
 			});
 			logger.error(error);
