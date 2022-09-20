@@ -24,6 +24,7 @@ const ArticleSchema = new Schema({
 	body: { type: String, minLength: 1, maxLength: 10000 },
 	image: { type: String },
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
+	anon: { type: Boolean },
 	tags: [{ type: String }], // Any tags added by control
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
 	publishDate: { type: Date }
