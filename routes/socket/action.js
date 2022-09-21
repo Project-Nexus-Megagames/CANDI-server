@@ -7,7 +7,8 @@ const {
 	deleteSubObject,
 	editSubObject,
 	supportAgenda,
-	assignController
+	assignController,
+	setNewsWorthy
 } = require('../../game/actions');
 const { addArrayValue } = require('../../middleware/util/arrayCalls');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
@@ -93,6 +94,11 @@ module.exports = {
 
 			case 'assignController': {
 				response = await assignController(data, client.username);
+				break;
+			}
+
+			case 'setNewsWorthy': {
+				response = await setNewsWorthy(data, client.username);
 				break;
 			}
 

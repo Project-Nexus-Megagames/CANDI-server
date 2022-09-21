@@ -150,7 +150,20 @@ async function assignController(data) {
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
+async function setNewsWorthy(data) {
+	try {
+		let action = await Action.findById(data.id)
+		action.news = data.news
+		action = await action.save()
+		await action.populateMe();
+		nexusEvent.emit('respondClient', 'update', [action]);
+		return { message: `${action.name} newsworthiness set`, type: 'success' };
 
+	}
+	catch (err){
+		return { message: `Server Error: ${err.message}`, type: 'error' };
+	}
+}
 async function deleteSubObject(data, user) {
 	const id = data.id;
 	let action = await Action.findById(id);
@@ -719,5 +732,6 @@ module.exports = {
 	editSubObject,
 	effectAction,
 	supportAgenda,
-	assignController
+	assignController,
+	setNewsWorthy
 };
