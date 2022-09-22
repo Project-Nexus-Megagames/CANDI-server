@@ -37,14 +37,14 @@ async function createAction(data, user) {
 			throw Error('New actions must have a character _id for creator...');
 		}
 		if (!data.submission) throw Error('You must include a submission...');
-		if (!data.controllers) {
-			throw Error('New actions must have a controllers array...');
-		}
-		else if (data.controllers.length < 1) {
-			throw Error('New actions must at least 1 controller assigned to it...');
-		}
+		//if (!data.controllers) {
+		//	throw Error('New actions must have a controllers array...');
+		//}
+		//else if (data.controllers.length < 1) {
+		//	throw Error('New actions must at least 1 controller assigned to it...');
+		//}
 
-		const { type, creator, controllers, name, numberOfInjuries, submission, attachments } = data;
+		const { type, creator, name, numberOfInjuries, submission, attachments } = data;
 
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
@@ -71,7 +71,6 @@ async function createAction(data, user) {
 			round: gamestate.round,
 			attachments,
 			creator,
-			controllers,
 			numberOfInjuries
 		});
 
@@ -119,7 +118,7 @@ async function supportAgenda(data) {
 	try {
 		let character = await Character.findById(data.supporter);
 		let action = await Action.findById(data.id);
-		console.log('Remove effort called', character?.characterName);
+		console.log('Remove effort called', character.characterName);
 		character = await character.expendEffort(1, 'Agenda');
 
 		await action.comment({
@@ -137,6 +136,34 @@ async function supportAgenda(data) {
 
 }
 
+async function assignController(data) {
+	try {
+		let action = await Action.findById(data.id)
+		action.controller = data.controller
+		action = await action.save()
+		await action.populateMe();
+		nexusEvent.emit('respondClient', 'update', [action]);
+		return { message: `${action.name} controller assigned!`, type: 'success' };
+
+	}
+	catch (err){
+		return { message: `Server Error: ${err.message}`, type: 'error' };
+	}
+}
+async function setNewsWorthy(data) {
+	try {
+		let action = await Action.findById(data.id)
+		action.news = data.news
+		action = await action.save()
+		await action.populateMe();
+		nexusEvent.emit('respondClient', 'update', [action]);
+		return { message: `${action.name} newsworthiness set`, type: 'success' };
+
+	}
+	catch (err){
+		return { message: `Server Error: ${err.message}`, type: 'error' };
+	}
+}
 async function deleteSubObject(data, user) {
 	const id = data.id;
 	let action = await Action.findById(id);
@@ -536,7 +563,7 @@ async function effectAction(data) {
 						commentor: effector,
 						type: 'Info'
 					});
-			
+
 					controlLog.message = controlLog.message + ` Aspect ${el} was changed from ${oldAspectValue} to ${old[el]}.`;
 				}
 			}
@@ -704,5 +731,7 @@ module.exports = {
 	deleteSubObject,
 	editSubObject,
 	effectAction,
-	supportAgenda
+	supportAgenda,
+	assignController,
+	setNewsWorthy
 };

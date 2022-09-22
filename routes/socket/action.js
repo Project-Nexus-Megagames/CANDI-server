@@ -6,7 +6,9 @@ const {
 	controlOverride,
 	deleteSubObject,
 	editSubObject,
-	supportAgenda
+	supportAgenda,
+	assignController,
+	setNewsWorthy
 } = require('../../game/actions');
 const { addArrayValue } = require('../../middleware/util/arrayCalls');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
@@ -39,7 +41,7 @@ module.exports = {
 				response = await supportAgenda(data);
 				break;
 			}
-						case 'comment': {
+			case 'comment': {
 				// Expects data.id <<Action ref>>
 				// Expects data.comment <<Comment object>> { body, commentor, type, status }
 				// console.log(data);
@@ -89,6 +91,17 @@ module.exports = {
 				response = await effectAction(data, client.username);
 				break;
 			}
+
+			case 'assignController': {
+				response = await assignController(data, client.username);
+				break;
+			}
+
+			case 'setNewsWorthy': {
+				response = await setNewsWorthy(data, client.username);
+				break;
+			}
+
 			case 'delete': {
 				response = await deleteAction(data, client.username);
 				break;
