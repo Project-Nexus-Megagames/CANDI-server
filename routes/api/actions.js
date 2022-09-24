@@ -29,7 +29,8 @@ router.get('/', async function(req, res, next) {
 					populate: { path: 'commentor', select: 'characterName profilePicture' }
 				}).populate('creator', 'characterName username playerName profilePicture')
 				.populate({ path: 'results', populate: { path: 'resolver', select: 'characterName profilePicture' } })
-				.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture' } });
+				.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture' } })
+				.populate('controller', 'characterName');
 			res.status(200).json(actions);
 		}
 
@@ -67,7 +68,8 @@ router.get('/:id', async (req, res, next) => {
 			else {
 				const actions = await Action.find({ creator: myCharacter._id })
 					.populate('comments')
-					.populate('creator');
+					.populate('creator')
+					.populate('controller', 'characterName');
 				// console.log(projects);
 				res.status(200).json(actions);
 			}

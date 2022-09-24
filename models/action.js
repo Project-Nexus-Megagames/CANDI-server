@@ -55,7 +55,7 @@ const ActionSchema = new Schema({
 	round: { type: Number }, // Round Number for the ACTION
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
-	controller: { type: String }, // Controllers assigned to handle this ACTION
+	controller: { type: ObjectId, ref: 'Character' }, // Controllers assigned to handle this ACTION
 	news: { type: Boolean },
 	tags: [{ type: String }], // Any tags added by control
 	submission: submissionSchema, // Player submission that created the ACTION
@@ -234,7 +234,8 @@ ActionSchema.methods.populateMe = async function() {
 	{
 		path: 'results',
 		populate: { path: 'resolver', select: 'characterName profilePicture' }
-	}]);
+	}, { path: 'controller', select: 'characterName' }
+	]);
 };
 
 const Action = mongoose.model('Action', ActionSchema);
