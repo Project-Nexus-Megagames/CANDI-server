@@ -23,7 +23,7 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const char = await Character.find().populate('knownContacts');
+			const char = await Character.find().populate('knownContacts', 'characterName');
 			res.status(200).json(char);
 		}
 		catch (err) {
@@ -202,15 +202,14 @@ router.patch('/cleanSupporters', async (req, res, next) => {
 	else {
 		const { id } = req.body;
 		try {
-			const characters = await Character.find().where("knownContacts").in(null);
+			const characters = await Character.find().where('knownContacts').in(null);
 			const record = [];
 
-			for (let character of characters) {
-				character.knownContacts = character.knownContacts.filter(el => el !== null)
-				console.log(character)
+			for (const character of characters) {
+				character.knownContacts = character.knownContacts.filter(el => el !== null);
+				console.log(character);
 				await character.save();
 			}
-
 
 
 			// character.supporters = record;
