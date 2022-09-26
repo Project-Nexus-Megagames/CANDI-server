@@ -60,6 +60,7 @@ const ActionSchema = new Schema({
 	tags: [{ type: String }], // Any tags added by control
 	submission: submissionSchema, // Player submission that created the ACTION
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
+	diceresult: { type: String },
 	results: [resultSchema], // Controller generated result of the ACTION
 	effects: [effectSchema], // Mechanical effects of the ACTION,
 	publishDate: { type: Date } // published Date for the Agenda
@@ -159,18 +160,18 @@ ActionSchema.methods.edit = async function() {
 	return;
 };
 
-ActionSchema.methods.postResult = async function(result) {
+ActionSchema.methods.postResult = async function(result, dice) {
 	// Expects { result, dice: { type, amount, roll } }
 	try {
 		if (!result.description) throw Error('Results must have a description..');
-		if (!result.dice) throw Error('Results must have dice information attched..');
+		if (!dice) throw Error('Results must have dice information attched..');
 		// else if (!result.dice.roll) throw Error('Result must have final dice roll...');
 		let post = new Result(result);
 
 		post = await post.save();
 
 		await post.populate('resolver', 'characterName profilePicture');
-
+		this.diceresult = dice;
 		this.results.push(post);
 		this.markModified('results');
 

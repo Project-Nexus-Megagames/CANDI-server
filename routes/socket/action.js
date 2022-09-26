@@ -8,6 +8,7 @@ const {
 	editSubObject,
 	supportAgenda,
 	assignController,
+	diceResult,
 	setNewsWorthy
 } = require('../../game/actions');
 const { addArrayValue } = require('../../middleware/util/arrayCalls');
@@ -75,7 +76,7 @@ module.exports = {
 				// console.log(data);
 				const action = await Action.findById(data.id);
 				action
-					? (response = await action.postResult(data.result))
+					? (response = await action.postResult(data.result, data.dice))
 					: (response = {
 						message: `Could not find Action for ${data.id} in 'result'`,
 						type: 'error'
@@ -94,6 +95,11 @@ module.exports = {
 
 			case 'assignController': {
 				response = await assignController(data, client.username);
+				break;
+			}
+
+			case 'diceResult': {
+				response = await diceResult(data, client.username);
 				break;
 			}
 
