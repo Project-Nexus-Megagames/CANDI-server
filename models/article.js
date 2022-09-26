@@ -21,7 +21,7 @@ const ArticleSchema = new Schema({
 	type: { type: String, default: 'News', required: true }, //  enum: actionAndEffortTypes, <- Disabling this so Actions are more permissive
 	round: { type: Number }, // Round Number for the ACTION
 	title: { type: String, required: true, minLength: 1, maxLength: 100 },
-	body: { type: String, minLength: 1, maxLength: 10000 },
+	body: { type: String, minLength: 1, maxLength: 20000 },
 	image: { type: String },
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
 	anon: { type: Boolean },
