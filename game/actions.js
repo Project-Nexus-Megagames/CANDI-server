@@ -144,12 +144,27 @@ async function assignController(data) {
 		await action.populateMe();
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return { message: `${action.name} controller assigned!`, type: 'success' };
+	}
+	catch (err){
+		return { message: `Server Error: ${err.message}`, type: 'error' };
+	}
+}
+
+async function diceResult(data) {
+	try {
+		let action = await Action.findById(data.id)
+		action.diceresult = data.diceresult
+		action = await action.save()
+		await action.populateMe();
+		nexusEvent.emit('respondClient', 'update', [action]);
+		return { message: `${action.name} diceresult logged!`, type: 'success' };
 
 	}
 	catch (err){
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
+
 async function setNewsWorthy(data) {
 	try {
 		let action = await Action.findById(data.id)
@@ -260,7 +275,7 @@ async function editSubObject(data, user) {
 				console.log(`Detected invalid edit: ${el} is ${data.result[el]}`);
 			}
 		}
-
+		action.diceresult = data.dice;
 		action = await action.save();
 		await action.populateMe();
 
@@ -733,5 +748,6 @@ module.exports = {
 	effectAction,
 	supportAgenda,
 	assignController,
+	diceResult,
 	setNewsWorthy
 };
