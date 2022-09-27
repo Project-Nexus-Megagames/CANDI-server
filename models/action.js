@@ -101,6 +101,7 @@ ActionSchema.methods.submit = async function(submission, submittedActionType, co
 	this.markModified('submission.assets');
 
 	const action = await this.save();
+	await action.populateMe();
 
 	nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
 	return ({ message : `${action.type} Submission Success`, type: 'success' });
