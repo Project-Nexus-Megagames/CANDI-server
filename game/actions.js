@@ -112,7 +112,7 @@ async function createAction(data, user) {
 async function supportAgenda(data) {
 	try {
 		let character = await Character.findById(data.supporter);
-		let action = await Action.findById(data.id);
+		const action = await Action.findById(data.id);
 		console.log('Remove effort called', character.characterName);
 		character = await character.expendEffort(1, 'Agenda');
 
@@ -133,29 +133,44 @@ async function supportAgenda(data) {
 
 async function assignController(data) {
 	try {
-		let action = await Action.findById(data.id)
-		action.controller = data.controller
-		action = await action.save()
+		let action = await Action.findById(data.id);
+		action.controller = data.controller;
+		action = await action.save();
 		await action.populateMe();
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return { message: `${action.name} controller assigned!`, type: 'success' };
-
 	}
-	catch (err){
+	catch (err) {
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
+
+async function diceResult(data) {
+	try {
+		let action = await Action.findById(data.id);
+		action.diceresult = data.diceresult;
+		action = await action.save();
+		await action.populateMe();
+		nexusEvent.emit('respondClient', 'update', [action]);
+		return { message: `${action.name} diceresult logged!`, type: 'success' };
+
+	}
+	catch (err) {
+		return { message: `Server Error: ${err.message}`, type: 'error' };
+	}
+}
+
 async function setNewsWorthy(data) {
 	try {
-		let action = await Action.findById(data.id)
-		action.news = data.news
-		action = await action.save()
+		let action = await Action.findById(data.id);
+		action.news = data.news;
+		action = await action.save();
 		await action.populateMe();
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return { message: `${action.name} newsworthiness set`, type: 'success' };
 
 	}
-	catch (err){
+	catch (err) {
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
@@ -255,7 +270,7 @@ async function editSubObject(data, user) {
 				console.log(`Detected invalid edit: ${el} is ${data.result[el]}`);
 			}
 		}
-
+		action.diceresult = data.dice;
 		action = await action.save();
 		await action.populateMe();
 
@@ -383,7 +398,7 @@ async function deleteAction(data, user) {
 }
 
 async function controlOverride(data, user) {
-	const char = await Character.findOne({ username: user })
+	const char = await Character.findOne({ username: user });
 	try {
 		const { id, asset } = data;
 		let action = await Action.findById(id);
@@ -451,7 +466,6 @@ async function editAction(data, user) {
 	const changed = [];
 	const oldAction = await Action.findById(id);
 
-	console.log(data.submission?.effort);
 
 	if (!id) throw Error('Actions must have an _id...');
 	if (oldAction === undefined) throw Error('Could not find oldAction');
@@ -728,5 +742,6 @@ module.exports = {
 	effectAction,
 	supportAgenda,
 	assignController,
+	diceResult,
 	setNewsWorthy
 };
