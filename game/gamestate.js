@@ -151,9 +151,13 @@ async function nextRound(control) {
 			for (const effort of config.effortTypes) {
 				const type = effort.type;
 				const amount = effort.effortAmount;
-				const restoredEffort = { type, amount };
-				character.effort.push(restoredEffort);
-				nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to ${amount}`);
+				const tag = effort.tag;
+				let restoredEffort = { };
+				if (character.tags.some(el => el.toLowerCase() === tag.toLowerCase())) {
+					restoredEffort = { type, amount };
+					character.effort.push(restoredEffort);
+					nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to ${amount}`);
+				}
 			}
 			character.injuries = character.injuries.filter((el) => (el.received + el.duration) > gamestate.round || el.permanent);
 			character.save();

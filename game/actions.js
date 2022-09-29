@@ -37,18 +37,13 @@ async function createAction(data, user) {
 			throw Error('New actions must have a character _id for creator...');
 		}
 		if (!data.submission) throw Error('You must include a submission...');
-		// if (!data.controllers) {
-		//	throw Error('New actions must have a controllers array...');
-		// }
-		// else if (data.controllers.length < 1) {
-		//	throw Error('New actions must at least 1 controller assigned to it...');
-		// }
+		const gamestate = await GameState.findOne();
+		if (gamestate.status !== 'Active') throw Error('Round is not active.')
 
 		const { type, creator, name, numberOfInjuries, submission, attachments } = data;
 
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
-		const gamestate = await GameState.findOne();
 		const config = await GameConfig.findOne();
 
 		const actionType = config.actionTypes.find(el => el.type.toLowerCase() === data.type.toLowerCase());
@@ -607,7 +602,7 @@ async function effectAction(data) {
 				if (!old.unlockedBy.includes(owner)) {
 					old.unlockedBy.push(owner);
 					await action.addEffect({ description: `New location unlocked: ${old.name} `, type: 'location',	status: 'Temp-Hidden', effector
-					});
+				});
 					controlLog.message = `New location unlocked: ${old.name} for ${owner} `;
 					locsForMessage = locsForMessage + old.name + ', ';
 					await old.save();
