@@ -158,6 +158,11 @@ async function nextRound(control) {
 					character.effort.push(restoredEffort);
 					nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to ${amount}`);
 				}
+				else {
+					restoredEffort = { type, amount:0 };
+					character.effort.push(restoredEffort);
+					nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to 0`);
+				}
 			}
 			character.injuries = character.injuries.filter((el) => (el.received + el.duration) > gamestate.round || el.permanent);
 			character.save();
