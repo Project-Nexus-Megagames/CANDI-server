@@ -17,6 +17,7 @@ const ActionTypeSchema = new Schema({
 
 const EffortTypeSchema = new Schema ({
 	model: { type: String, default: 'EffortType' },
+	tag: { type: String, default: 'PC' },
 	type: { type: String, default: 'Normal', required: true },
 	effortAmount: { type: Number, required: true, Default: 0 }
 });
