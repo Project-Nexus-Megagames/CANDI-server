@@ -3,6 +3,7 @@ const { Article } = require('../../models/article');
 const { GameState } = require('../../models/gamestate');
 const nexusEvent = require('../../middleware/events/events');
 const { Character } = require('../../models/character');
+const { draftArticle } = require('../../game/articles');
 
 module.exports = {
 	name: 'article',
@@ -11,51 +12,14 @@ module.exports = {
 			logger.info(
 				`${client.username} has made a ${req.action} request in the ${req.route} route!`
 			);
+			let response;
 			switch (req.action) {
-			case 'post': {
-				const { title, body, image, creator, tags, anon } = req.data;
-
-				const gamestate = await GameState.findOne();
-				const character = await Character.findById(creator);
-
-				const article = new Article({
-					creator,
-					round: gamestate.round,
-					title,
-					body,
-					image,
-					tags,
-					anon
-				});
-				const newArticle = await article.save();
-				await newArticle.populateMe();
-				// nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
-				nexusEvent.emit('respondClient', 'update', [newArticle]);
-				client.emit('alert', { type: 'success', message: 'Posted Article' });
-
-				await character.expendEffort('1', 'Article');
-
-				break;
-			}
 
 			case 'draft': {
-				const { title, body, image, creator, tags, anon } = req.data;
-				const gamestate = await GameState.findOne();
-				const article = new Article({
-					creator,
-					round: gamestate.round,
-					title,
-					body,
-					image,
-					anon,
-					tags: [...tags, 'Draft']
-				});
-				const newArticle = await article.save();
-				await newArticle.populateMe();
-				// nexusEvent.emit('respondClient', 'update', [ action, ...changed ]);
-				nexusEvent.emit('respondClient', 'update', [newArticle]);
-				client.emit('alert', { type: 'success', message: 'Posted Article' });
-
+				response = await draftArticle(req.data, client.username);
+				response.type === 'success'
+					? client.emit('alert', { type: 'success', message: 'Article posted!' })
+					: null;
 				break;
 			}
 
@@ -70,6 +34,7 @@ module.exports = {
 				await article.populateMe();
 				nexusEvent.emit('respondClient', 'update', [article]);
 				client.emit('alert', { type: 'success', message: 'Edited Article' });
+
 				break;
 			}
 
@@ -107,10 +72,10 @@ module.exports = {
 					character = await Character.findById(req.data.article.creator);
 				}
 				else {
-					const { title, body, image, creator, tags, anon } = req.data;
+					const { title, body, image, creator, tags, anon, round } = req.data;
 					article = new Article({
 						creator,
-						round: gamestate.round,
+						round,
 						title,
 						body,
 						image,
@@ -129,6 +94,7 @@ module.exports = {
 					type: 'success',
 					message: 'Published Article'
 				});
+				if (article.round === gamestate.round) nexusEvent.emit('respondClient', 'notification', article);
 				break;
 			}
 			// FIXME: [JOHN] - This is Copy-pasta... fix me please?
