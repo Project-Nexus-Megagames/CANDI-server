@@ -18,12 +18,12 @@ const { Comment } = require('./comment');
 
 const ArticleSchema = new Schema({
 	model:  { type: String, default: 'Article' }, // Model for the DOC
-	type: { type: String, default: 'News', required: true }, //  enum: actionAndEffortTypes, <- Disabling this so Actions are more permissive
-	round: { type: Number }, // Round Number for the ACTION
+	type: { type: String, default: 'News', required: true },
+	round: { type: Number }, // Round Number for the Article
 	title: { type: String, required: true, minLength: 1, maxLength: 100 },
 	body: { type: String, minLength: 1, maxLength: 20000 },
 	image: { type: String },
-	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
+	creator: { type: ObjectId, ref: 'Character' }, // The character that wrote the article
 	anon: { type: Boolean },
 	tags: [{ type: String }], // Any tags added by control
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
@@ -113,9 +113,9 @@ ArticleSchema.methods.publish = async function() {
 	}
 	this.markModified('tags');
 
-	const article = await this.save();
+	// const article = await this.save();
+	// if (this.round ) nexusEvent.emit('respondClient', 'notification', article);
 
-	nexusEvent.emit('respondClient', 'notification', article);
 };
 
 ArticleSchema.methods.setToDraft = async function() {
