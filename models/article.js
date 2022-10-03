@@ -113,8 +113,8 @@ ArticleSchema.methods.publish = async function() {
 	}
 	this.markModified('tags');
 
-	// const article = await this.save();
-	// if (this.round ) nexusEvent.emit('respondClient', 'notification', article);
+	const article = await this.save();
+	if (this.round ) nexusEvent.emit('respondClient', 'notification', article);
 
 };
 
