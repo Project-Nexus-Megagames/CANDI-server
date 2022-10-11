@@ -17,7 +17,7 @@ const storage = new CloudinaryStorage({
 	},
 	params: {
 		transformation: [ { if: 'w  > 900' }, { width: 900, crop: 'scale' }, { if: 'end' }],
-		folder: 'UrSeason2' }
+		folder: 'goblinCity' }
 });
 
 const uploadCloudLarge = multer({ storage });
