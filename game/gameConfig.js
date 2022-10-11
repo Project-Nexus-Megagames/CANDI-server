@@ -31,6 +31,10 @@ async function createGameConfig(data, user) {
 		}
 	}
 
+	for (const aT of actionTypes) {
+		aT.subTypes = aT.subTypes.split(/[ ,]+/);
+	}
+
 	let gameConfig = new GameConfig({
 		actionTypes,
 		effortTypes
