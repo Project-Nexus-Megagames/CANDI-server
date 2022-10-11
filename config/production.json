@@ -1,6 +1,6 @@
 {
   "jwtPrivateKey": "spooky",
-  "dbName": "urSeason2DB",
+  "dbName": "goblinCityDB",
   "clientURL": "https://candi-app.herokuapp.com/",
 	"serverURL": "https://candi-server.herokuapp.com/",
   "socketCORS": "https://candi-app.herokuapp.com"

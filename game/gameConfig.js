@@ -13,7 +13,6 @@ async function createGameConfig(data, user) {
 	const docs = await GameConfig.find();
 	if 	(docs.length >= 1) {await GameConfig.deleteMany();}
 
-	const actionsWithSubTypes = [];
 	let dupesCheck = [];
 	for (const aT of actionTypes) {
 		dupesCheck.push(aT.type);
@@ -31,10 +30,6 @@ async function createGameConfig(data, user) {
 			dupesCheck = [];
 			return nexusError('EffortTypes must be unique', 400);
 		}
-	}
-
-	for (const aT of actionTypes) {
-		aT.subTypes = aT.subTypes.split(/[ ,]+/);
 	}
 
 	let gameConfig = new GameConfig({
