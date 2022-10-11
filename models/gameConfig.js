@@ -12,7 +12,8 @@ const ActionTypeSchema = new Schema({
 	maxAssets: { type: Number, required: true, default: 0 },
 	status: [{ type: String }], // status array, e.g. for 'public' or 'campaign'
 	icon: { type: String },
-	public: { type: Boolean, default: false }
+	public: { type: Boolean, default: false },
+	subTypes: [{ type: String }]
 });
 
 const EffortTypeSchema = new Schema ({
