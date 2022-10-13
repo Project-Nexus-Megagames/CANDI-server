@@ -17,130 +17,130 @@ const aspects = {
 
 const locations = [
 	{
-		name: 'A1',
+		name: 'Aetheric Realms',
 		coords: {	x: 0, y: 0 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'A2',
+		name: 'Astral Realms',
 		coords: {	x: 0, y: 1 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'A3',
+		name: 'Clock Tower',
 		coords: {	x: 0, y: 2 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'A4',
+		name: 'The Cathedral Catacombs',
 		coords: {	x: 0, y: 3 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'A5',
+		name: 'Fate\'s Bazaar',
 		coords: {	x: 0, y: 4 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'B1',
+		name: 'Fate\'s End',
 		coords: {	x: 1, y: 0 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'B2',
+		name: 'High Hall',
 		coords: {	x: 1, y: 1 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'B3',
+		name: 'Maelstrom',
 		coords: {	x: 1, y: 2 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'B4',
+		name: 'Old Hall',
 		coords: {	x: 1, y: 3 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'B5',
+		name: 'Order Halls',
 		coords: {	x: 1, y: 4 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'B6',
+		name: 'Postov Square',
 		coords: {	x: 1, y: 5 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'C1',
+		name: 'Queen\'s Park',
 		coords: {	x: 2, y: 0 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'C2',
+		name: 'Smoke District',
 		coords: {	x: 2, y: 1 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'C3',
+		name: 'The Nest',
 		coords: {	x: 2, y: 2 },
 		description: 'Placeholder Description'
 	},
 	{
-		name: 'C4',
+		name: 'The Rookery',
 		coords: {	x: 2, y: 3 },
 		description: 'Placeholder Description'
 	},
-	{
-		name: 'C5',
-		coords: {	x: 2, y: 4 },
-		description: 'Placeholder Description'
-	},
-	{
-		name: 'D1',
-		coords: {	x: 3, y: 0 },
-		description: 'Placeholder Description'
-	},
-	{
-		name: 'D2',
-		coords: {	x: 3, y: 1 },
-		description: 'Placeholder Description'
-	},
-	{
-		name: 'D3',
-		coords: {	x: 3, y: 2 },
-		description: 'Placeholder Description'
-	},
-	{
-		name: 'D4',
-		coords: {	x: 3, y: 3 },
-		description: 'Placeholder Description'
-	},
-	{
-		name: 'E1',
-		coords: {	x: 4, y: 0 },
-		description: 'Placeholder Description'
-	},
-	{
-		name: 'E2',
-		coords: {	x: 4, y: 1 },
-		description: 'Placeholder Description'
-	},
-	{
-		name: 'E3',
-		coords: {	x: 4, y: 2 },
-		description: 'Placeholder Description'
-	},
-	{
-		name: 'F1',
-		coords: {	x: 5, y: 0 },
-		description: 'Placeholder Description'
-	},
-	{
-		name: 'F2',
-		coords: {	x: 5, y: 1 },
-		description: 'Placeholder Description'
-	}
+	// {
+	// 	name: 'C5',
+	// 	coords: {	x: 2, y: 4 },
+	// 	description: 'Placeholder Description'
+	// },
+	// {
+	// 	name: 'D1',
+	// 	coords: {	x: 3, y: 0 },
+	// 	description: 'Placeholder Description'
+	// },
+	// {
+	// 	name: 'D2',
+	// 	coords: {	x: 3, y: 1 },
+	// 	description: 'Placeholder Description'
+	// },
+	// {
+	// 	name: 'D3',
+	// 	coords: {	x: 3, y: 2 },
+	// 	description: 'Placeholder Description'
+	// },
+	// {
+	// 	name: 'D4',
+	// 	coords: {	x: 3, y: 3 },
+	// 	description: 'Placeholder Description'
+	// },
+	// {
+	// 	name: 'E1',
+	// 	coords: {	x: 4, y: 0 },
+	// 	description: 'Placeholder Description'
+	// },
+	// {
+	// 	name: 'E2',
+	// 	coords: {	x: 4, y: 1 },
+	// 	description: 'Placeholder Description'
+	// },
+	// {
+	// 	name: 'E3',
+	// 	coords: {	x: 4, y: 2 },
+	// 	description: 'Placeholder Description'
+	// },
+	// {
+	// 	name: 'F1',
+	// 	coords: {	x: 5, y: 0 },
+	// 	description: 'Placeholder Description'
+	// },
+	// {
+	// 	name: 'F2',
+	// 	coords: {	x: 5, y: 1 },
+	// 	description: 'Placeholder Description'
+	// }
 ];
 
 module.exports = { assets, locations, aspects };

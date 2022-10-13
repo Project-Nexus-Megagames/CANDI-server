@@ -25,6 +25,10 @@ const submissionSchema = new Schema({
 	intent: { type: String, required: true }, // Intended result of the ACTION
 	effort: effortSchema, // Initial effort allocated
 	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
+	arguments: [{
+		accepted: { type: Boolean, default: true },
+		text: { type: String, default: '' },
+	}],
 	collaborators: [{ type: ObjectId, ref: 'Character' }] // Characters involved in the ACTION
 }, { timestamps: true });
 

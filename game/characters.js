@@ -104,7 +104,7 @@ async function register(data) {
 				from: 'CANDI Registration',
 				to: email,
 				subject: 'CANDI Registration',
-				html: `<p>Dear ${regChar.playerName},</p> <p> You have been successfully registered on the CANDI App, and can now log in. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p>Have fun!</p> <p>Your Character: ${regChar.characterName} </p> https://candi-app.herokuapp.com/home`
+				html: `<p>Dear ${regChar.playerName},</p> <p> You have been successfully registered on the CANDI App, and can now log in. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p>Have fun!</p> <p>Your Character: ${regChar.characterName} </p> https://ur-candi-app.herokuapp.com/home`
 			};
 			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
 		}

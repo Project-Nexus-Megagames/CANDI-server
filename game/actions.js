@@ -40,7 +40,7 @@ async function createAction(data, user) {
 		const gamestate = await GameState.findOne();
 		if (gamestate.status !== 'Active') throw Error('Round is not active.')
 
-		const { type, creator, name, numberOfInjuries, submission, attachments } = data;
+		const { type, creator, name, numberOfInjuries, submission, attachments, args } = data;
 
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
@@ -51,7 +51,6 @@ async function createAction(data, user) {
 		const allowedAssets = actionType.assetType;
 
 		for (const id of data.submission.assets) {
-
 			const asset = await Asset.findById(id);
 			const allowed = allowedAssets.find(el => el === asset.type.toLowerCase());
 			if (!allowed) throw Error (`Asset of type ${asset.type} not allowed for ${data.type}!`);
@@ -69,6 +68,12 @@ async function createAction(data, user) {
 			numberOfInjuries
 		});
 
+		const formattedArgs = [];
+		for (const arg of args) {
+			formattedArgs.push({ text: arg, accepted: true });
+		}
+
+		action.arguments = formattedArgs;
 		action = await action.save();
 		await action.submit(data.submission, data.type, config.actionTypes);
 		await action.populateMe();
