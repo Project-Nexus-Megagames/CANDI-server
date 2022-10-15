@@ -70,7 +70,7 @@ async function createAction(data, user) {
 
 		const formattedArgs = [];
 		for (const arg of args) {
-			formattedArgs.push({ text: arg, accepted: true });
+			formattedArgs.push({ text: arg, modifier: 0 });
 		}
 
 		action.arguments = formattedArgs;

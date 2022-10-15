@@ -25,10 +25,6 @@ const submissionSchema = new Schema({
 	intent: { type: String, required: true }, // Intended result of the ACTION
 	effort: effortSchema, // Initial effort allocated
 	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
-	arguments: [{
-		accepted: { type: Boolean, default: true },
-		text: { type: String, default: '' },
-	}],
 	collaborators: [{ type: ObjectId, ref: 'Character' }] // Characters involved in the ACTION
 }, { timestamps: true });
 
@@ -63,6 +59,10 @@ const ActionSchema = new Schema({
 	news: { type: Boolean },
 	tags: [{ type: String }], // Any tags added by control
 	submission: submissionSchema, // Player submission that created the ACTION
+	arguments: [{
+		modifier: { type: Number, default: 0 },
+		text: { type: String, default: '' },
+	}],
 	comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
 	diceresult: { type: String },
 	results: [resultSchema], // Controller generated result of the ACTION
