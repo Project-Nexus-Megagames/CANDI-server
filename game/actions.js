@@ -38,7 +38,7 @@ async function createAction(data, user) {
 		}
 		if (!data.submission) throw Error('You must include a submission...');
 		const gamestate = await GameState.findOne();
-		if (gamestate.status !== 'Active') throw Error('Round is not active.')
+		if (gamestate.status !== 'Active') throw Error('Round is not active.');
 
 		const { type, creator, name, numberOfInjuries, submission, attachments, args } = data;
 
@@ -69,7 +69,7 @@ async function createAction(data, user) {
 		});
 
 		const formattedArgs = [];
-		for (const arg of args) {
+		for (const arg of submission.args) {
 			formattedArgs.push({ text: arg, modifier: 0 });
 		}
 
@@ -607,7 +607,7 @@ async function effectAction(data) {
 				if (!old.unlockedBy.includes(owner)) {
 					old.unlockedBy.push(owner);
 					await action.addEffect({ description: `New location unlocked: ${old.name} `, type: 'location',	status: 'Temp-Hidden', effector
-				});
+					});
 					controlLog.message = `New location unlocked: ${old.name} for ${owner} `;
 					locsForMessage = locsForMessage + old.name + ', ';
 					await old.save();
