@@ -6,6 +6,7 @@ const { logger } = require('../middleware/log/winston');
 const { History } = require('../models/history');
 const nexusError = require('../middleware/util/throwError');
 const _ = require('lodash');
+const { at } = require('lodash');
 
 async function createGameConfig(data, user) {
 
@@ -33,12 +34,14 @@ async function createGameConfig(data, user) {
 
 	for (const aT of actionTypes) {
 		aT.subTypes = aT.subTypes.split(/[ ,]+/);
+		if (aT.subTypes.every(el => el === '')) {aT.subTypes = [];}
 	}
 
 	let gameConfig = new GameConfig({
 		actionTypes,
 		effortTypes
 	});
+	console.log(gameConfig);
 	gameConfig = await gameConfig.save();
 
 	const log = new History({
