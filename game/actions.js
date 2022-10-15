@@ -475,9 +475,17 @@ async function editAction(data, user) {
 	if (!id) throw Error('Actions must have an _id...');
 	if (oldAction === undefined) throw Error('Could not find oldAction');
 
+
 	let action = await Action.findByIdAndUpdate(id, data, {
 		new: true
 	}).populate('creator');
+
+	const formattedArgs = [];
+	for (const arg of data.submission.args) {
+		formattedArgs.push({ text: arg, modifier: 0 });
+	}
+
+	action.arguments = formattedArgs;
 
 	if (action.submission.effort.amount !== oldAction.submission.effort.amount) {
 		let character = await Character.findById(action.creator._id).populate('lentAssets');
