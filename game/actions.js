@@ -40,7 +40,7 @@ async function createAction(data, user) {
 		const gamestate = await GameState.findOne();
 		if (gamestate.status !== 'Active') throw Error('Round is not active.');
 
-		const { type, creator, name, numberOfInjuries, submission, attachments, args } = data;
+		const { type, creator, name, numberOfInjuries, submission, attachments, subType } = data;
 
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
@@ -64,6 +64,7 @@ async function createAction(data, user) {
 					: name,
 			round: gamestate.round,
 			attachments,
+			subType,
 			creator,
 			numberOfInjuries
 		});

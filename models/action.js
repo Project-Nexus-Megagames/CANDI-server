@@ -25,7 +25,8 @@ const submissionSchema = new Schema({
 	intent: { type: String, required: true }, // Intended result of the ACTION
 	effort: effortSchema, // Initial effort allocated
 	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
-	collaborators: [{ type: ObjectId, ref: 'Character' }] // Characters involved in the ACTION
+	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
+	location: { type: ObjectId, ref: 'Location' }
 }, { timestamps: true });
 
 const resultSchema = new Schema({
@@ -52,6 +53,7 @@ const ActionSchema = new Schema({
 	model:  { type: String, default: 'Action' }, // Model for the DOC
 	name: { type: String },
 	type: { type: String, default: 'Normal', required: true }, //  enum: actionAndEffortTypes, <- Disabling this so Actions are more permissive
+	subType: { type: String, default: 'Assist', }, //  enum: actionAndEffortTypes, <- Disabling this so Actions are more permissive
 	round: { type: Number }, // Round Number for the ACTION
 	creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
