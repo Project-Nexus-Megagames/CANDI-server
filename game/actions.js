@@ -277,6 +277,7 @@ async function editSubObject(data, user) {
 			}
 		}
 		action.diceresult = data.dice;
+		action.arguments = data.arguments;
 		action = await action.save();
 		await action.populateMe();
 

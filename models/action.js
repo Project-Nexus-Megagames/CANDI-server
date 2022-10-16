@@ -167,7 +167,7 @@ ActionSchema.methods.edit = async function() {
 	return;
 };
 
-ActionSchema.methods.postResult = async function(result, dice) {
+ActionSchema.methods.postResult = async function(result, dice, arguments) {
 	// Expects { result, dice: { type, amount, roll } }
 	try {
 		if (!result.description) throw Error('Results must have a description..');
@@ -179,6 +179,7 @@ ActionSchema.methods.postResult = async function(result, dice) {
 
 		await post.populate('resolver', 'characterName profilePicture');
 		this.diceresult = dice;
+		this.arguments = arguments;
 		this.results.push(post);
 		this.markModified('results');
 

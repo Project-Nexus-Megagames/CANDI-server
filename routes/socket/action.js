@@ -76,7 +76,7 @@ module.exports = {
 				// console.log(data);
 				const action = await Action.findById(data.id);
 				action
-					? (response = await action.postResult(data.result, data.dice))
+					? (response = await action.postResult(data.result, data.dice, data.args))
 					: (response = {
 						message: `Could not find Action for ${data.id} in 'result'`,
 						type: 'error'
