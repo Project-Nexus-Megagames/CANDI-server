@@ -22,7 +22,7 @@ const effortSchema = new Schema({
 const submissionSchema = new Schema({
 	model: { type: String, default: 'Submission' },
 	description: { type: String, required: true }, // Description of the ACTION
-	intent: { type: String, required: true }, // Intended result of the ACTION
+	intent: { type: String, default: 'None Provided' }, // Intended result of the ACTION
 	effort: effortSchema, // Initial effort allocated
 	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
@@ -79,7 +79,7 @@ ActionSchema.methods.submit = async function(submission, submittedActionType, co
 	console.log(submission);
 	// Expects description, intent, effort, assets, collaborators
 	if (!submission.description) throw Error('A submission must have a description...');
-	if (!submission.intent) throw Error('You must have an intent for an action...');
+	// if (!submission.intent) throw Error('You must have an intent for an action...');
 
 	// this.markModified('status');
 

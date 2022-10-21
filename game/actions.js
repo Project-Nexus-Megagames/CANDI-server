@@ -36,7 +36,7 @@ async function createAction(data, user) {
 		if (!data.creator) {
 			throw Error('New actions must have a character _id for creator...');
 		}
-		if (!data.submission) throw Error('You must include a submission...');
+		// if (!data.submission) throw Error('You must include a submission...');
 		const gamestate = await GameState.findOne();
 		if (gamestate.status !== 'Active') throw Error('Round is not active.');
 

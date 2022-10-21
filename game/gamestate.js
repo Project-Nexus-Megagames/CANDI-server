@@ -117,7 +117,7 @@ async function nextRound(control) {
 	const gamestate = await GameState.findOne();
 	const config = await GameConfig.findOne();
 	try {
-		// Find aall hidden assets and unhide them
+		// Find all hidden assets and unhide them
 		// Find all used assets and -1 to their uses, then un-use them
 		// Find all hidden resolutions and unhide them
 		const assets = [];
@@ -158,11 +158,11 @@ async function nextRound(control) {
 					character.effort.push(restoredEffort);
 					nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to ${amount}`);
 				}
-				else {
-					restoredEffort = { type, amount:0 };
-					character.effort.push(restoredEffort);
-					nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to 0`);
-				}
+				// else {
+				// 	restoredEffort = { type, amount:0 };
+				// 	character.effort.push(restoredEffort);
+				// 	nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to Zero`);
+				// }
 			}
 			character.injuries = character.injuries.filter((el) => (el.received + el.duration) > gamestate.round || el.permanent);
 			character.save();

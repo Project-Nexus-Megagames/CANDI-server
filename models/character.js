@@ -38,7 +38,6 @@ const CharacterSchema = new Schema({
 	effort: [effortSchema],
 	bitsyCount: { type: Number, default: 0 },
 	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
-	color: { type: String, default: 'ffffff' },
 	knownContacts: [{ type: Schema.Types.ObjectId, ref: 'Character' }],
 	injuries: [injurySchema],
 	profilePicture: { type: String }
