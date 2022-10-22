@@ -2,6 +2,6 @@
   "jwtPrivateKey": "spooky",
   "dbName": "urSeason2DB",
   "clientURL": "https://ur-candi-app.herokuapp.com/",
-	"serverURL": "https://ur-candi-server.herokuapp.com/",
+	"serverURL": "https://candi-server.onrender.com/",
   "socketCORS": "https://ur-candi-app.herokuapp.com"
 }
