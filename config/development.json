@@ -1,7 +1,7 @@
 {
-  "jwtPrivateKey": "rawr",
-	"dbName": "urSeason2DB",
+	"jwtPrivateKey": "rawr",
+	"dbName": "developmentDB",
 	"clientURL": "http://localhost:3000/",
 	"serverURL": "http://localhost:5000/",
-  "socketCORS": "http://localhost:3000"
+	"socketCORS": "http://localhost:3000"
 }
