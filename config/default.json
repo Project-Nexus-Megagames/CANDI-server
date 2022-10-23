@@ -2,7 +2,7 @@
   "jwtPrivateKey": "spooky",
   "dbName": "tempestDB",
   "version": "1.0",
-  "clientURL": "https://candi-app.herokuapp.com/",
-	"serverURL": "https://candi-server.herokuapp.com/",
-  "socketCORS": "https://candi-app.herokuapp.com"
+  "clientURL": "https://candi-app.onrender.com/",
+	"serverURL": "https://candi-server.onrender.com/",
+  "socketCORS": "https://candi-app.onrender.com"
 }
