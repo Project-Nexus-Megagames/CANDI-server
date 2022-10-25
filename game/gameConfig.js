@@ -9,10 +9,11 @@ const _ = require('lodash');
 const { at } = require('lodash');
 
 async function createGameConfig(data, user) {
-
 	const { actionTypes, effortTypes } = data;
 	const docs = await GameConfig.find();
-	if 	(docs.length >= 1) {await GameConfig.deleteMany();}
+	if (docs.length >= 1) {
+		await GameConfig.deleteMany();
+	}
 
 	let dupesCheck = [];
 	for (const aT of actionTypes) {
@@ -33,8 +34,14 @@ async function createGameConfig(data, user) {
 	}
 
 	for (const aT of actionTypes) {
-		aT.subTypes = aT.subTypes.split(/[ ,]+/);
-		if (aT.subTypes.every(el => el === '')) {aT.subTypes = [];}
+		aT.subTypes = aT.subTypes
+			.split(/[,]+/)
+			.map((el) => el.trim())
+			.filter((element) => element);
+		console.log('HEY', aT.subTypes);
+		if (aT.subTypes.every((el) => el === '')) {
+			aT.subTypes = [];
+		}
 	}
 
 	let gameConfig = new GameConfig({
@@ -57,16 +64,18 @@ async function createGameConfig(data, user) {
 	logger.info(`Game Config ${gameConfig.name} created.`);
 	try {
 		nexusEvent.emit('respondClient', 'create', [gameConfig]);
-		return { message: `Config ${gameConfig.name} Creation Success`, type: 'success' };
-	 }
-	 catch (err) {
+		return {
+			message: `Config ${gameConfig.name} Creation Success`,
+			type: 'success'
+		};
+	} catch (err) {
 		console.log(err);
 		logger.error(`message : Server Error: ${err}`);
 		return {
 			message: `message : Server Error: ${err.message}`,
 			type: 'error'
 		};
-	 }
+	}
 }
 
 module.exports = {
