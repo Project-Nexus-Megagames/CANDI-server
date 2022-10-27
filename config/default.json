@@ -1,8 +1,8 @@
 {
-  "jwtPrivateKey": "spooky",
-  "dbName": "tempestDB",
-  "version": "1.0",
-  "clientURL": "https://candi-app.onrender.com/",
+	"jwtPrivateKey": "spooky",
+	"dbName": "tempestDB",
+	"version": "1.0",
+	"clientURL": "https://candi.onrender.com/",
 	"serverURL": "https://candi-server.onrender.com/",
-  "socketCORS": "https://candi-app.onrender.com"
+	"socketCORS": "https://candi.onrender.com"
 }

@@ -1,7 +1,7 @@
 {
-  "jwtPrivateKey": "spooky",
-  "dbName": "urSeason2DB",
-  "clientURL": "https://candi-app.onrender.com/",
+	"jwtPrivateKey": "spooky",
+	"dbName": "urSeason2DB",
+	"clientURL": "https://candi.onrender.com/",
 	"serverURL": "https://candi-server.onrender.com/",
-  "socketCORS": "https://candi-app.onrender.com"
+	"socketCORS": "https://candi.onrender.com"
 }
