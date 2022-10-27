@@ -4,5 +4,5 @@
 	"version": "1.0",
 	"clientURL": "https://candi.onrender.com/",
 	"serverURL": "https://candi-server.onrender.com/",
-	"socketCORS": "https://candi.onrender.com"
+	"socketCORS": ["https://candi.onrender.com", "https://candi-app.onrender.com"]
 }
