@@ -9,7 +9,8 @@ const {
 	supportAgenda,
 	assignController,
 	diceResult,
-	setNewsWorthy
+	setNewsWorthy,
+	editActionTags
 } = require('../../game/actions');
 const { addArrayValue } = require('../../middleware/util/arrayCalls');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
@@ -122,12 +123,7 @@ module.exports = {
 			}
 			case 'tags': {
 				// Expects data to be a Action object with edits
-				const action = await Action.findById(data.id);
-				for (const item of data.tags) {
-					await addArrayValue(action.tags, item);
-				}
-				action.markModified('tags');
-				await action.save();
+				response = await editActionTags(data);
 				break;
 			}
 			case 'controlReject': {

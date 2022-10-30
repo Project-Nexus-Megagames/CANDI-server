@@ -63,14 +63,12 @@ router.post('/', async function(req, res, next) {
 		const { data } = req.body;
 		console.log(req.body);
 		try {
-			let newElement = new Location(data);
-			const docs = await Location.find({ name: data.name });
+			let newElement = new Location(req.body);
+			const docs = await Location.find({ name: req.body.name });
 
 			if (docs.length < 1) {
 				newElement = await newElement.save();
-				const location = await Location.findById(newElement._id).populate(
-					'creator'
-				);
+				const location = await Location.findById(newElement._id);
 				logger.info(`Location "${newElement.name}" created.`);
 				res.status(200).json(location);
 			}

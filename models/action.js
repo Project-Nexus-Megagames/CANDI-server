@@ -26,7 +26,7 @@ const submissionSchema = new Schema({
 	effort: effortSchema, // Initial effort allocated
 	assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	collaborators: [{ type: ObjectId, ref: 'Character' }], // Characters involved in the ACTION
-	location: { type: ObjectId, ref: 'Location' }
+	location: { type: ObjectId, ref: 'Location', required: true, default: '635ead6b88ebd0b658287e2b' }
 }, { timestamps: true });
 
 const resultSchema = new Schema({
@@ -79,13 +79,14 @@ ActionSchema.methods.submit = async function(submission, submittedActionType, co
 	console.log(submission);
 	// Expects description, intent, effort, assets, collaborators
 	if (!submission.description) throw Error('A submission must have a description...');
-	// if (!submission.intent) throw Error('You must have an intent for an action...');
+	if (!submission.intent) throw Error('You must have an intent for an action...');
+	if (!submission.location) throw Error('You must have an location for an action...');
 
 	// this.markModified('status');
 
-	const { description, intent, effort } = submission;
+	const { description, intent, effort, location } = submission;
 	this.submission = {
-		description, intent, effort
+		description, intent, effort, location
 	};
 
 	const changed = [];
@@ -239,6 +240,10 @@ ActionSchema.methods.populateMe = async function() {
 	{
 		path: 'effects',
 		populate: { path: 'effector', select: 'characterName profilePicture' }
+	},
+	{
+		path: 'submission',
+		populate: { path: 'location', select: 'name' }
 	},
 	{
 		path: 'results',

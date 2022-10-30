@@ -30,6 +30,7 @@ router.get('/', async function(req, res, next) {
 				}).populate('creator', 'characterName username playerName profilePicture')
 				.populate({ path: 'results', populate: { path: 'resolver', select: 'characterName profilePicture' } })
 				.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture' } })
+				.populate({ path: 'submission', populate: { path: 'location', select: 'name' } })
 				.populate('controller', 'characterName');
 			res.status(200).json(actions);
 		}
@@ -60,17 +61,26 @@ router.get('/:id', async (req, res, next) => {
 			}
 			else if (myCharacter.tags.some(el => el === 'Control')) { // if the user is control
 				const actions = await Action.find()
-					.populate('comments')
-					.populate('creator');
-				// console.log(projects);
+					.populate({
+						path: 'comments',
+						populate: { path: 'commentor', select: 'characterName profilePicture' }
+					}).populate('creator', 'characterName username playerName profilePicture')
+					.populate({ path: 'results', populate: { path: 'resolver', select: 'characterName profilePicture' } })
+					.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture' } })
+					.populate({ path: 'submission', populate: { path: 'location', select: 'name' } })
+					.populate('controller', 'characterName');
 				res.status(200).json(actions);
 			}
 			else {
 				const actions = await Action.find({ creator: myCharacter._id })
-					.populate('comments')
-					.populate('creator')
+					.populate({
+						path: 'comments',
+						populate: { path: 'commentor', select: 'characterName profilePicture' }
+					}).populate('creator', 'characterName username playerName profilePicture')
+					.populate({ path: 'results', populate: { path: 'resolver', select: 'characterName profilePicture' } })
+					.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture' } })
+					.populate({ path: 'submission', populate: { path: 'location', select: 'name' } })
 					.populate('controller', 'characterName');
-				// console.log(projects);
 				res.status(200).json(actions);
 			}
 

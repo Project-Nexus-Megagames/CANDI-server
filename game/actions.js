@@ -134,7 +134,20 @@ async function supportAgenda(data) {
 	catch(err) {
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
+}
 
+async function editActionTags(data) {
+	try {
+		let action = await Action.findById(data.id);
+		action.tags = data.tags;
+		action = await action.save();
+		await action.populateMe();
+		nexusEvent.emit('respondClient', 'update', [action]);
+		return { message: `${action.name} tags edited`, type: 'success' };
+	}
+	catch (err) {
+		return { message: `Server Error: ${err.message}`, type: 'error' };
+	}
 }
 
 async function assignController(data) {
@@ -482,12 +495,16 @@ async function editAction(data, user) {
 		new: true
 	}).populate('creator');
 
-	const formattedArgs = [];
-	for (const arg of data.submission.args) {
-		formattedArgs.push({ text: arg, modifier: 0 });
+	if (data.submission.args) {
+		const formattedArgs = [];
+		for (const arg of data.submission.args) {
+			formattedArgs.push({ text: arg, modifier: 0 });
+		}
+
+		action.arguments = formattedArgs;		
 	}
 
-	action.arguments = formattedArgs;
+
 
 	if (action.submission.effort.amount !== oldAction.submission.effort.amount) {
 		let character = await Character.findById(action.creator._id).populate('lentAssets');
@@ -758,5 +775,6 @@ module.exports = {
 	supportAgenda,
 	assignController,
 	diceResult,
-	setNewsWorthy
+	setNewsWorthy,
+	editActionTags
 };
