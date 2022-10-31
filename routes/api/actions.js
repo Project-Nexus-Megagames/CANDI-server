@@ -60,7 +60,7 @@ router.get('/:id', async (req, res, next) => {
 				res.status(404).send('No Character Found');
 			}
 			else if (myCharacter.tags.some(el => el === 'Control')) { // if the user is control
-				const actions = await Action.find()
+				const actions = await Action.find({submission: {$exists: true}})
 					.populate({
 						path: 'comments',
 						populate: { path: 'commentor', select: 'characterName profilePicture' }
