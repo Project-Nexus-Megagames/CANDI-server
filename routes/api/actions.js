@@ -23,7 +23,7 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const actions = await Action.find()
+			const actions = await Action.find({submission: {$exists: true}})
 				.populate({
 					path: 'comments',
 					populate: { path: 'commentor', select: 'characterName profilePicture' }
@@ -167,53 +167,17 @@ router.patch('/deleteAll', async function(req, res) {
 
 // ~~~Game Routes~~~
 
-router.post('/project', async function(req, res, next) {
-	logger.info('POST Route: api/action/project call made...');
+router.post('/test', async function(req, res, next) {
+	logger.info('POST Route: AAAAAAAAAAA...');
 	if (req.timedout) {
 		next();
 	}
 	else {
-		const { data } = req.body;
-		try {
-			let newElement = new Action(data);
-			newElement.status.draft = false;
-			newElement.status.published = true;
-
-			newElement = await newElement.save();
-			res.status(200).json(newElement);
-			nexusEvent.emit('updateActions');
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
+		const actions = await Action.find({submission: {$exists: false}}).populate('creator', 'characterName')
+		res.status(200).json(actions);
 	}
 });
 
-router.patch('/project', async function(req, res, next) {
-	logger.info('patch Route: api/action/project call made...');
-	if (req.timedout) {
-		next();
-	}
-	else {
-		const { description, intent, progress, players, image, id } = req.body.data;
-		try {
-			const project = await Action.findById(id);
-			project.status.draft = false;
-			project.status.published = true;
-			project.description = description;
-			project.intent = intent;
-			project.progress = progress;
-			project.players = players;
-			project.image = image;
-			project.save();
 
-			nexusEvent.emit('updateActions');
-			res.status(200).json(project);
-		}
-		catch (err) {
-			httpErrorHandler(res, err);
-		}
-	}
-});
 
 module.exports = router;
