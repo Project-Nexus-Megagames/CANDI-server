@@ -79,7 +79,7 @@ ActionSchema.methods.submit = async function(submission, submittedActionType, co
 	console.log(submission);
 	// Expects description, intent, effort, assets, collaborators
 	if (!submission.description) throw Error('A submission must have a description...');
-	if (!submission.intent) throw Error('You must have an intent for an action...');
+	// if (!submission.intent) throw Error('You must have an intent for an action...');
 	if (!submission.location) throw Error('You must have an location for an action...');
 
 	// this.markModified('status');
