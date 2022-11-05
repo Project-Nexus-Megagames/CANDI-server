@@ -38,8 +38,7 @@ async function modifyGameState(data, user) {
 
 		nexusEvent.emit('respondClient', 'update', [gamestate]);
 		return { message: 'Gamestate edit Success', type: 'success' };
-	}
-	catch (err) {
+	} catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
@@ -61,8 +60,7 @@ async function closeRound(control) {
 
 		nexusEvent.emit('respondClient', 'update', [gamestate]);
 		return { message: 'Round Closed Success', type: 'success' };
-	}
-	catch (err) {
+	} catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
@@ -87,23 +85,23 @@ async function calculateDie(action) {
 	for (let j = 0; j < dice; j++) {
 		let face = 0;
 		switch (j) {
-		case 3:
-			face = d8();
-			result = result + face;
-			response = response + `1d8: ${face}, `;
-			break;
-		case 2:
-			face = d6();
-			result = result + face;
-			response = response + `1d6: ${face}, `;
-			break;
-		case 1:
-			face = d4();
-			result = result + face;
-			response = response + `1d4: ${face}, `;
-			break;
-		default:
-			break;
+			case 3:
+				face = d8();
+				result = result + face;
+				response = response + `1d8: ${face}, `;
+				break;
+			case 2:
+				face = d6();
+				result = result + face;
+				response = response + `1d6: ${face}, `;
+				break;
+			case 1:
+				face = d4();
+				result = result + face;
+				response = response + `1d4: ${face}, `;
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -147,27 +145,37 @@ async function nextRound(control) {
 		for (const character of await Character.find()) {
 			character.lentAssets = [];
 			character.effort = [];
-			nextRoundLog.logMessages.push(`Restoring effort and auto-healing injuries of ${character.characterName}`);
+			nextRoundLog.logMessages.push(
+				`Restoring effort and auto-healing injuries of ${character.characterName}`
+			);
 			for (const effort of config.effortTypes) {
 				const type = effort.type;
 				const amount = effort.effortAmount;
 				const tag = effort.tag;
-				let restoredEffort = { };
-				if (character.tags.some(el => el.toLowerCase() === tag.toLowerCase())) {
+				let restoredEffort = {};
+				if (
+					character.tags.some((el) => el.toLowerCase() === tag.toLowerCase())
+				) {
 					restoredEffort = { type, amount };
 					character.effort.push(restoredEffort);
-					nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to ${amount}`);
+					nextRoundLog.logMessages.push(
+						`Restoring effort ${type} of ${character.characterName} to ${amount}`
+					);
+				} else {
+					restoredEffort = { type, amount: 0 };
+					character.effort.push(restoredEffort);
+					nextRoundLog.logMessages.push(
+						`Restoring effort ${type} of ${character.characterName} to Zero`
+					);
 				}
-				// else {
-				// 	restoredEffort = { type, amount:0 };
-				// 	character.effort.push(restoredEffort);
-				// 	nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to Zero`);
-				// }
 			}
-			character.injuries = character.injuries.filter((el) => (el.received + el.duration) > gamestate.round || el.permanent);
+			character.injuries = character.injuries.filter(
+				(el) => el.received + el.duration > gamestate.round || el.permanent
+			);
 			character.save();
-			console.log(`Restoring effort and auto-healing injuries of ${character.characterName}`);
-
+			console.log(
+				`Restoring effort and auto-healing injuries of ${character.characterName}`
+			);
 		}
 
 		let used = await Asset.find().populate('with');
@@ -233,8 +241,7 @@ async function nextRound(control) {
 			controlLog
 		]);
 		return { message: 'Gamestate pushed!', type: 'success' };
-	}
-	catch (err) {
+	} catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
@@ -254,23 +261,22 @@ async function easterEgg(data) {
 		char = await char.save();
 		// Do Bitsy Action
 		switch (action) {
-		case 'feed':
-			gamestate.hunger = gamestate.hunger + 20;
-			nexusEvent.emit('respondClient', 'bitsy', { action });
-			break;
-		case 'play':
-			gamestate.happiness = gamestate.happiness + 20;
-			nexusEvent.emit('respondClient', 'bitsy', { action });
-			break;
-		default:
-			break;
+			case 'feed':
+				gamestate.hunger = gamestate.hunger + 20;
+				nexusEvent.emit('respondClient', 'bitsy', { action });
+				break;
+			case 'play':
+				gamestate.happiness = gamestate.happiness + 20;
+				nexusEvent.emit('respondClient', 'bitsy', { action });
+				break;
+			default:
+				break;
 		}
 		// send response event to trigger new animation
 		gamestate = await gamestate.save();
 		nexusEvent.emit('respondClient', 'update', [gamestate, char]);
 		return { message: 'Bitsy was Fed!', type: 'success' };
-	}
-	catch (err) {
+	} catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
