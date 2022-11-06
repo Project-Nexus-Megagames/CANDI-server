@@ -1,18 +1,4 @@
-const {
-	createAction,
-	effectAction,
-	deleteAction,
-	editAction,
-	controlOverride,
-	deleteSubObject,
-	editSubObject,
-	supportAgenda,
-	assignController,
-	diceResult,
-	setNewsWorthy,
-	editActionTags
-} = require('../../game/actions');
-const { addArrayValue } = require('../../middleware/util/arrayCalls');
+const {	createAction,	effectAction,	deleteAction,	editAction,	controlOverride,	deleteSubObject,	editSubObject,	supportAgenda,	assignController,	diceResult,	setNewsWorthy,	editActionTags} = require('../../game/actions');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
 const { Action } = require('../../models/action');
 const nexusEvent = require('../../middleware/events/events');

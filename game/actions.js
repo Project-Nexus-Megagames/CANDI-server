@@ -289,8 +289,8 @@ async function editSubObject(data, user) {
 				console.log(`Detected invalid edit: ${el} is ${data.result[el]}`);
 			}
 		}
-		action.diceresult = data.dice;
-		action.arguments = data.arguments;
+		data.dice ? action.diceresult = data.dice : null;
+		data.arguments ? action.arguments = data.arguments: null;
 		action = await action.save();
 		await action.populateMe();
 
