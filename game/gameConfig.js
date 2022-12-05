@@ -9,7 +9,7 @@ const _ = require('lodash');
 
 async function createGameConfig(data, user) {
 
-	const { actionTypes, effortTypes } = data;
+	const { actionTypes, effortTypes, stats } = data;
 	const docs = await GameConfig.find();
 	if 	(docs.length >= 1) {await GameConfig.deleteMany();}
 
@@ -34,7 +34,8 @@ async function createGameConfig(data, user) {
 
 	let gameConfig = new GameConfig({
 		actionTypes,
-		effortTypes
+		effortTypes,
+		stats
 	});
 	gameConfig = await gameConfig.save();
 

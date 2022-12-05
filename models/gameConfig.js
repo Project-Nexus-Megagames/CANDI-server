@@ -23,11 +23,18 @@ const EffortTypeSchema = new Schema ({
 	effortAmount: { type: Number, required: true, Default: 0 }
 });
 
+const StatSchema = new Schema ({
+	model: { type: String, default: 'Stat' },
+	type: { type: String, default: 'Some Stat', required: true },
+	statAmount: { type: Number, default: 0, required: true }
+});
+
 const GameConfigSchema = new Schema({
 	model: { type: String, default: 'GameConfig' },
 	name: { type: String, required: true, default: 'Quack' },
 	description: { type: String, required: false },
 	actionTypes: [ActionTypeSchema],
+	stats: [StatSchema],
 	effortTypes: [EffortTypeSchema]
 });
 
