@@ -24,7 +24,7 @@ const EffortTypeSchema = new Schema ({
 });
 
 const StatSchema = new Schema ({
-	model: { type: String, default: 'Stat' },
+	submodel: { type: String, default: 'Stat' },
 	type: { type: String, default: 'Some Stat', required: true },
 	statAmount: { type: Number, default: 0, required: true }
 });
@@ -34,7 +34,8 @@ const GameConfigSchema = new Schema({
 	name: { type: String, required: true, default: 'Quack' },
 	description: { type: String, required: false },
 	actionTypes: [ActionTypeSchema],
-	stats: [StatSchema],
+	globalStats: [StatSchema],
+	characterStats: [StatSchema],
 	effortTypes: [EffortTypeSchema]
 });
 
@@ -48,4 +49,4 @@ const ActionType = mongoose.model('ActionType', ActionTypeSchema);
 const EffortType = mongoose.model('EffortType', EffortTypeSchema);
 
 
-module.exports = { GameConfig, ActionType, EffortType };
+module.exports = { GameConfig, ActionType, EffortType, StatSchema };

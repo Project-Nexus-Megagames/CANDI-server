@@ -6,10 +6,11 @@ const { logger } = require('../middleware/log/winston');
 const { History } = require('../models/history');
 const nexusError = require('../middleware/util/throwError');
 const _ = require('lodash');
+const { Character } = require('../models/character');
 
 async function createGameConfig(data, user) {
 
-	const { actionTypes, effortTypes, stats } = data;
+	const { actionTypes, effortTypes, globalStats, characterStats } = data;
 	const docs = await GameConfig.find();
 	if 	(docs.length >= 1) {await GameConfig.deleteMany();}
 
@@ -35,9 +36,15 @@ async function createGameConfig(data, user) {
 	let gameConfig = new GameConfig({
 		actionTypes,
 		effortTypes,
-		stats
+		characterStats,
+		globalStats
 	});
 	gameConfig = await gameConfig.save();
+
+	for (const char of await Character.find()) {
+		char.characterStats = characterStats;
+		await char.save();
+	}
 
 	const log = new History({
 		docType: 'gameConfig',

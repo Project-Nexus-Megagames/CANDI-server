@@ -20,6 +20,12 @@ const effortSchema = new Schema ({
 	amount: { type: Number, default: 0, required: true }
 });
 
+const StatSchema = new Schema ({
+	submodel: { type: String, default: 'Stat' },
+	type: { type: String, default: 'Some Stat', required: true },
+	statAmount: { type: Number, default: 0, required: true }
+});
+
 const CharacterSchema = new Schema({
 	model:  { type: String, default: 'Character' },
 	playerName: { type: String, minlength: 1, maxlength: 50, required: true },
@@ -36,9 +42,7 @@ const CharacterSchema = new Schema({
 	standingOrders: { type: String },
 	lentAssets: [{ type: ObjectId, ref: 'Asset' }],
 	effort: [effortSchema],
-	bitsyCount: { type: Number, default: 0 },
-	bitsy: { type: String, default: '2021-03-24T17:52:50.969Z' },
-	color: { type: String, default: 'ffffff' },
+	characterStats: [StatSchema],
 	knownContacts: [{ type: Schema.Types.ObjectId, ref: 'Character' }],
 	injuries: [injurySchema],
 	profilePicture: { type: String }
