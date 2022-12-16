@@ -38,7 +38,7 @@ async function createAction(data, user) {
 		}
 		if (!data.submission) throw Error('You must include a submission...');
 		const gamestate = await GameState.findOne();
-		if (gamestate.status !== 'Active') throw Error('Round is not active.')
+		if (gamestate.status !== 'Active') throw Error('Round is not active.');
 
 		const { type, creator, name, numberOfInjuries, submission, attachments } = data;
 
@@ -558,10 +558,10 @@ async function effectAction(data) {
 			controlLog.message = ' ';
 			for (const el in document) {
 				if (parseInt(document[el]) !== 0) {
-					const oldAspectValue = old[el];
-					old[el] = old[el] + parseInt(document[el]);
+					const oldAspectValue = old.globalStats.find(stat => stat.type === el).statAmount;
+					old.globalStats.find(stat => stat.type === el).statAmount += parseInt(document[el]);
 					await action.addEffect({
-						description: `${el} changed from ${oldAspectValue} to ${old[el]} `,
+						description: `${el} changed from ${oldAspectValue} to ${oldAspectValue + parseInt(document[el])} `,
 						type: 'aspect',
 						status: 'Private',
 						effector
@@ -573,11 +573,40 @@ async function effectAction(data) {
 						type: 'Info'
 					});
 
-					controlLog.message = controlLog.message + ` Aspect ${el} was changed from ${oldAspectValue} to ${old[el]}.`;
+					controlLog.message = controlLog.message + ` Aspect ${el} was changed from ${oldAspectValue} to ${old.globalStats[el]}.`;
 				}
 			}
 			await controlLog.save();
 			await old.save();
+			nexusEvent.emit('respondClient', 'update', [old]);
+			return;
+		case 'character-stat':
+			old = await Character.findById(owner);
+			controlLog.message = ' ';
+			for (const el in document) {
+				if (parseInt(document[el]) !== 0) {
+					// const oldAspectValue = old.characterStats[el].characterStats;
+					// old.characterStats[el].characterStats = old.characterStats[el].characterStats + parseInt(document[el]);
+					const oldAspectValue = await old.restoreStat(parseInt(document[el]), el);
+					await action.addEffect({
+						description: `${el} changed from ${document[el]} to ${oldAspectValue} `,
+						type: 'aspect',
+						status: 'Private',
+						effector
+					});
+
+					await action.comment({
+						body: `${el} has changed`,
+						commentor: effector,
+						type: 'Info'
+					});
+
+					controlLog.message = controlLog.message + ` character-stat ${el} was changed from ${document[el]} to ${oldAspectValue}.`;
+				}
+			}
+			await controlLog.save();
+			await old.save();
+			old = await old.populateMe();
 			nexusEvent.emit('respondClient', 'update', [old]);
 			return;
 		case 'new':
@@ -602,7 +631,7 @@ async function effectAction(data) {
 				if (!old.unlockedBy.includes(owner)) {
 					old.unlockedBy.push(owner);
 					await action.addEffect({ description: `New location unlocked: ${old.name} `, type: 'location',	status: 'Temp-Hidden', effector
-				});
+					});
 					controlLog.message = `New location unlocked: ${old.name} for ${owner} `;
 					locsForMessage = locsForMessage + old.name + ', ';
 					await old.save();

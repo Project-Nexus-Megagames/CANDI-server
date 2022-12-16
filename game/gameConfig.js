@@ -7,11 +7,14 @@ const { History } = require('../models/history');
 const nexusError = require('../middleware/util/throwError');
 const _ = require('lodash');
 const { Character } = require('../models/character');
+const { GameState } = require('../models/gamestate');
 
 async function createGameConfig(data, user) {
-
 	const { actionTypes, effortTypes, globalStats, characterStats } = data;
 	const docs = await GameConfig.find();
+	const gamestate = await GameState.findOne();
+
+	if (gamestate.round > 1) throw Error('Editing Gamestate After Round 1 is Disabled for... uh.. reasons. Talk to Scott');
 	if 	(docs.length >= 1) {await GameConfig.deleteMany();}
 
 	let dupesCheck = [];
@@ -45,6 +48,9 @@ async function createGameConfig(data, user) {
 		char.characterStats = characterStats;
 		await char.save();
 	}
+
+	gamestate.globalStats = globalStats;
+	await gamestate.save();
 
 	const log = new History({
 		docType: 'gameConfig',

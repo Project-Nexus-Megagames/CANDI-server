@@ -88,6 +88,22 @@ CharacterSchema.methods.restoreEffort = async function(amount, type, config) {
 	}
 };
 
+CharacterSchema.methods.restoreStat = async function(amount, type) {
+	try {
+		const characterStats = this.characterStats.find(ef => ef.type.toLowerCase() === type.toLowerCase());
+		if (!characterStats) throw Error(`Stat for type ${type} is undefined`);
+		characterStats.statAmount = characterStats.statAmount + amount;
+		let character = await this.save();
+		character = await character.populateMe();
+
+		nexusEvent.emit('respondClient', 'update', [ character ]);
+		return characterStats.statAmount;
+	}
+	catch (err) {
+		console.log(err); // Add proper error handling for CANDI
+	}
+};
+
 CharacterSchema.methods.populateMe = async function() {
 	return this
 		.populate(['knownContacts', 'effort']);
