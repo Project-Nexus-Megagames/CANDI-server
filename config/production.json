@@ -1,7 +1,7 @@
 {
   "jwtPrivateKey": "spooky",
-  "dbName": "goblinCityDB",
-  "clientURL": "https://candi-app.herokuapp.com/",
-	"serverURL": "https://candi-server.herokuapp.com/",
-  "socketCORS": "https://candi-app.herokuapp.com"
+  "dbName": "gw2DB",
+  "clientURL": "https://godswar-app.onrender.com/",
+	"serverURL": "https://godswar-server.onrender.com/",
+  "socketCORS": "https://godswar-app.onrender.com"
 }

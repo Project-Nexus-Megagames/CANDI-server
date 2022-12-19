@@ -17,7 +17,7 @@ const storage = new CloudinaryStorage({
 	},
 	params: {
 		transformation: [ { if: 'w  > 500' }, { width: 500, crop: 'scale' }, { if: 'end' }],
-		folder: 'goblinCity' }
+		folder: 'godwar2' }
 });
 
 const uploadCloudSmall = multer({ storage });
