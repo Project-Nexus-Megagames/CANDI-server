@@ -1,6 +1,6 @@
 {
   "jwtPrivateKey": "spooky",
-  "dbName": "gw2DB",
+  "dbName": "sunsetDB",
   "clientURL": "https://godswar-app.onrender.com/",
 	"serverURL": "https://godswar-server.onrender.com/",
   "socketCORS": "https://godswar-app.onrender.com"
