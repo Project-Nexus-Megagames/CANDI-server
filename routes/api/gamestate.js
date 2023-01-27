@@ -120,11 +120,11 @@ router.post('/initGameState', async function(req, res) {
 		happiness: 100,
 		discovered: false,
 		round: 0,
-		tag: 'GC' });
+		tag: 'sunshine' });
 	try {
-		for (const el in aspects) {
-			newGameState[el] = aspects[el];
-		}
+		// for (const el in aspects) {
+		// 	newGameState[el] = aspects[el];
+		// }
 		newGameState = await newGameState.save();
 		const locat = await GameState.findOne();
 		res.status(200).json(locat);

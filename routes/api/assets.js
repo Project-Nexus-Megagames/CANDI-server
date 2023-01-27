@@ -130,9 +130,6 @@ router.post('/initAssets', async function(req, res) {
 		for (const ass of assets) {
 			const newAsset = new Asset(ass);
 			switch (newAsset.type) {
-			case 'Asset':
-				newAsset.lendable = true;
-				break;
 			default:
 				newAsset.uses = 999;
 				break;
