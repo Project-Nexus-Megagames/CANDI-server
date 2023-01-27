@@ -26,7 +26,7 @@ module.exports = {
 				response = await deleteAsset(data, client.username);
 				break;
 			}
-			case 'create': {
+			case 'new': {
 				// console.log(data);
 				response = await addAsset(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'addAssetState') : null ;
