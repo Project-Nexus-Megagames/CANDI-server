@@ -8,6 +8,7 @@ const { GameConfig } = require('../models/gameConfig');
 const { History } = require('../models/history');
 const { NextRoundLog, ControlLog } = require('../models/log');
 const { d10, d8, d6, d4 } = require('../scripts/util/dice');
+const { unhideAll } = require('./assets');
 
 async function modifyGameState(data, user) {
 	const controlLog = new ControlLog();
@@ -123,10 +124,10 @@ async function nextRound(control) {
 		const assets = [];
 		const actions = [];
 
-		for (const asset of await Asset.find({ 'status.lent': true }).populate(
+		for (const asset of await Asset.find({ status: 'lent' }).populate(
 			'with'
 		)) {
-			asset.status.lent = false;
+      asset.toggleStatus('lent', true);
 			asset.currentHolder = null;
 			await asset.save();
 			console.log(`Unlending ${asset.name}`);
@@ -134,15 +135,7 @@ async function nextRound(control) {
 			assets.push(asset);
 		}
 
-		let hidden = await Asset.find().populate('with');
-		hidden = hidden.filter((el) => el.status.hidden === true);
-		for (const ass of hidden) {
-			console.log(`Unhiding ${ass.name}`);
-			nextRoundLog.logMessages.push(`Unhiding ${ass.name}`);
-			ass.status.hidden = false;
-			await ass.save();
-			assets.push(ass);
-		}
+    unhideAll();
 
 		for (const character of await Character.find()) {
 			character.lentAssets = [];

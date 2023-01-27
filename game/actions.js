@@ -21,9 +21,7 @@ async function removeEffort(data) {
 
 async function addEffort(data) {
 	console.log(data);
-	let character = await Character.findOne({ characterName: data.creator })
-		.populate('assets')
-		.populate('lentAssets');
+	let character = await Character.findOne({ characterName: data.creator });
 	character = await character.restoreEffort(data.effort, data.type);
 	return character;
 }
@@ -475,7 +473,7 @@ async function editAction(data, user) {
 	}).populate('creator');
 
 	if (action.submission.effort.amount !== oldAction.submission.effort.amount) {
-		let character = await Character.findById(action.creator._id).populate('lentAssets');
+		let character = await Character.findById(action.creator._id);
 		character = await character.expendEffort(action.submission.effort.amount - oldAction.submission.effort.amount, action.submission.effort.effortType);
 		nexusEvent.emit('respondClient', 'update', [character]);
 	}

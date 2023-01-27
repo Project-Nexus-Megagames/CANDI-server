@@ -64,36 +64,35 @@ async function modifyAsset(data, user) {
 
 async function addAsset(data, user) {
 	try {
-		const { asset, arcane } = data;
-		const gamestate = await GameState.findOne()
-		
+		const { asset } = data;
+		const gamestate = await GameState.findOne();
 
 		let newAsset;
 		newAsset = new Asset(asset);
-		if (gamestate.status === 'Resolution') newAsset.status.hidden = true;
+    newAsset = await newAsset.save();
 
-		switch (data.asset.type) {
-		case 'Asset':
-			newAsset.status.lendable = true;
-			break;
-		case 'Trait':
-			newAsset.status.lendable = false;
-			break;
-		case 'Power':
-			newAsset.status.lendable = false;
-			break;
-		case 'Territory':
-			newAsset.status.lendable = true;
-			newAsset.uses = 999;
-			break;
-		case 'Title':
-			newAsset.status.lendable = false;
-			break;
-		default:
-			throw Error(`Type '${data.asset.type}' is Invalid!`);
-		}
+		if (gamestate.status === 'Resolution') newAsset.toggleStatus('hidden', true);
+		// switch (data.asset.type) {
+		// case 'Asset':
+		// 	newAsset.status.lendable = true;
+		// 	break;
+		// case 'Trait':
+		// 	newAsset.status.lendable = false;
+		// 	break;
+		// case 'Power':
+		// 	newAsset.status.lendable = false;
+		// 	break;
+		// case 'Territory':
+		// 	newAsset.status.lendable = true;
+		// 	newAsset.uses = 999;
+		// 	break;
+		// case 'Title':
+		// 	newAsset.status.lendable = false;
+		// 	break;
+		// default:
+		// 	throw Error(`Type '${data.asset.type}' is Invalid!`);
+		// }
 
-		newAsset = await newAsset.save();
 
 		const controlLog = new ControlLog({
 			control: data.loggedInUser.username,
@@ -150,7 +149,7 @@ async function lendAsset(data, user) {
 			};
 		}
 		else {
-			if (lendingBoolean === asset.status.lent) {
+			if (asset.status.some(el => el === 'lent')) {
 				// this is a check to see if someone is trying to relend a previously lent asset
 				return {
 					message: `You cannot lend an already loaned asset "${asset.name}"`,
@@ -165,7 +164,7 @@ async function lendAsset(data, user) {
 			else {
 				asset.currentHolder = asset.owner;
 			}
-			asset.status.lent = lendingBoolean;
+			asset.toggleStatus('lent', lendingBoolean);
 			asset = await asset.save();
 
 			log.document = asset;
@@ -215,12 +214,10 @@ async function deleteAsset(data, user) {
 
 async function unhideAll() {
 	try {
-		let assets = await Asset.find().populate('with');
-		assets = assets.filter((el) => el.status.hidden === true);
+		const assets = await Asset.find({ status: 'hidden' }).populate('with');
 		const res = [];
 		for (const ass of assets) {
 			console.log(ass.name);
-			ass.status.hidden = false;
 			await ass.save();
 			res.push(ass);
 		}
