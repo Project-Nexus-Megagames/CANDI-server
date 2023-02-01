@@ -16,14 +16,19 @@ const ActionTypeSchema = new Schema({
 	subTypes: [{ type: String }]
 });
 
-const EffortTypeSchema = new Schema ({
+const EffortTypeSchema = new Schema({
 	model: { type: String, default: 'EffortType' },
 	tag: { type: String, default: 'PC' },
 	type: { type: String, default: 'Normal', required: true },
 	effortAmount: { type: Number, required: true, Default: 0 }
 });
 
-const StatSchema = new Schema ({
+const ResourceTypeSchema = new Schema({
+	model: { type: String, default: 'ResourceType' },
+	type: { type: String, default: 'Asset', required: true }
+});
+
+const StatSchema = new Schema({
 	submodel: { type: String, default: 'Stat' },
 	type: { type: String, default: 'Some Stat', required: true },
 	statAmount: { type: Number, default: 0, required: true }
@@ -33,20 +38,19 @@ const GameConfigSchema = new Schema({
 	model: { type: String, default: 'GameConfig' },
 	name: { type: String, required: true, default: 'Quack' },
 	description: { type: String, required: false },
+	effortTypes: [EffortTypeSchema],
+	resourceTypes: [ResourceTypeSchema],
 	actionTypes: [ActionTypeSchema],
 	globalStats: [StatSchema],
-	characterStats: [StatSchema],
-	effortTypes: [EffortTypeSchema]
+	characterStats: [StatSchema]
 });
 
-GameConfigSchema.methods.populateMe = function() {
-	return this
-		.populate(['actionTypes', 'effortTypes']);
+GameConfigSchema.methods.populateMe = function () {
+	return this.populate(['actionTypes', 'effortTypes']);
 };
 
 const GameConfig = mongoose.model('GameConfig', GameConfigSchema);
 const ActionType = mongoose.model('ActionType', ActionTypeSchema);
 const EffortType = mongoose.model('EffortType', EffortTypeSchema);
-
 
 module.exports = { GameConfig, ActionType, EffortType, StatSchema };
