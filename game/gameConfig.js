@@ -20,10 +20,11 @@ async function createGameConfig(data, user) {
 	const docs = await GameConfig.find();
 	const gamestate = await GameState.findOne();
 
-	if (gamestate.round > 1)
+	if (gamestate.round > 1) {
 		throw Error(
 			'Editing Gamestate After Round 1 is Disabled for... uh.. reasons. Talk to Scott'
 		);
+	}
 	if (docs.length >= 1) {
 		await GameConfig.deleteMany();
 	}
@@ -62,6 +63,7 @@ async function createGameConfig(data, user) {
 		globalStats,
 		resourceTypes
 	});
+	console.log('HELLO', actionTypes);
 	gameConfig = await gameConfig.save();
 
 	for (const char of await Character.find()) {
