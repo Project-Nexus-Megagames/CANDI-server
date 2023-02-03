@@ -40,7 +40,6 @@ const CharacterSchema = new Schema({
 	tags: [{ type: String }],
 	control: [{ type: String }],
 	standingOrders: { type: String },
-	lentAssets: [{ type: ObjectId, ref: 'Asset' }],
 	effort: [effortSchema],
 	characterStats: [StatSchema],
 	knownContacts: [{ type: Schema.Types.ObjectId, ref: 'Character' }],

@@ -212,12 +212,13 @@ async function deleteAsset(data, user) {
 	}
 }
 
-async function unhideAll() {
+async function unhideAllAssets() {
 	try {
 		const assets = await Asset.find({ status: 'hidden' }).populate('with');
 		const res = [];
 		for (const ass of assets) {
-			console.log(ass.name);
+			console.log('unhiding: ', ass.name);
+      if (ass.uses !== 999) ass.uses = ass.uses - 1;
 			await ass.save();
 			res.push(ass);
 		}
@@ -229,4 +230,24 @@ async function unhideAll() {
 	}
 }
 
-module.exports = { addAsset, modifyAsset, lendAsset, deleteAsset, unhideAll };
+async function unLendAllAssets() {
+	try {
+		const res = [];
+		for (const asset of await Asset.find({ status: 'lent' }).populate(
+			'with'
+		)) {
+      asset.toggleStatus('lent', true);
+			asset.currentHolder = null;
+			await asset.save();
+			console.log(`Unlending ${asset.name}`);
+			res.push(asset);
+		}
+		nexusEvent.emit('respondClient', 'update', res);
+	}
+	catch (err) {
+		logger.error(err);
+		return { message: `ERROR: ${err}`, type: 'error' };
+	}
+}
+
+module.exports = { addAsset, modifyAsset, lendAsset, deleteAsset, unhideAllAssets, unLendAllAssets };

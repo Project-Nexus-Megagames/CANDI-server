@@ -4,6 +4,7 @@ const { logger } = require('../middleware/log/winston');
 const { default: axios } = require('axios');
 const { ControlLog } = require('../models/log');
 const { GameConfig } = require('../models/gameConfig');
+const { GameState } = require('../models/gamestate');
 
 
 async function modifyCharacter(receivedData) {
@@ -248,4 +249,34 @@ async function shareContacts(data) {
 	return { message: 'Contacts successfully shared!', type: 'success' };
 }
 
-module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, manageContacts, healInjury, shareContacts };
+async function resetCharacters(nextRoundLog) {
+	const config = await GameConfig.findOne();
+	const gamestate = await GameState.findOne();
+
+	for (const character of await Character.find()) {
+		character.effort = [];
+		nextRoundLog.logMessages.push(`Restoring effort and auto-healing injuries of ${character.characterName}`);
+		for (const effort of config.effortTypes) {
+			const type = effort.type;
+			const amount = effort.effortAmount;
+			const tag = effort.tag;
+			let restoredEffort = { };
+			if (character.tags.some(el => el.toLowerCase() === tag.toLowerCase())) {
+				restoredEffort = { type, amount };
+				character.effort.push(restoredEffort);
+				nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to ${amount}`);
+			}
+			else {
+				restoredEffort = { type, amount:0 };
+				character.effort.push(restoredEffort);
+				nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to 0`);
+			}
+		}
+		character.injuries = character.injuries.filter((el) => (el.received + el.duration) > gamestate.round || el.permanent);
+		character.save();
+		console.log(`Restoring effort and auto-healing injuries of ${character.characterName}`);
+	}
+	return nextRoundLog;
+}
+
+module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, manageContacts, healInjury, shareContacts, resetCharacters };

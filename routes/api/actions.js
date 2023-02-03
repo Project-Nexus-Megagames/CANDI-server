@@ -26,10 +26,10 @@ router.get('/', async function(req, res, next) {
 			const actions = await Action.find()
 				.populate({
 					path: 'comments',
-					populate: { path: 'commentor', select: 'characterName profilePicture' }
+					populate: { path: 'commentor', select: 'characterName profilePicture playerName' }
 				}).populate('creator', 'characterName username playerName profilePicture')
-				.populate({ path: 'results', populate: { path: 'resolver', select: 'characterName profilePicture' } })
-				.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture' } })
+				.populate({ path: 'results', populate: { path: 'resolver', select: 'characterName profilePicture playerName' } })
+				.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture playerName' } })
 				.populate('controller', 'characterName');
 			res.status(200).json(actions);
 		}
