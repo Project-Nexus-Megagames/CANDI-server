@@ -1,114 +1,242 @@
-const mongoose = require('mongoose'); // Mongo DB object modeling module
-
-// Global Constants
-const Schema = mongoose.Schema; // Destructure of Schema
-const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
-
-const injurySchema = new Schema({
-	submodel: { type: String, default: 'Injury' },
-	name: { type: String, default: 'Scurvey' },
-	received: { type: Number },
-	duration: { type: Number },
-	permanent: { type: Boolean, default: false },
-	actionTitle: { type: String, default: 'no action title was to be found' }
-});
-
-const effortSchema = new Schema ({
-	submodel: { type: String, default: 'Effort' },
-	type: { type: String, default: 'Normal' },
-	amount: { type: Number, default: 0, required: true }
-});
-
-const StatSchema = new Schema ({
-	submodel: { type: String, default: 'Stat' },
-	type: { type: String, default: 'Some Stat', required: true },
-	statAmount: { type: Number, default: 0, required: true }
-});
-
-const CharacterSchema = new Schema({
-	model:  { type: String, default: 'Character' },
-	playerName: { type: String, minlength: 1, maxlength: 50, required: true },
-	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
-	username: { type: String, minlength: 2, maxlength: 50, required: true },
-	characterTitle: { type: String, maxlength: 50, default: 'None' },
-	pronouns: { type: String },
-	bio: { type: String },
-	email: { type: String, required: true },
-	wiki: { type: String, default: '' },
-	timeZone: { type: String, default: '???' },
-	tags: [{ type: String }],
-	control: [{ type: String }],
-	standingOrders: { type: String },
-	lentAssets: [{ type: ObjectId, ref: 'Asset' }],
-	effort: [effortSchema],
-	characterStats: [StatSchema],
-	knownContacts: [{ type: Schema.Types.ObjectId, ref: 'Character' }],
-	injuries: [injurySchema],
-	profilePicture: { type: String }
-});
+const { Character } = require('../models/character');
+const { logger } = require('../middleware/log/winston');
+const { default: axios } = require('axios');
+const { ControlLog } = require('../models/log');
+const { GameConfig } = require('../models/gameConfig');
 
 
-CharacterSchema.methods.expendEffort = async function(amount, type) {
+async function modifyCharacter(receivedData) {
+	const { data, imageURL, loggedInUser: control } = receivedData;
+	// console.log(data);
+	const _id = data._id;
+	const character = await Character.findById(_id);
+
 	try {
-		if (!amount || !type) throw Error(`expendEffort() must have type and amount. amount: '${amount}' - type: '${type}'`);
-		const effort = this.effort.find(ef => ef.type.toLowerCase() === type.toLowerCase());
-		if (!effort) throw Error(`Effort for type ${type} is undefined`);
-		if (effort.amount < amount) throw Error(`Not enough Effort for type ${type}: ${effort.amount} < ${amount}`);
-		effort.amount = effort.amount - amount;
+		if (character === null) {
+			return ({ message : `Could not find a character for _id "${_id}"`, type: 'error' });
+		}
+		else if (character.length > 1) {
+			return ({ message : `Found multiple characters for _id ${_id}`, type: 'error' });
+		}
+		else {
+			for (const el in data) {
+				if (data[el] !== undefined && data[el] !== '' && el !== '_id' && el !== 'model') {
+					character[el] = data[el];
+				}
+				else {
+					console.log(`Detected invalid edit: ${el} is ${data[el]}`);
+				}
+			}
+			if (imageURL && imageURL !== '') {
+				character.profilePicture = imageURL;
+			}
+			await character.save();
 
-		let character = await this.save();
-		character = await character.populateMe();
+			const controlLog = new ControlLog({
+				control: control.username,
+				affectedCharacter: data.characterName,
+				controlAction: 'Character',
+				message: 'Character: ' + data.characterName + ' was modified'
+			});
 
-		nexusEvent.emit('respondClient', 'update', [ character ]);
-		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
-		return character;
+			await controlLog.save();
+
+			nexusEvent.emit('respondClient', 'update', [ character ]);
+			return ({ message : `Character ${character.characterName} edited`, type: 'success' });
+		}
 	}
 	catch (err) {
-		console.log(err); // Add proper error handling for CANDI
-		throw Error(err);
+		logger.error(`message : Server Error: ${err.message}`);
+		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
 	}
-};
+}
 
-CharacterSchema.methods.restoreEffort = async function(amount, type, config) {
-	try {
-		const effort = this.effort.find(ef => ef.type.toLowerCase() === type.toLowerCase());
-		if (!effort) throw Error(`Effort for type ${type} is undefined`);
-		const configEffort = config.find(ef => ef.type.toLowerCase() === type.toLowerCase());
-		effort.amount = effort.amount + amount;
-		if (effort.amount > configEffort.effortAmount) effort.amount = configEffort.effortAmount;
-		let character = await this.save();
-		character = await character.populateMe();
 
+async function modifySupport(data) {
+	const { id, supporter } = data;
+	let character = await Character.findById(id);
+
+	if (character === null) {
+		return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
+	}
+	else if (character.length > 1) {
+		return ({ message : `Found multiple characters for id ${id}`, type: 'error' });
+	}
+	else {
+		if (character.supporters.some(el => el === supporter)) {
+			const index = character.supporters.indexOf(supporter);
+			character.supporters.splice(index, 1);
+		}
+		else {
+			character.supporters.push(supporter);
+		}
+		character = await character.save();
 		nexusEvent.emit('respondClient', 'update', [ character ]);
-		return character;
+		return ({ message : `Character Support ${character.characterName} edited`, type: 'success' });
+	}
+}
+
+async function register(data) {
+	const { character, username, playerName, email } = data;
+	try {
+		let regChar = await Character.findById(character);
+
+		if (regChar === null) {
+			return ({ message : `Could not find a character for id "${character}"`, type: 'error' });
+		}
+		else {
+			regChar.username = username;
+			regChar.playerName = playerName;
+			regChar = await regChar.save();
+			nexusEvent.emit('respondClient', 'update', [ regChar ]);
+			const emailStuff = {
+				from: 'CANDI Registration',
+				to: email,
+				subject: 'CANDI Registration',
+				html: `<p>Dear ${regChar.playerName},</p> <p> You have been successfully registered on the CANDI App, and can now log in. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p>Have fun!</p> <p>Your Character: ${regChar.characterName} </p> https://godswar-app.onrender.com/`
+			};
+			await	axios.post('https://nexus-central-server.herokuapp.com/nexus/email', emailStuff);
+		}
+
+		return ({ message : `Player ${username} registered to ${regChar.characterName}`, type: 'success' });
+
 	}
 	catch (err) {
-		console.log(err); // Add proper error handling for CANDI
+		logger.error(`message : Server Error: ${err.message}`);
+		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
 	}
-};
+}
 
-CharacterSchema.methods.restoreStat = async function(amount, type) {
-	try {
-		const characterStats = this.characterStats.find(ef => ef.type.toLowerCase() === type.toLowerCase());
-		if (!characterStats) throw Error(`Stat for type ${type} is undefined`);
-		characterStats.statAmount = characterStats.statAmount + amount;
-		let character = await this.save();
-		character = await character.populateMe();
+async function modifyMemory(data) {
+	const { id, memories } = data;
+	let character = await Character.findById(id);
 
+	if (character === null) {
+		return ({ message : `Could not find a character for id "${id}"`, type: 'error' });
+	}
+	else if (character.length > 1) {
+		return ({ message : `Found multiple characters for id ${id}`, type: 'error' });
+	}
+	else {
+		character.memories = memories;
+
+		character = await character.save();
 		nexusEvent.emit('respondClient', 'update', [ character ]);
-		return characterStats.statAmount;
+		return ({ message : `Character ${character.characterName} memory edited`, type: 'success' });
+	}
+}
+
+async function deleteCharacter(data) {
+	try {
+		const id = data.id;
+		let element = await Character.findById(id);
+		if (element != null) {
+			element = await Character.findByIdAndDelete(id);
+			logger.info(`Character with the id ${id} was deleted via Socket!`);
+
+			nexusEvent.emit('respondClient', 'delete', [ { model: 'character', id } ]);
+			return ({ message : 'Character Delete Success', type: 'success' });
+		}
+		else {
+			return ({ message : `No character with the id ${id} exists!`, type: 'error' });
+		}
 	}
 	catch (err) {
-		console.log(err); // Add proper error handling for CANDI
+		logger.error(`message : Server Error: ${err.message}`);
+		return ({ message : `Server Error: ${err.message}`, type: 'error' });
 	}
-};
+}
 
-CharacterSchema.methods.populateMe = async function() {
-	return this
-		.populate(['knownContacts', 'effort']);
-};
+async function createCharacter(receivedData) {
+	try {
+		const { data, imageURL, loggedInUser: control } = receivedData;
+		const config = await GameConfig.findOne();
 
-const Character = mongoose.model('Character', CharacterSchema);
+		let newElement = new Character(data);
+		newElement.profilePicture = imageURL;
+		const docs = await Character.find({ characterName: data.characterName });
+		if (docs.length < 1) {
+			newElement = await newElement.save();
+			const character = await Character.findById(newElement._id);
 
-module.exports = { Character };
+			logger.info(`Character "${newElement.characterName}" created.`);
+
+			character.effort = [];
+			for (const effort of config.effortTypes) {
+				const type = effort.type;
+				const amount = effort.effortAmount;
+				const restoredEffort = { type, amount };
+				character.effort.push(restoredEffort);
+			}
+
+			const controlLog = new ControlLog({
+				control: control.username,
+				affectedCharacter: data.characterName,
+				controlAction: 'Character',
+				message: 'New Character: ' + data.characterName + ' was created'
+			});
+
+			await controlLog.save();
+
+			nexusEvent.emit('respondClient', 'create', [ character ]);
+			return ({ message : 'Character Creation Success', type: 'success' });
+		}
+		else {
+			return ({ message : 'This Character Already Exists!', type: 'error' });
+		}
+	}
+	catch (err) {
+		logger.error(`message : Server Error: ${err.message}`);
+		return ({ message : `message : Server Error: ${err.message}`, type: 'error' });
+	}
+}
+
+async function manageContacts(data) {
+	const { charId, contacts } = data;
+	let character = await Character.findById(charId);
+	character.knownContacts = contacts;
+	await character.save();
+	character = await character.populateMe();
+	nexusEvent.emit('respondClient', 'update', [character]);
+	logger.info(`${character.characterName} edited.`);
+	return { message: 'Character Edit Success', type: 'success' };
+}
+
+async function healInjury(data) {
+	const { char, injuriesToHeal } = data;
+	let character = await Character.findById(char);
+	injuriesToHeal.forEach((injId) => {
+		const found = character.injuries.findIndex((injury) => injury._id.toString() === injId);
+		if (found === -1) 	{
+			return {
+				message: 'Character does not have that injury to heal.',
+				type: 'error'
+			};
+
+		}
+		else {character.injuries = character.injuries.filter((injury) => injId !== injury._id.toString());}
+	});
+	await character.save();
+	character = await character.populateMe();
+	nexusEvent.emit('respondClient', 'update', [character]);
+	logger.info(`${character.characterName} edited.`);
+	return { message: 'Character Edit Success', type: 'success' };
+}
+
+async function shareContacts(data) {
+	const { chars, charId } = data;
+	let character = await Character.findById(charId);
+	for (const id of chars) {
+		if (character.knownContacts.findIndex((el) => el == id) === -1) {
+			character.knownContacts.push(id);
+		}
+	}
+	await character.save();
+	character = await character.populateMe();
+	nexusEvent.emit('respondClient', 'update', [character]);
+	logger.info(`${character.characterName} edited.`);
+	return { message: 'Contacts successfully shared!', type: 'success' };
+}
+
+module.exports = { createCharacter, modifyCharacter, modifySupport, modifyMemory, deleteCharacter, register, manageContacts, healInjury, shareContacts };
