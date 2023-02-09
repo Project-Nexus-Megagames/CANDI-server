@@ -218,6 +218,7 @@ async function unhideAllAssets() {
 		for (const ass of assets) {
 			console.log('unhiding: ', ass.name);
 			if (ass.uses !== 999) ass.uses = ass.uses - 1;
+
 			await ass.save();
 			res.push(ass);
 		}
@@ -235,7 +236,9 @@ async function unLendAllAssets() {
 		for (const asset of await Asset.find({ status: 'lent' }).populate(
 			'with'
 		)) {
+
 			asset.toggleStatus('lent', true);
+
 			asset.currentHolder = null;
 			await asset.save();
 			console.log(`Unlending ${asset.name}`);

@@ -1,7 +1,7 @@
 {
   "jwtPrivateKey": "spooky",
-  "dbName": "gw2DB",
-  "clientURL": "https://godswar-app.onrender.com/",
-	"serverURL": "https://godswar-server.onrender.com/",
-  "socketCORS": "https://godswar-app.onrender.com"
+  "dbName": "sunsetDB",
+	"clientURL": "https://candi.onrender.com/",
+	"serverURL": "https://candi-server.onrender.com/",
+	"socketCORS": ["https://candi.onrender.com", "https://candi-app.onrender.com"]
 }
