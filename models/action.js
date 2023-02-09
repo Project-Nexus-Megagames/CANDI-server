@@ -121,7 +121,9 @@ ActionSchema.methods.submit = async function (
 
 	for (const id of submission.assets) {
 		let asset = await Asset.findById(id);
-		const allowed = allowedAssets.find((el) => el === asset.type.toLowerCase());
+		const allowed = allowedAssets.find(
+			(el) => el.toLowerCase() === asset.type.toLowerCase()
+		);
 		if (!allowed)
 			throw Error(
 				`Asset of type ${asset.type} not allowed for ${submittedActionType}!`

@@ -54,12 +54,14 @@ async function createAction(data, user) {
 		for (const id of data.submission.assets) {
 			const asset = await Asset.findById(id);
 			const allowed = allowedAssets.find(
-				(el) => el === asset.type.toLowerCase()
+				(el) => el.toLowerCase() === asset.type.toLowerCase()
 			);
-			if (!allowed)
+			console.log('HELLO', allowed);
+			if (allowed === 'test') {
 				throw Error(
 					`Asset of type ${asset.type} not allowed for ${data.type}!`
 				);
+			}
 		}
 
 		let action = new Action({
