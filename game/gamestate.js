@@ -9,6 +9,7 @@ const { History } = require('../models/history');
 const { NextRoundLog, ControlLog } = require('../models/log');
 const { d10, d8, d6, d4 } = require('../scripts/util/dice');
 const { unhideAllAssets, unLendAllAssets } = require('./assets');
+const { resetCharacters } = require('./characters');
 
 async function modifyGameState(data, user) {
 	const controlLog = new ControlLog();
@@ -122,32 +123,9 @@ async function nextRound(control) {
 		// Find all hidden resolutions and unhide them
 		const actions = [];
 
-    unhideAllAssets(nextRoundLog);
-    unLendAllAssets(nextRoundLog);
-
-		// for (const character of await Character.find()) {
-		// 	character.effort = [];
-		// 	nextRoundLog.logMessages.push(`Restoring effort and auto-healing injuries of ${character.characterName}`);
-		// 	for (const effort of config.effortTypes) {
-		// 		const type = effort.type;
-		// 		const amount = effort.effortAmount;
-		// 		const tag = effort.tag;
-		// 		let restoredEffort = { };
-		// 		if (character.tags.some(el => el.toLowerCase() === tag.toLowerCase())) {
-		// 			restoredEffort = { type, amount };
-		// 			character.effort.push(restoredEffort);
-		// 			nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to ${amount}`);
-		// 		}
-		// 		else {
-		// 			restoredEffort = { type, amount:0 };
-		// 			character.effort.push(restoredEffort);
-		// 			nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to 0`);
-		// 		}
-		// 	}
-		// 	character.injuries = character.injuries.filter((el) => (el.received + el.duration) > gamestate.round || el.permanent);
-		// 	character.save();
-		// 	console.log(`Restoring effort and auto-healing injuries of ${character.characterName}`);
-		// }
+    await unhideAllAssets(nextRoundLog);
+    await unLendAllAssets(nextRoundLog);
+    await resetCharacters(nextRoundLog);
 
 		for (const action of await Action.find({ round: gamestate.round })) {
 			action.status = 'Published';
