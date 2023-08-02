@@ -9,7 +9,8 @@ const {
 	supportAgenda,
 	assignController,
 	diceResult,
-	setNewsWorthy
+	setNewsWorthy,
+	collabAction
 } = require('../../game/actions');
 const { addArrayValue } = require('../../middleware/util/arrayCalls');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
@@ -18,7 +19,7 @@ const nexusEvent = require('../../middleware/events/events');
 
 module.exports = {
 	name: 'action',
-	async function(client, req) {
+	async function (client, req) {
 		logger.info(
 			`${client.username} has made a ${req.action} request in the ${req.route} route!`
 		);
@@ -148,6 +149,9 @@ module.exports = {
 				response = await editSubObject(data, client.username);
 				break;
 			}
+			case 'collab':
+				response = await collabAction(data, client.username);
+				break;
 			default: // need an error socket to trigger
 				console.log('Bad action socket Request: ', type);
 				response = {

@@ -15,11 +15,13 @@ router.get('/', async function (req, res, next) {
 	logger.info('GET Route: api/gameConfig requested: get all');
 	if (req.timedout) {
 		next();
-	} else {
+	}
+	else {
 		try {
 			const config = await GameConfig.findOne();
 			res.status(200).json(config);
-		} catch (err) {
+		}
+		catch (err) {
 			logger.error(err.message, { meta: err.stack });
 			res.status(500).send(err.message);
 		}
@@ -34,7 +36,8 @@ router.post('/', async function (req, res, next) {
 
 	if (req.timedout) {
 		next();
-	} else {
+	}
+	else {
 		try {
 			// TODO: pull this into the socket
 			const docs = await GameConfig.find();
@@ -62,7 +65,8 @@ router.post('/', async function (req, res, next) {
 			config = await config.save();
 			logger.info('GameConfig  created.');
 			res.status(200).json(config);
-		} catch (err) {
+		}
+		catch (err) {
 			httpErrorHandler(res, err);
 		}
 	}
@@ -72,11 +76,97 @@ router.post('/', async function (req, res, next) {
 // @desc    Delete All comments
 // @access  Public
 
-router.delete('/delete', async function (req, res) {
+router.patch('/deleteAll', async function (req, res) {
 	const data = await GameConfig.deleteMany();
 	return res
 		.status(200)
 		.send(`We wiped out ${data.deletedCount} Configurations!`);
 });
+
+
+router.post('/initGameConfig', async function (req, res) {
+	logger.info('POST Route: api/gamestate call made...');
+	let newGameState = new GameConfig({
+		'model': 'GameConfig',
+		'name': 'Candi Dev Config',
+		'effortTypes': [
+			{
+				'model': 'EffortType',
+				'tag': 'PC',
+				'type': 'Main',
+				'effortAmount': 1
+			},
+			{
+				'model': 'EffortType',
+				'tag': 'PC',
+				'type': 'Defence',
+				'effortAmount': 1
+			},
+			{
+				'model': 'EffortType',
+				'tag': 'Control',
+				'type': 'Article',
+				'effortAmount': 20
+			}
+		],
+		'resourceTypes': [
+			{
+				'model': 'ResourceType',
+				'type': 'Asset'
+			},
+			{
+				'model': 'ResourceType',
+				'type': 'Bond'
+			}
+		],
+		'actionTypes': [
+			{
+				'model': 'ActionType',
+				'type': 'Main',
+				'minEffort': 1,
+				'maxEffort': 1,
+				'effortTypes': [
+					'Main'
+				],
+				'resourceTypes': [
+					'Asset'
+				],
+				'maxAssets': 1,
+				'status': [],
+				'public': false
+			},
+			{
+				'model': 'ActionType',
+				'type': 'Defence',
+				'minEffort': 1,
+				'maxEffort': 1,
+				'effortTypes': [
+					'Defense',
+					'Defence'
+				],
+				'resourceTypes': [
+					'Asset'
+				],
+				'maxAssets': 1,
+				'status': [],
+				'public': false
+			}
+		],
+		'globalStats': [],
+		'characterStats': [],
+	});
+	try {
+		// for (const el in aspects) {
+		// 	newGameState[el] = aspects[el];
+		// }
+		newGameState = await newGameState.save();
+		const locat = await GameConfig.findOne();
+		res.status(200).json(locat);
+	}
+	catch (err) {
+		httpErrorHandler(res, err);
+	}
+});
+
 
 module.exports = router;

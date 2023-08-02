@@ -12,21 +12,21 @@ const { Location } = require('../models/location');
 const { GameConfig } = require('../models/gameConfig');
 const { ControlLog } = require('../models/log');
 
-async function removeEffort(data) {
+async function removeEffort (data) {
 	let character = await Character.findOne({ characterName: data.creator });
 	console.log('remove effort called', data);
 	character = await character.expendEffort(data.effort);
 	return character;
 }
 
-async function addEffort(data) {
+async function addEffort (data) {
 	console.log(data);
 	let character = await Character.findOne({ characterName: data.creator });
 	character = await character.restoreEffort(data.effort, data.type);
 	return character;
 }
 
-async function createAction(data, user) {
+async function createAction (data, user) {
 	// Expecting -  round, creator <<character_id>>, controllers <<Array>>, submission <<submissionSchema>>
 	try {
 		// Data check errors!
@@ -38,8 +38,7 @@ async function createAction(data, user) {
 		const gamestate = await GameState.findOne();
 		if (gamestate.status !== 'Active') throw Error('Round is not active.');
 
-		const { type, creator, name, numberOfInjuries, submission, attachments } =
-			data;
+		const { type, creator, name, numberOfInjuries, submission, attachments, collaborators } = data;
 
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
@@ -73,12 +72,14 @@ async function createAction(data, user) {
 			round: gamestate.round,
 			attachments,
 			creator,
+			collaborators,
 			numberOfInjuries
 		});
 
 		action = await action.save();
 		await action.submit(data.submission, data.type, config.actionTypes);
-		await action.populateMe();
+		logger.info(`${data.type} "${action._id}" created.`);
+		action = await action.populateMe();
 
 		nexusEvent.emit('respondClient', 'update', [action]);
 
@@ -101,11 +102,9 @@ async function createAction(data, user) {
 
 		await log.save();
 
-		logger.info(`${action.type} "${action._id}" created.`);
-
-		// nexusEvent.emit('respondClient', 'create', [action]);
-		return { message: `${action.type} Creation Success`, type: 'success' };
-	} catch (err) {
+		return { message: `${data.type} Creation Success`, type: 'success' };
+	}
+	catch (err) {
 		console.log(err);
 		logger.error(`message : Server Error: ${err}`);
 		return {
@@ -115,7 +114,7 @@ async function createAction(data, user) {
 	}
 }
 
-async function supportAgenda(data) {
+async function supportAgenda (data) {
 	try {
 		let character = await Character.findById(data.supporter);
 		const action = await Action.findById(data.id);
@@ -130,12 +129,13 @@ async function supportAgenda(data) {
 		});
 
 		return { message: `${action.name} supported!`, type: 'success' };
-	} catch (err) {
+	}
+	catch (err) {
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 
-async function assignController(data) {
+async function assignController (data) {
 	try {
 		let action = await Action.findById(data.id);
 		action.controller = data.controller;
@@ -143,12 +143,13 @@ async function assignController(data) {
 		await action.populateMe();
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return { message: `${action.name} controller assigned!`, type: 'success' };
-	} catch (err) {
+	}
+	catch (err) {
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 
-async function diceResult(data) {
+async function diceResult (data) {
 	try {
 		let action = await Action.findById(data.id);
 		action.diceresult = data.diceresult;
@@ -156,12 +157,13 @@ async function diceResult(data) {
 		await action.populateMe();
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return { message: `${action.name} diceresult logged!`, type: 'success' };
-	} catch (err) {
+	}
+	catch (err) {
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 
-async function setNewsWorthy(data) {
+async function setNewsWorthy (data) {
 	try {
 		let action = await Action.findById(data.id);
 		action.news = data.news;
@@ -169,11 +171,12 @@ async function setNewsWorthy(data) {
 		await action.populateMe();
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return { message: `${action.name} newsworthiness set`, type: 'success' };
-	} catch (err) {
+	}
+	catch (err) {
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
-async function deleteSubObject(data, user) {
+async function deleteSubObject (data, user) {
 	const id = data.id;
 	let action = await Action.findById(id);
 	if (action != null && data.result) {
@@ -194,7 +197,8 @@ async function deleteSubObject(data, user) {
 		await log.save();
 		logger.info(`Result with the id ${id} was deleted via Socket!`);
 		nexusEvent.emit('respondClient', 'update', [action]);
-	} else if (action != null && data.effect) {
+	}
+	else if (action != null && data.effect) {
 		const log = new History({
 			docType: 'action',
 			action: 'delete',
@@ -212,7 +216,8 @@ async function deleteSubObject(data, user) {
 		await log.save();
 		logger.info(`effect with the id ${id} was deleted via Socket!`);
 		nexusEvent.emit('respondClient', 'update', [action]);
-	} else if (action != null && data.comment) {
+	}
+	else if (action != null && data.comment) {
 		const log = new History({
 			docType: 'action',
 			action: 'delete',
@@ -238,9 +243,10 @@ async function deleteSubObject(data, user) {
 }
 
 // Used to edit comments, results, or effects of an action. probably should be seperate functions, but...
-async function editSubObject(data, user) {
+async function editSubObject (data, user) {
 	const id = data.id;
 	let action = await Action.findById(id);
+  // case: editing a result
 	if (action != null && data.result) {
 		const log = new History({
 			docType: 'action',
@@ -262,7 +268,8 @@ async function editSubObject(data, user) {
 				el !== 'model'
 			) {
 				thing[el] = data.result[el];
-			} else {
+			}
+			else {
 				console.log(`Detected invalid edit: ${el} is ${data.result[el]}`);
 			}
 		}
@@ -277,7 +284,7 @@ async function editSubObject(data, user) {
 			message: `Result with the id ${id} was edited via Socket!`,
 			type: 'success'
 		};
-	} // if
+	} // case: editing an effect
 	else if (action != null && data.effect) {
 		const log = new History({
 			docType: 'action',
@@ -299,7 +306,8 @@ async function editSubObject(data, user) {
 				el !== 'model'
 			) {
 				thing[el] = data.effect[el];
-			} else {
+			}
+			else {
 				console.log(`Detected invalid edit: ${el} is ${data.effect[el]}`);
 			}
 		}
@@ -314,7 +322,7 @@ async function editSubObject(data, user) {
 			message: `Result with the id ${id} was edited via Socket!`,
 			type: 'success'
 		};
-	} // if
+	} // case: editing comment
 	else if (action != null && data.comment) {
 		const log = new History({
 			docType: 'action',
@@ -340,9 +348,35 @@ async function editSubObject(data, user) {
 			type: 'success'
 		};
 	} // if
+  else if (action != null && data.collab) {
+    console.log('editing collab')
+		// const log = new History({
+		// 	docType: 'action',
+		// 	action: 'edit',
+		// 	function: 'editComment',
+		// 	document: action,
+		// 	user
+		// });
+		// await Comment.findByIdAndUpdate(data.comment._id, data.comment, {
+		// 	new: true
+		// }).populate('commentor');
+		// action = await Action.findById(id);
+		// action = await action.save();
+		// await action.populateMe();
+
+		// await log.save();
+		// logger.info(
+		// 	`Comment with the id ${data.comment._id} was edited via Socket!`
+		// );
+		// nexusEvent.emit('respondClient', 'update', [action]);
+		// return {
+		// 	message: `Comment with the id ${data.comment._id} was edited via Socket!`,
+		// 	type: 'success'
+		// };
+	} // if
 }
 
-async function deleteAction(data, user) {
+async function deleteAction (data, user) {
 	try {
 		const id = data.id;
 		let action = await Action.findById(id);
@@ -381,19 +415,21 @@ async function deleteAction(data, user) {
 			nexusEvent.emit('respondClient', 'delete', [{ model: 'action', id }]);
 			nexusEvent.emit('respondClient', 'update', changed);
 			return { message: 'Action Delete Success', type: 'success' };
-		} else {
+		}
+		else {
 			return {
 				message: `No action with the id ${id} exists!`,
 				type: 'error'
 			};
 		}
-	} catch (err) {
+	}
+	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 
-async function controlOverride(data, user) {
+async function controlOverride (data, user) {
 	const char = await Character.findOne({ username: user });
 	try {
 		const { id, asset } = data;
@@ -446,16 +482,18 @@ async function controlOverride(data, user) {
 
 			logger.info(`Asset ${asset} removed`);
 			return { message: `Asset ${asset} removed`, type: 'success' };
-		} else {
+		}
+		else {
 			throw Error(`Asset ${item.name} is not attached to this action.`);
 		}
-	} catch (err) {
+	}
+	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 
-async function editAction(data, user) {
+async function editAction (data, user) {
 	const { id } = data;
 	const changed = [];
 	const oldAction = await Action.findById(id);
@@ -523,11 +561,11 @@ async function editAction(data, user) {
 	return { message: `${action.type} Edit Success`, type: 'success' };
 }
 
-function capitalizeFirstLetter(string) {
+function capitalizeFirstLetter (string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-async function effectAction(data) {
+async function effectAction (data) {
 	try {
 		const { type, document, owner, arcane, loggedInUser, effector } = data;
 		const action = await Action.findById(data.action);
@@ -542,195 +580,195 @@ async function effectAction(data) {
 		const effects = [];
 
 		switch (type) {
-			case 'asset':
-				old = await Asset.findById(document._id);
-				controlLog.message = `Asset ${old.name} was edited`;
-				await controlLog.save();
-				break;
-			case 'bond':
-				old = await Asset.findById(document._id);
-				controlLog.message = `Bond ${old.name} was edited`;
-				await controlLog.save();
-				break;
-			case 'aspect':
-				old = await GameState.findOne();
-				controlLog.message = ' ';
-				for (const el in document) {
-					if (parseInt(document[el]) !== 0) {
-						const oldAspectValue = old.globalStats.find(
-							(stat) => stat.type === el
-						).statAmount;
-						old.globalStats.find((stat) => stat.type === el).statAmount +=
+		case 'asset':
+			old = await Asset.findById(document._id);
+			controlLog.message = `Asset ${old.name} was edited`;
+			await controlLog.save();
+			break;
+		case 'bond':
+			old = await Asset.findById(document._id);
+			controlLog.message = `Bond ${old.name} was edited`;
+			await controlLog.save();
+			break;
+		case 'aspect':
+			old = await GameState.findOne();
+			controlLog.message = ' ';
+			for (const el in document) {
+				if (parseInt(document[el]) !== 0) {
+					const oldAspectValue = old.globalStats.find(
+						(stat) => stat.type === el
+					).statAmount;
+					old.globalStats.find((stat) => stat.type === el).statAmount +=
 							parseInt(document[el]);
-						await action.addEffect({
-							description: `${el} changed from ${oldAspectValue} to ${
-								oldAspectValue + parseInt(document[el])
-							} `,
-							type: 'aspect',
-							status: 'Private',
-							effector
-						});
+					await action.addEffect({
+						description: `${el} changed from ${oldAspectValue} to ${
+							oldAspectValue + parseInt(document[el])
+						} `,
+						type: 'aspect',
+						status: 'Private',
+						effector
+					});
 
-						await action.comment({
-							body: `${el} has changed`,
-							commentor: effector,
-							type: 'Info'
-						});
+					await action.comment({
+						body: `${el} has changed`,
+						commentor: effector,
+						type: 'Info'
+					});
 
-						controlLog.message =
+					controlLog.message =
 							controlLog.message +
 							` Aspect ${el} was changed from ${oldAspectValue} to ${old.globalStats[el]}.`;
-					}
 				}
-				await controlLog.save();
-				await old.save();
-				nexusEvent.emit('respondClient', 'update', [old]);
-				return;
-			case 'character-stat':
-				old = await Character.findById(owner);
-				controlLog.message = ' ';
-				for (const el in document) {
-					if (parseInt(document[el]) !== 0) {
-						// const oldAspectValue = old.characterStats[el].characterStats;
-						// old.characterStats[el].characterStats = old.characterStats[el].characterStats + parseInt(document[el]);
-						const oldAspectValue = await old.restoreStat(
-							parseInt(document[el]),
-							el
-						);
-						await action.addEffect({
-							description: `${el} changed from ${document[el]} to ${oldAspectValue} `,
-							type: 'aspect',
-							status: 'Private',
-							effector
-						});
+			}
+			await controlLog.save();
+			await old.save();
+			nexusEvent.emit('respondClient', 'update', [old]);
+			return;
+		case 'character-stat':
+			old = await Character.findById(owner);
+			controlLog.message = ' ';
+			for (const el in document) {
+				if (parseInt(document[el]) !== 0) {
+					// const oldAspectValue = old.characterStats[el].characterStats;
+					// old.characterStats[el].characterStats = old.characterStats[el].characterStats + parseInt(document[el]);
+					const oldAspectValue = await old.restoreStat(
+						parseInt(document[el]),
+						el
+					);
+					await action.addEffect({
+						description: `${el} changed from ${document[el]} to ${oldAspectValue} `,
+						type: 'aspect',
+						status: 'Private',
+						effector
+					});
 
-						await action.comment({
-							body: `${el} has changed`,
-							commentor: effector,
-							type: 'Info'
-						});
+					await action.comment({
+						body: `${el} has changed`,
+						commentor: effector,
+						type: 'Info'
+					});
 
-						controlLog.message =
+					controlLog.message =
 							controlLog.message +
 							` character-stat ${el} was changed from ${document[el]} to ${oldAspectValue}.`;
-					}
 				}
-				await controlLog.save();
-				await old.save();
-				old = await old.populateMe();
-				nexusEvent.emit('respondClient', 'update', [old]);
-				return;
-			case 'new':
-				response = await addAsset({ asset: document, arcane, loggedInUser });
-				response.type === 'success'
-					? await action.addEffect({
-							description: `New ${document.type} created: ${document.name} ${
-								document.level ? `(${document.level})` : `(${document.dice})`
-							}`,
-							type: document.type,
-							status: 'Temp-Hidden',
-							effector
+			}
+			await controlLog.save();
+			await old.save();
+			old = await old.populateMe();
+			nexusEvent.emit('respondClient', 'update', [old]);
+			return;
+		case 'new':
+			response = await addAsset({ asset: document, arcane, loggedInUser });
+			response.type === 'success'
+				? await action.addEffect({
+					description: `New ${document.type} created: ${document.name} ${
+						document.level ? `(${document.level})` : `(${document.dice})`
+					}`,
+					type: document.type,
+					status: 'Temp-Hidden',
+					effector
 					  })
-					: null;
-				controlLog.message = `New ${document.type} created: ${document.name} for ${owner}`;
-				await controlLog.save();
-				return response;
-			case 'map': {
-				let locsForMessage = '';
-				for (const el of document) {
-					old = await Location.findById(el);
-					if (!old.unlockedBy.includes(owner)) {
-						old.unlockedBy.push(owner);
-						await action.addEffect({
-							description: `New location unlocked: ${old.name} `,
-							type: 'location',
-							status: 'Temp-Hidden',
-							effector
-						});
-						controlLog.message = `New location unlocked: ${old.name} for ${owner} `;
-						locsForMessage = locsForMessage + old.name + ', ';
-						await old.save();
-						const loc = await old.populateMe();
-						await controlLog.save();
-						nexusEvent.emit('respondClient', 'update', [loc]);
-					}
+				: null;
+			controlLog.message = `New ${document.type} created: ${document.name} for ${owner}`;
+			await controlLog.save();
+			return response;
+		case 'map': {
+			let locsForMessage = '';
+			for (const el of document) {
+				old = await Location.findById(el);
+				if (!old.unlockedBy.includes(owner)) {
+					old.unlockedBy.push(owner);
+					await action.addEffect({
+						description: `New location unlocked: ${old.name} `,
+						type: 'location',
+						status: 'Temp-Hidden',
+						effector
+					});
+					controlLog.message = `New location unlocked: ${old.name} for ${owner} `;
+					locsForMessage = locsForMessage + old.name + ', ';
+					await old.save();
+					const loc = await old.populateMe();
+					await controlLog.save();
+					nexusEvent.emit('respondClient', 'update', [loc]);
 				}
-				return { message: `${locsForMessage} unlocked`, type: 'success' };
 			}
-			case 'character': {
-				old = await Character.findById(owner);
-				for (const id of document) {
-					if (old.knownContacts.findIndex((el) => el == id) === -1) {
-						old.knownContacts.push(id);
-					}
+			return { message: `${locsForMessage} unlocked`, type: 'success' };
+		}
+		case 'character': {
+			old = await Character.findById(owner);
+			for (const id of document) {
+				if (old.knownContacts.findIndex((el) => el == id) === -1) {
+					old.knownContacts.push(id);
 				}
-				await action.addEffect({
-					description: 'New character(s) unlocked',
-					type: 'character',
-					status: 'Temp-Hidden',
-					effector
-				});
-				controlLog.message = `New character(s) unlocked for ${old.characterName} `;
-				await old.save();
-				const char = await old.populateMe();
-				nexusEvent.emit('respondClient', 'update', [char]);
-				await controlLog.save();
-				return {
-					message: 'Character(s) successfully unlocked',
-					type: 'success'
-				};
 			}
-			case 'addInjury': {
-				const { received, duration, actionTitle, name, permanent } = document;
-				old = await Character.findById(owner);
-				const inj = {
-					actionTitle,
-					received,
-					permanent,
-					duration: parseInt(duration),
-					name
-				};
-				old.injuries.push(inj);
-				await action.addEffect({
-					description: `${name} added to ${old.characterName} `,
-					type: 'injury',
-					status: 'Temp-Hidden',
-					effector
-				});
-				await old.save();
-				controlLog.message = `Injury added to ${old.characterName} `;
-				const char = await old.populateMe();
-				nexusEvent.emit('respondClient', 'update', [char]);
-				await controlLog.save();
-				return { message: `1 Injury added to ${char.characterName}` };
+			await action.addEffect({
+				description: 'New character(s) unlocked',
+				type: 'character',
+				status: 'Temp-Hidden',
+				effector
+			});
+			controlLog.message = `New character(s) unlocked for ${old.characterName} `;
+			await old.save();
+			const char = await old.populateMe();
+			nexusEvent.emit('respondClient', 'update', [char]);
+			await controlLog.save();
+			return {
+				message: 'Character(s) successfully unlocked',
+				type: 'success'
+			};
+		}
+		case 'addInjury': {
+			const { received, duration, actionTitle, name, permanent } = document;
+			old = await Character.findById(owner);
+			const inj = {
+				actionTitle,
+				received,
+				permanent,
+				duration: parseInt(duration),
+				name
+			};
+			old.injuries.push(inj);
+			await action.addEffect({
+				description: `${name} added to ${old.characterName} `,
+				type: 'injury',
+				status: 'Temp-Hidden',
+				effector
+			});
+			await old.save();
+			controlLog.message = `Injury added to ${old.characterName} `;
+			const char = await old.populateMe();
+			nexusEvent.emit('respondClient', 'update', [char]);
+			await controlLog.save();
+			return { message: `1 Injury added to ${char.characterName}` };
+		}
+		case 'healInjuries': {
+			old = await Character.findById(owner);
+			let injuryCount = 0;
+			for (const el of document) {
+				old.injuries = old.injuries.filter((injury) => el != injury._id);
+				injuryCount++;
 			}
-			case 'healInjuries': {
-				old = await Character.findById(owner);
-				let injuryCount = 0;
-				for (const el of document) {
-					old.injuries = old.injuries.filter((injury) => el != injury._id);
-					injuryCount++;
-				}
-				await action.addEffect({
-					description: `${injuryCount} injuries healed for ${old.characterName}. `,
-					type: 'injury',
-					status: 'Temp-Hidden',
-					effector
-				});
-				controlLog.message = `Injury healed of ${old.characterName} `;
-				await old.save();
-				const char = await old.populateMe();
-				nexusEvent.emit('respondClient', 'update', [char]);
-				await controlLog.save();
-				return { message: `${injuryCount} injuries healed!`, type: 'success' };
-			}
+			await action.addEffect({
+				description: `${injuryCount} injuries healed for ${old.characterName}. `,
+				type: 'injury',
+				status: 'Temp-Hidden',
+				effector
+			});
+			controlLog.message = `Injury healed of ${old.characterName} `;
+			await old.save();
+			const char = await old.populateMe();
+			nexusEvent.emit('respondClient', 'update', [char]);
+			await controlLog.save();
+			return { message: `${injuryCount} injuries healed!`, type: 'success' };
+		}
 
-			default:
-				console.log(`Invalid effectAction switch type ${type}`);
-				return {
-					message: `Invalid effectAction switch type ${type}`,
-					type: 'error'
-				};
+		default:
+			console.log(`Invalid effectAction switch type ${type}`);
+			return {
+				message: `Invalid effectAction switch type ${type}`,
+				type: 'error'
+			};
 		}
 
 		if (!old) throw Error('No Old thing for the thing... you know the thing?');
@@ -760,7 +798,8 @@ async function effectAction(data) {
 					effector
 				});
 				old[el] = document[el];
-			} else {
+			}
+			else {
 				// leaving this in case I have to debug
 				// console.log(document[el]);
 				// console.log(`Detected invalid edit: ${el} is ${document[el]}`);
@@ -774,9 +813,44 @@ async function effectAction(data) {
 			await action.addEffect(effect);
 		}
 		return response;
-	} catch (err) {
+	}
+	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
 		return { message: `Server Error: ${err.message}`, type: 'error' };
+	}
+}
+
+async function collabAction (data, user) {
+	try {
+    const { effort, creator } = data;
+		const action = await Action.findById(data.action);
+    const character = await Character.findById(creator);
+
+		if (!action) throw Error('No Action for Collab!');
+		const response = await action.submitCollaboration(data);
+
+    if (effort.amount > 0) {
+			await character.expendEffort(
+				effort.amount,
+				effort.effortType
+			);
+		}
+
+		const log = new History({
+			docType: 'action',
+			action: 'create',
+			function: 'createAction',
+			document: action,
+			user,
+			character: creator
+		});
+
+		await log.save();
+		return response;
+	}
+	catch (err) {
+		logger.error(`message : Server collabAction Error: ${err.message}`);
+		return { message: `Server collabAction Error: ${err.message}`, type: 'error' };
 	}
 }
 
@@ -793,5 +867,6 @@ module.exports = {
 	supportAgenda,
 	assignController,
 	diceResult,
-	setNewsWorthy
+	setNewsWorthy,
+  collabAction
 };

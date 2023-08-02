@@ -22,11 +22,11 @@ const effortSchema = new Schema({
 const submissionSchema = new Schema(
 	{
 		model: { type: String, default: 'Submission' },
+		creator: { type: ObjectId, ref: 'Character' }, // The character that initiates an ACTION
 		description: { type: String, required: true }, // Description of the ACTION
 		intent: { type: String, required: true }, // Intended result of the ACTION
 		effort: effortSchema, // Initial effort allocated
-		assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
-		collaborators: [{ type: ObjectId, ref: 'Character' }] // Characters involved in the ACTION
+		assets: [{ type: ObjectId, ref: 'Asset' }] // ASSETS used to facilitate this ACTION
 	},
 	{ timestamps: true }
 );
@@ -77,6 +77,7 @@ const ActionSchema = new Schema(
 		news: { type: Boolean },
 		tags: [{ type: String }], // Any tags added by control
 		submission: submissionSchema, // Player submission that created the ACTION
+		submissions: [ submissionSchema ], // Submissions of players in a group action
 		comments: [{ type: ObjectId, ref: 'Comment' }], // User comments and system generated info
 		diceresult: { type: String },
 		results: [resultSchema], // Controller generated result of the ACTION
@@ -89,57 +90,34 @@ const ActionSchema = new Schema(
 const Effect = mongoose.model('Effect', effectSchema);
 const Result = mongoose.model('Result', resultSchema);
 
-ActionSchema.methods.submit = async function (
-	submission,
-	submittedActionType,
-	config
-) {
+ActionSchema.methods.submit = async function (submission) {
 	console.log(submission);
 	// Expects description, intent, effort, assets, collaborators
-	if (!submission.description)
-		throw Error('A submission must have a description...');
-	if (!submission.intent)
-		throw Error('You must have an intent for an action...');
+	if (!submission.description) {throw Error('A submission must have a description...');}
+	if (!submission.intent) {throw Error('You must have an intent for an action...');}
 
 	// this.markModified('status');
-
-	const { description, intent, effort } = submission;
-	this.submission = {
-		description,
-		intent,
-		effort
-	};
-
-	const changed = [];
-
-	const actionType = config.find(
-		(el) => el.type.toLowerCase() === submittedActionType.toLowerCase()
-	);
-	if (!actionType)
-		throw Error(`Action for type ${submittedActionType} is undefined`);
-	const allowedAssets = actionType.resourceTypes;
-
-	for (const id of submission.assets) {
-		let asset = await Asset.findById(id);
-		const allowed = allowedAssets.find(
-			(el) => el.toLowerCase() === asset.type.toLowerCase()
-		);
-		if (!allowed)
-			throw Error(
-				`Asset of type ${asset.type} not allowed for ${submittedActionType}!`
-			);
-		this.submission.assets.push(id);
-		asset = await asset.use();
-		changed.push(asset);
-	}
-
-	this.markModified('submission.assets');
-
+	this.submission = submission;
 	const action = await this.save();
 	await action.populateMe();
 
-	nexusEvent.emit('respondClient', 'update', [action, ...changed]);
+	nexusEvent.emit('respondClient', 'update', [action]);
 	return { message: `${action.type} Submission Success`, type: 'success' };
+};
+
+ActionSchema.methods.submitCollaboration = async function (submission) {
+	console.log(submission);
+	// Expects description, intent, effort, assets, collaborators
+	if (!submission.description) {throw Error('A submission must have a description...');}
+	if (!submission.intent) {throw Error('You must have an intent for an action...');}
+
+	// this.markModified('status');
+	this.submissions.push(submission);
+	const action = await this.save();
+	await action.populateMe();
+
+	nexusEvent.emit('respondClient', 'update', [action]);
+	return { message: `${action.type} Collaboration Success`, type: 'success' };
 };
 
 ActionSchema.methods.comment = async function (comment) {
@@ -217,7 +195,8 @@ ActionSchema.methods.postResult = async function (result, dice) {
 			message: `Result Successfully added to ${this.name}`,
 			type: 'success'
 		};
-	} catch (err) {
+	}
+	catch (err) {
 		return { message: `Error: ${err}`, type: 'error' };
 	}
 };
@@ -279,7 +258,8 @@ ActionSchema.methods.populateMe = async function () {
 			path: 'results',
 			populate: { path: 'resolver', select: 'characterName profilePicture' }
 		},
-		{ path: 'controller', select: 'characterName' }
+		{ path: 'controller', select: 'characterName' },
+		{ path: 'collaborators', select: 'characterName' }
 	]);
 };
 

@@ -1,6 +1,6 @@
 {
   "jwtPrivateKey": "spooky",
-  "dbName": "gw2DB",
+  "dbName": "developmentDB",
   "version": "1.0",
   "clientURL": "https://godswar-app.onrender.com/",
 	"serverURL": "https://godswar-server.onrender.com/",
