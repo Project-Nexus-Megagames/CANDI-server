@@ -113,11 +113,11 @@ ActionSchema.methods.submitCollaboration = async function (submission) {
 
 	// this.markModified('status');
 	this.submissions.push(submission);
-	const action = await this.save();
-	await action.populateMe();
+	let action = await this.save();
+	action = await action.populateMe();
 
 	nexusEvent.emit('respondClient', 'update', [action]);
-	return { message: `${action.type} Collaboration Success`, type: 'success' };
+	return { message: ` Collaboration Success`, type: 'success' };
 };
 
 ActionSchema.methods.comment = async function (comment) {
@@ -259,7 +259,11 @@ ActionSchema.methods.populateMe = async function () {
 			populate: { path: 'resolver', select: 'characterName profilePicture' }
 		},
 		{ path: 'controller', select: 'characterName' },
-		{ path: 'collaborators', select: 'characterName' }
+		{ path: 'collaborators', select: 'characterName' },
+		{
+			path: 'submissions',
+			populate: { path: 'creator', select: 'characterName profilePicture playerName' }
+		}
 	]);
 };
 

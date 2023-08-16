@@ -316,10 +316,10 @@ async function editSubObject (data, user) {
 		await action.populateMe();
 
 		await log.save();
-		logger.info(`Result with the id ${id} was edited via Socket!`);
+		logger.info(`Effect with the id ${id} was edited via Socket!`);
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return {
-			message: `Result with the id ${id} was edited via Socket!`,
+			message: `Effect with the id ${id} was edited via Socket!`,
 			type: 'success'
 		};
 	} // case: editing comment
@@ -348,31 +348,44 @@ async function editSubObject (data, user) {
 			type: 'success'
 		};
 	} // if
-  else if (action != null && data.collab) {
-    console.log('editing collab')
-		// const log = new History({
-		// 	docType: 'action',
-		// 	action: 'edit',
-		// 	function: 'editComment',
-		// 	document: action,
-		// 	user
-		// });
-		// await Comment.findByIdAndUpdate(data.comment._id, data.comment, {
-		// 	new: true
-		// }).populate('commentor');
-		// action = await Action.findById(id);
-		// action = await action.save();
-		// await action.populateMe();
+  else if (action != null && data.submission) {
+    console.log('editing submission')
+		const log = new History({
+			docType: 'action',
+			action: 'edit',
+			function: 'editSubmission',
+			document: action,
+			user
+		});
+		const submission = action.submissions.findIndex(
+			(el) => el._id.toHexString() === data.submission.id
+		); // submissions are populated,
+		const thing = action.submissions[submission];
 
-		// await log.save();
-		// logger.info(
-		// 	`Comment with the id ${data.comment._id} was edited via Socket!`
-		// );
-		// nexusEvent.emit('respondClient', 'update', [action]);
-		// return {
-		// 	message: `Comment with the id ${data.comment._id} was edited via Socket!`,
-		// 	type: 'success'
-		// };
+		for (const el in data.submission) {
+			if (
+				data.submission[el] !== undefined &&
+				data.submission[el] !== '' &&
+				el !== '_id' &&
+				el !== 'model'
+			) {
+				thing[el] = data.submission[el];
+			}
+			else {
+				console.log(`Detected invalid edit: ${el} is ${data.submission[el]}`);
+			}
+		}
+
+		action = await action.save();
+		await action.populateMe();
+
+		await log.save();
+		logger.info(`Result with the id ${id} was edited via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [action]);
+		return {
+			message: `Result with the id ${id} was edited via Socket!`,
+			type: 'success'
+		};
 	} // if
 }
 
