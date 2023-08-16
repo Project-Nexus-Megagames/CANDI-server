@@ -11,20 +11,20 @@ const characters = [
 		control: ['Scott']
 	},
 	{
-		playerName: 'Justin',
+		playerName: 'Greg',
 		pronouns: 'he/him',
-		characterName: 'Ankh Control',
+		characterName: 'Ook Control',
 		tags: ['Control'],
 		email: 'temp@mail.com',
 		timeZone: 'temp',
 		bio: 'No Bio yet',
-		username: 'Blumbus',
+		username: 'aggrocragg',
 		control: []
 	},
 	{
 		playerName: 'Dominique',
 		pronouns: 'he/him',
-		characterName: 'Nile Control',
+		characterName: 'Thaum Control',
 		tags: ['Control'],
 		email: 'temp@mail.com',
 		timeZone: 'temp',
@@ -44,21 +44,21 @@ const characters = [
 		control: []
 	},
 	{
-		playerName: 'Nicole',
+		playerName: 'spamduck',
 		pronouns: 'she/her',
-		characterName: 'Pyramid Control',
+		characterName: 'College Porter Control',
 		tags: ['Control'],
 		email: 'temp@mail.com',
 		timeZone: 'temp',
 		bio: 'No Bio yet',
-		username: 'Nicole',
+		username: 'spamduck',
 		control: []
 	},
 	{
 		playerName: 'Alex',
 		pronouns: 'He/Him',
-		characterName: 'Scarab Control',
-		tags: ['Control', 'Game Control'],
+		characterName: 'Root Vegetable Control',
+		tags: ['Control'],
 		email: 'temp@mail.com',
 		timeZone: 'temp',
 		bio: 'No Bio yet',
@@ -66,10 +66,10 @@ const characters = [
 		control: []
 	},
 	{
-		playerName: 'Kieran ',
+		playerName: 'Clare ',
 		pronouns: 'He/Him',
-		characterName: 'Ushabti Control',
-		tags: ['Control'],
+		characterName: 'The Auditor Control',
+		tags: ['Control', 'Game Control'],
 		email: 'temp@mail.com',
 		timeZone: 'temp',
 		bio: 'No Bio yet',
