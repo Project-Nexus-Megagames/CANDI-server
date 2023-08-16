@@ -377,7 +377,7 @@ async function editSubObject (data, user) {
 		}
 
 		action = await action.save();
-		await action.populateMe();
+		action = await action.populateMe();
 
 		await log.save();
 		logger.info(`Result with the id ${id} was edited via Socket!`);

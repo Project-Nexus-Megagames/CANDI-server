@@ -241,7 +241,7 @@ ActionSchema.methods.addAttachment = async function (attachment) {
 
 ActionSchema.methods.populateMe = async function () {
 	// TODO: THIS IS A CORRECT POPULATE!!!!
-	await this.populate([
+	return await this.populate([
 		{
 			path: 'comments',
 			populate: { path: 'commentor', select: 'characterName profilePicture' }
