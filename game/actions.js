@@ -78,10 +78,21 @@ async function createAction (data, user) {
 
 		action = await action.save();
 		await action.submit(data.submission, data.type, config.actionTypes);
+
+		const changed = [];
+
+		for (const item of action.submission.assets) {
+			let asset = await Asset.findById(item);
+			asset
+				? (asset = await asset.use())
+				: console.log('Avoided using a thing!');
+			changed.push(asset);
+		}
+
 		logger.info(`${data.type} "${action._id}" created.`);
 		action = await action.populateMe();
 
-		nexusEvent.emit('respondClient', 'update', [action]);
+		nexusEvent.emit('respondClient', 'update', [action, ...changed]);
 
 		// console.log(action)
 		if (submission.effort.amount > 0) {
@@ -246,7 +257,7 @@ async function deleteSubObject (data, user) {
 async function editSubObject (data, user) {
 	const id = data.id;
 	let action = await Action.findById(id);
-  // case: editing a result
+	// case: editing a result
 	if (action != null && data.result) {
 		const log = new History({
 			docType: 'action',
@@ -348,8 +359,8 @@ async function editSubObject (data, user) {
 			type: 'success'
 		};
 	} // if
-  else if (action != null && data.submission) {
-    console.log('editing submission')
+	else if (action != null && data.submission) {
+		console.log('editing submission');
 		const log = new History({
 			docType: 'action',
 			action: 'edit',
@@ -835,14 +846,14 @@ async function effectAction (data) {
 
 async function collabAction (data, user) {
 	try {
-    const { effort, creator } = data;
+		const { effort, creator } = data;
 		const action = await Action.findById(data.action);
-    const character = await Character.findById(creator);
+		const character = await Character.findById(creator);
 
 		if (!action) throw Error('No Action for Collab!');
 		const response = await action.submitCollaboration(data);
 
-    if (effort.amount > 0) {
+		if (effort.amount > 0) {
 			await character.expendEffort(
 				effort.amount,
 				effort.effortType
@@ -881,5 +892,5 @@ module.exports = {
 	assignController,
 	diceResult,
 	setNewsWorthy,
-  collabAction
+	collabAction
 };

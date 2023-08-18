@@ -117,7 +117,7 @@ ActionSchema.methods.submitCollaboration = async function (submission) {
 	action = await action.populateMe();
 
 	nexusEvent.emit('respondClient', 'update', [action]);
-	return { message: ` Collaboration Success`, type: 'success' };
+	return { message: ' Collaboration Success', type: 'success' };
 };
 
 ActionSchema.methods.comment = async function (comment) {
@@ -135,9 +135,8 @@ ActionSchema.methods.comment = async function (comment) {
 	this.comments.push(post._id);
 	this.markModified('comments');
 
-	const action = await this.save();
-
-	await action.populateMe();
+	let action = await this.save();
+	action = await action.populateMe();
 
 	nexusEvent.emit('respondClient', 'update', [action]);
 	return { message: `${action.type} Comment Success`, type: 'success' };
@@ -187,8 +186,8 @@ ActionSchema.methods.postResult = async function (result, dice) {
 		this.results.push(post);
 		this.markModified('results');
 
-		const action = await this.save();
-		await action.populateMe();
+		let action = await this.save();
+		action = await action.populateMe();
 
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return {
@@ -214,8 +213,8 @@ ActionSchema.methods.addEffect = async function (effect) {
 	await post.populate('effector', 'characterName profilePicture');
 	this.effects.push(post);
 	this.markModified('effects');
-	const action = await this.save();
-	await action.populateMe();
+	let action = await this.save();
+	action = await action.populateMe();
 
 	nexusEvent.emit('respondClient', 'update', [action]);
 	console.log(`Effect Successfully added to ${action.name}`);
@@ -256,7 +255,7 @@ ActionSchema.methods.populateMe = async function () {
 		},
 		{
 			path: 'results',
-			populate: { path: 'resolver', select: 'characterName profilePicture' }
+			populate: { path: 'resolver', select: 'characterName playerName profilePicture' }
 		},
 		{ path: 'controller', select: 'characterName' },
 		{ path: 'collaborators', select: 'characterName' },

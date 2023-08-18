@@ -27,7 +27,7 @@ const AssetSchema = new Schema({
 	uses: { type: Number, default: 2 }
 });
 
-AssetSchema.methods.toggleStatus = async function(tag, remove) {
+AssetSchema.methods.toggleStatus = async function (tag, remove) {
 	if (remove) {
 		await clearArrayValue(this.status, tag); //
 	}
@@ -37,12 +37,13 @@ AssetSchema.methods.toggleStatus = async function(tag, remove) {
 };
 
 
-AssetSchema.methods.use = async function() {
-	this.toggleStatus('used');
+AssetSchema.methods.use = async function () {
+	const asset = await this.toggleStatus('used');
+	console.log(`${asset.name} owned by ${asset.owner} has been used.`);
 	return;
 };
 
-AssetSchema.methods.unuse = async function() {
+AssetSchema.methods.unuse = async function () {
 	const asset = await this.toggleStatus('used', true);
 	console.log(`${asset.name} owned by ${asset.owner} has been unused.`);
 	return asset;
