@@ -49,18 +49,20 @@ const CharacterSchema = new Schema({
 
 CharacterSchema.methods.expendEffort = async function (amount, type) {
 	try {
-		if (!amount || !type)
+		if (!amount || !type) {
 			throw Error(
 				`expendEffort() must have type and amount. amount: '${amount}' - type: '${type}'`
 			);
+		}
 		const effort = this.effort.find(
 			(ef) => ef.type.toLowerCase() === type.toLowerCase()
 		);
 		if (!effort) throw Error(`Effort for type ${type} is undefined`);
-		if (effort.amount < amount)
+		if (effort.amount < amount) {
 			throw Error(
 				`Not enough Effort for type ${type}: ${effort.amount} < ${amount}`
 			);
+		}
 		effort.amount = effort.amount - amount;
 
 		let character = await this.save();
@@ -69,7 +71,8 @@ CharacterSchema.methods.expendEffort = async function (amount, type) {
 		nexusEvent.emit('respondClient', 'update', [character]);
 		// nexusEvent.emit('updateCharacters'); // Needs proper update for CANDI
 		return character;
-	} catch (err) {
+	}
+	catch (err) {
 		console.log(err); // Add proper error handling for CANDI
 		throw Error(err);
 	}
@@ -77,22 +80,30 @@ CharacterSchema.methods.expendEffort = async function (amount, type) {
 
 CharacterSchema.methods.restoreEffort = async function (amount, type, config) {
 	try {
-		const effort = this.effort.find(
+		let effort = this.effort.find(
 			(ef) => ef.type.toLowerCase() === type.toLowerCase()
 		);
-		if (!effort) throw Error(`Effort for type ${type} is undefined`);
+		if (!effort) {
+			this.effort.push({ amount: 0, type });
+			effort = this.effort.find(
+				(ef) => ef.type.toLowerCase() === type.toLowerCase()
+			);
+		}
+
+		if (!effort) throw Error(`This effort is bad ${type}`);
+
 		const configEffort = config.find(
 			(ef) => ef.type.toLowerCase() === type.toLowerCase()
 		);
 		effort.amount = effort.amount + amount;
-		if (effort.amount > configEffort.effortAmount)
-			effort.amount = configEffort.effortAmount;
+		if (effort.amount > configEffort.effortAmount) effort.amount = configEffort.effortAmount;
 		let character = await this.save();
 		character = await character.populateMe();
 
 		nexusEvent.emit('respondClient', 'update', [character]);
 		return character;
-	} catch (err) {
+	}
+	catch (err) {
 		console.log(err); // Add proper error handling for CANDI
 	}
 };
@@ -109,7 +120,8 @@ CharacterSchema.methods.restoreStat = async function (amount, type) {
 
 		nexusEvent.emit('respondClient', 'update', [character]);
 		return characterStats.statAmount;
-	} catch (err) {
+	}
+	catch (err) {
 		console.log(err); // Add proper error handling for CANDI
 	}
 };

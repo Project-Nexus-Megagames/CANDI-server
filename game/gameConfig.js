@@ -38,14 +38,15 @@ async function createGameConfig(data, user) {
 		}
 	}
 
-	dupesCheck = [];
-	for (const eT of effortTypes) {
-		dupesCheck.push(eT.type);
-		if (dupesCheck.length !== _.uniq(dupesCheck).length) {
-			dupesCheck = [];
-			return nexusError('EffortTypes must be unique', 400);
-		}
-	}
+  // Scott has disabled this to allow for allowing multiple tags for 1 effort type
+	// dupesCheck = [];
+	// for (const eT of effortTypes) {
+	// 	dupesCheck.push(eT.type);
+	// 	if (dupesCheck.length !== _.uniq(dupesCheck).length) {
+	// 		dupesCheck = [];
+	// 		return nexusError('EffortTypes must be unique', 400);
+	// 	}
+	// }
 
 	dupesCheck = [];
 	for (const rT of resourceTypes) {
