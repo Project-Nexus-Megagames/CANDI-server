@@ -116,7 +116,7 @@ router.delete('/:id', auth, async function(req, res, next) {
 // @route   PATCH api/assets/deleteAll
 // @desc    Delete All assets
 // @access  Public
-router.patch('/deleteAll', auth, async function(req, res) {
+router.patch('/deleteAll', async function(req, res) {
 	const data = await Asset.deleteMany();
 	return res.status(200).send(`We wiped out ${data.delCount} Assets`);
 });
@@ -130,9 +130,6 @@ router.post('/initAssets', async function(req, res) {
 		for (const ass of assets) {
 			const newAsset = new Asset(ass);
 			switch (newAsset.type) {
-			case 'Asset':
-				newAsset.lendable = true;
-				break;
 			default:
 				newAsset.uses = 999;
 				break;

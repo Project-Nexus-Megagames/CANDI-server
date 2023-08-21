@@ -1,13 +1,15 @@
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const { logger } = require('../middleware/log/winston');
-const { Asset, GodBond, MortalBond } = require('../models/asset');
+const { Asset } = require('../models/asset');
 const { GameState } = require('../models/gamestate');
 const { History } = require('../models/history');
 const { ControlLog } = require('../models/log');
 
-async function modifyAsset(data, user) {
+async function modifyAsset(receivedData, user) {
 	try {
-		const {	_id, name, description, uses, used, owner, status, lendable, level, dice, tags, loggedInUser, type } = data;
+		console.log(receivedData);
+		const {	data, loggedInUser } = receivedData;
+	  const _id = data._id;
 		const asset = await Asset.findById(_id);
 
 		if (asset === null) {
@@ -20,17 +22,14 @@ async function modifyAsset(data, user) {
 			return { message: `Found multiple assets for _id ${_id}`, type: 'error' };
 		}
 		else {
-			asset.name = name;
-			asset.description = description;
-			asset.type = type;
-			asset.uses = uses;
-			asset.level = level;
-			asset.dice = dice;
-			asset.owner = owner;
-
-			asset.status = status;
-
-			asset.tags = tags;
+			for (const el in data) {
+				if (data[el] !== undefined && data[el] !== '' && el !== '_id' && el !== 'model') {
+					asset[el] = data[el];
+				}
+				else {
+					console.log(`Detected invalid edit: ${el} is ${data[el]}`);
+				}
+			}
 
 			await asset.save();
 			const log = new History({
@@ -64,36 +63,35 @@ async function modifyAsset(data, user) {
 
 async function addAsset(data, user) {
 	try {
-		const { asset, arcane } = data;
-		const gamestate = await GameState.findOne()
-		
+		const { asset } = data;
+		const gamestate = await GameState.findOne();
 
 		let newAsset;
 		newAsset = new Asset(asset);
-		if (gamestate.status === 'Resolution') newAsset.status.hidden = true;
-
-		switch (data.asset.type) {
-		case 'Asset':
-			newAsset.status.lendable = true;
-			break;
-		case 'Trait':
-			newAsset.status.lendable = false;
-			break;
-		case 'Power':
-			newAsset.status.lendable = false;
-			break;
-		case 'Territory':
-			newAsset.status.lendable = true;
-			newAsset.uses = 999;
-			break;
-		case 'Title':
-			newAsset.status.lendable = false;
-			break;
-		default:
-			throw Error(`Type '${data.asset.type}' is Invalid!`);
-		}
-
 		newAsset = await newAsset.save();
+
+		if (gamestate.status === 'Resolution') newAsset.toggleStatus('hidden', true);
+		// switch (data.asset.type) {
+		// case 'Asset':
+		// 	newAsset.status.lendable = true;
+		// 	break;
+		// case 'Trait':
+		// 	newAsset.status.lendable = false;
+		// 	break;
+		// case 'Power':
+		// 	newAsset.status.lendable = false;
+		// 	break;
+		// case 'Territory':
+		// 	newAsset.status.lendable = true;
+		// 	newAsset.uses = 999;
+		// 	break;
+		// case 'Title':
+		// 	newAsset.status.lendable = false;
+		// 	break;
+		// default:
+		// 	throw Error(`Type '${data.asset.type}' is Invalid!`);
+		// }
+
 
 		const controlLog = new ControlLog({
 			control: data.loggedInUser.username,
@@ -150,7 +148,7 @@ async function lendAsset(data, user) {
 			};
 		}
 		else {
-			if (lendingBoolean === asset.status.lent) {
+			if (asset.status.some(el => el === 'lent')) {
 				// this is a check to see if someone is trying to relend a previously lent asset
 				return {
 					message: `You cannot lend an already loaned asset "${asset.name}"`,
@@ -165,7 +163,7 @@ async function lendAsset(data, user) {
 			else {
 				asset.currentHolder = asset.owner;
 			}
-			asset.status.lent = lendingBoolean;
+			asset.toggleStatus('lent', lendingBoolean);
 			asset = await asset.save();
 
 			log.document = asset;
@@ -213,14 +211,14 @@ async function deleteAsset(data, user) {
 	}
 }
 
-async function unhideAll() {
+async function unhideAllAssets() {
 	try {
-		let assets = await Asset.find().populate('with');
-		assets = assets.filter((el) => el.status.hidden === true);
+		const assets = await Asset.find({ status: 'hidden' }).populate('with');
 		const res = [];
 		for (const ass of assets) {
-			console.log(ass.name);
-			ass.status.hidden = false;
+			console.log('unhiding: ', ass.name);
+			if (ass.uses !== 999) ass.uses = ass.uses - 1;
+
 			await ass.save();
 			res.push(ass);
 		}
@@ -232,4 +230,26 @@ async function unhideAll() {
 	}
 }
 
-module.exports = { addAsset, modifyAsset, lendAsset, deleteAsset, unhideAll };
+async function unLendAllAssets() {
+	try {
+		const res = [];
+		for (const asset of await Asset.find({ status: 'lent' }).populate(
+			'with'
+		)) {
+
+			asset.toggleStatus('lent', true);
+
+			asset.currentHolder = null;
+			await asset.save();
+			console.log(`Unlending ${asset.name}`);
+			res.push(asset);
+		}
+		nexusEvent.emit('respondClient', 'update', res);
+	}
+	catch (err) {
+		logger.error(err);
+		return { message: `ERROR: ${err}`, type: 'error' };
+	}
+}
+
+module.exports = { addAsset, modifyAsset, lendAsset, deleteAsset, unhideAllAssets, unLendAllAssets };

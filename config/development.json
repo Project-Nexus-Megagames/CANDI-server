@@ -1,7 +1,8 @@
 {
-  "jwtPrivateKey": "rawr",
-	"dbName": "developmentDB",
+	"jwtPrivateKey": "rawr",
+	"dbName": "candiDB",
+  // "dbName": "discDB",
 	"clientURL": "http://localhost:3000/",
 	"serverURL": "http://localhost:5000/",
-  "socketCORS": "http://localhost:3000"
+	"socketCORS": "http://localhost:3000"
 }

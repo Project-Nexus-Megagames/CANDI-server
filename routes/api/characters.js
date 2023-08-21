@@ -70,20 +70,10 @@ router.post('/', async function(req, res, next) {
 	else {
 		try {
 			let newCharacter = new Character(req.body);
-			const wealth = {
-				name: `${newCharacter.characterName}'s Wealth`,
-				description: req.body.wealthLevel,
-				model: 'Wealth',
-				uses: 2
-			};
-			const asset = new Asset(wealth);
-			newCharacter.wealth = asset;
 
-			//	await newAgent.validateAgent();
-			const docs = await Character.find({ characterName: req.body.characterName });
+		  const docs = await Character.find({ characterName: req.body.characterName });
 
 			if (docs.length < 1) {
-				asset.save();
 				newCharacter = await newCharacter.save();
 				logger.info(`${newCharacter.characterName} created.`);
 				nexusEvent.emit('updateCharacters');
@@ -131,7 +121,7 @@ router.delete('/:id', auth, async function(req, res, next) {
 // @route   PATCH api/characters/deleteAll
 // @desc    Delete All Agents
 // @access  Public
-router.patch('/deleteAll', auth, async function(req, res) {
+router.patch('/deleteAll', async function(req, res) {
 	const data = await Character.deleteMany();
 	return res.status(200).send(`We wiped out ${data.deletedCount} Characters!`);
 });

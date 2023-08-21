@@ -12,23 +12,21 @@ const { Location } = require('../models/location');
 const { GameConfig } = require('../models/gameConfig');
 const { ControlLog } = require('../models/log');
 
-async function removeEffort(data) {
+async function removeEffort (data) {
 	let character = await Character.findOne({ characterName: data.creator });
 	console.log('remove effort called', data);
 	character = await character.expendEffort(data.effort);
 	return character;
 }
 
-async function addEffort(data) {
+async function addEffort (data) {
 	console.log(data);
-	let character = await Character.findOne({ characterName: data.creator })
-		.populate('assets')
-		.populate('lentAssets');
+	let character = await Character.findOne({ characterName: data.creator });
 	character = await character.restoreEffort(data.effort, data.type);
 	return character;
 }
 
-async function createAction(data, user) {
+async function createAction (data, user) {
 	// Expecting -  round, creator <<character_id>>, controllers <<Array>>, submission <<submissionSchema>>
 	try {
 		// Data check errors!
@@ -38,23 +36,31 @@ async function createAction(data, user) {
 		}
 		if (!data.submission) throw Error('You must include a submission...');
 		const gamestate = await GameState.findOne();
-		if (gamestate.status !== 'Active') throw Error('Round is not active.')
+		if (gamestate.status !== 'Active') throw Error('Round is not active.');
 
-		const { type, creator, name, numberOfInjuries, submission, attachments } = data;
+		const { type, creator, name, numberOfInjuries, submission, attachments, collaborators } = data;
 
 		const character = await Character.findById(creator);
 		const actions = await Action.find({ creator });
 		const config = await GameConfig.findOne();
 
-		const actionType = config.actionTypes.find(el => el.type.toLowerCase() === data.type.toLowerCase());
+		const actionType = config.actionTypes.find(
+			(el) => el.type.toLowerCase() === data.type.toLowerCase()
+		);
 		if (!actionType) throw Error(`Action for type ${data.type} is undefined`);
-		const allowedAssets = actionType.assetType;
+		const allowedAssets = actionType.resourceTypes;
 
 		for (const id of data.submission.assets) {
-
 			const asset = await Asset.findById(id);
-			const allowed = allowedAssets.find(el => el === asset.type.toLowerCase());
-			if (!allowed) throw Error (`Asset of type ${asset.type} not allowed for ${data.type}!`);
+			const allowed = allowedAssets.find(
+				(el) => el.toLowerCase() === asset.type.toLowerCase()
+			);
+			console.log('HELLO', allowed);
+			if (allowed === 'test') {
+				throw Error(
+					`Asset of type ${asset.type} not allowed for ${data.type}!`
+				);
+			}
 		}
 
 		let action = new Action({
@@ -66,22 +72,35 @@ async function createAction(data, user) {
 			round: gamestate.round,
 			attachments,
 			creator,
+			collaborators,
 			numberOfInjuries
 		});
 
 		action = await action.save();
 		await action.submit(data.submission, data.type, config.actionTypes);
-		await action.populateMe();
 
+		const changed = [];
 
-		nexusEvent.emit('respondClient', 'update', [action]);
+		for (const item of action.submission.assets) {
+			let asset = await Asset.findById(item);
+			asset
+				? (asset = await asset.use())
+				: console.log('Avoided using a thing!');
+			changed.push(asset);
+		}
 
+		logger.info(`${data.type} "${action._id}" created.`);
+		action = await action.populateMe();
+
+		nexusEvent.emit('respondClient', 'update', [action, ...changed]);
 
 		// console.log(action)
 		if (submission.effort.amount > 0) {
-			await character.expendEffort(submission.effort.amount, submission.effort.effortType);
+			await character.expendEffort(
+				submission.effort.amount,
+				submission.effort.effortType
+			);
 		}
-
 
 		const log = new History({
 			docType: 'action',
@@ -94,10 +113,7 @@ async function createAction(data, user) {
 
 		await log.save();
 
-		logger.info(`${action.type} "${action._id}" created.`);
-
-		// nexusEvent.emit('respondClient', 'create', [action]);
-		return { message: `${action.type} Creation Success`, type: 'success' };
+		return { message: `${data.type} Creation Success`, type: 'success' };
 	}
 	catch (err) {
 		console.log(err);
@@ -109,7 +125,7 @@ async function createAction(data, user) {
 	}
 }
 
-async function supportAgenda(data) {
+async function supportAgenda (data) {
 	try {
 		let character = await Character.findById(data.supporter);
 		const action = await Action.findById(data.id);
@@ -125,13 +141,12 @@ async function supportAgenda(data) {
 
 		return { message: `${action.name} supported!`, type: 'success' };
 	}
-	catch(err) {
+	catch (err) {
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
-
 }
 
-async function assignController(data) {
+async function assignController (data) {
 	try {
 		let action = await Action.findById(data.id);
 		action.controller = data.controller;
@@ -145,7 +160,7 @@ async function assignController(data) {
 	}
 }
 
-async function diceResult(data) {
+async function diceResult (data) {
 	try {
 		let action = await Action.findById(data.id);
 		action.diceresult = data.diceresult;
@@ -153,14 +168,13 @@ async function diceResult(data) {
 		await action.populateMe();
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return { message: `${action.name} diceresult logged!`, type: 'success' };
-
 	}
 	catch (err) {
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
 
-async function setNewsWorthy(data) {
+async function setNewsWorthy (data) {
 	try {
 		let action = await Action.findById(data.id);
 		action.news = data.news;
@@ -168,13 +182,12 @@ async function setNewsWorthy(data) {
 		await action.populateMe();
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return { message: `${action.name} newsworthiness set`, type: 'success' };
-
 	}
 	catch (err) {
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
-async function deleteSubObject(data, user) {
+async function deleteSubObject (data, user) {
 	const id = data.id;
 	let action = await Action.findById(id);
 	if (action != null && data.result) {
@@ -241,9 +254,10 @@ async function deleteSubObject(data, user) {
 }
 
 // Used to edit comments, results, or effects of an action. probably should be seperate functions, but...
-async function editSubObject(data, user) {
+async function editSubObject (data, user) {
 	const id = data.id;
 	let action = await Action.findById(id);
+	// case: editing a result
 	if (action != null && data.result) {
 		const log = new History({
 			docType: 'action',
@@ -281,7 +295,7 @@ async function editSubObject(data, user) {
 			message: `Result with the id ${id} was edited via Socket!`,
 			type: 'success'
 		};
-	} // if
+	} // case: editing an effect
 	else if (action != null && data.effect) {
 		const log = new History({
 			docType: 'action',
@@ -313,13 +327,13 @@ async function editSubObject(data, user) {
 		await action.populateMe();
 
 		await log.save();
-		logger.info(`Result with the id ${id} was edited via Socket!`);
+		logger.info(`Effect with the id ${id} was edited via Socket!`);
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return {
-			message: `Result with the id ${id} was edited via Socket!`,
+			message: `Effect with the id ${id} was edited via Socket!`,
 			type: 'success'
 		};
-	} // if
+	} // case: editing comment
 	else if (action != null && data.comment) {
 		const log = new History({
 			docType: 'action',
@@ -328,26 +342,65 @@ async function editSubObject(data, user) {
 			document: action,
 			user
 		});
-		await Comment.findByIdAndUpdate(
-			data.comment._id,
-			data.comment,
-			{ new: true }
-		).populate('commentor');
+		await Comment.findByIdAndUpdate(data.comment._id, data.comment, {
+			new: true
+		}).populate('commentor');
 		action = await Action.findById(id);
 		action = await action.save();
 		await action.populateMe();
 
 		await log.save();
-		logger.info(`Comment with the id ${data.comment._id} was edited via Socket!`);
+		logger.info(
+			`Comment with the id ${data.comment._id} was edited via Socket!`
+		);
 		nexusEvent.emit('respondClient', 'update', [action]);
 		return {
 			message: `Comment with the id ${data.comment._id} was edited via Socket!`,
 			type: 'success'
 		};
 	} // if
+	else if (action != null && data.submission) {
+		console.log('editing submission');
+		const log = new History({
+			docType: 'action',
+			action: 'edit',
+			function: 'editSubmission',
+			document: action,
+			user
+		});
+		const submission = action.submissions.findIndex(
+			(el) => el._id.toHexString() === data.submission.id
+		); // submissions are populated,
+		const thing = action.submissions[submission];
+
+		for (const el in data.submission) {
+			if (
+				data.submission[el] !== undefined &&
+				data.submission[el] !== '' &&
+				el !== '_id' &&
+				el !== 'model'
+			) {
+				thing[el] = data.submission[el];
+			}
+			else {
+				console.log(`Detected invalid edit: ${el} is ${data.submission[el]}`);
+			}
+		}
+
+		action = await action.save();
+		action = await action.populateMe();
+
+		await log.save();
+		logger.info(`Result with the id ${id} was edited via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [action]);
+		return {
+			message: `Result with the id ${id} was edited via Socket!`,
+			type: 'success'
+		};
+	} // if
 }
 
-async function deleteAction(data, user) {
+async function deleteAction (data, user) {
 	try {
 		const id = data.id;
 		let action = await Action.findById(id);
@@ -364,7 +417,11 @@ async function deleteAction(data, user) {
 
 			const character = await Character.findById(action.creator);
 			const config = await GameConfig.findOne();
-			await character.restoreEffort(action.submission.effort.amount, action.submission.effort.effortType, config.effortTypes);
+			await character.restoreEffort(
+				action.submission.effort.amount,
+				action.submission.effort.effortType,
+				config.effortTypes
+			);
 			nexusEvent.emit('respondClient', 'update', [character]);
 
 			for (const item of action.submission.assets) {
@@ -373,7 +430,6 @@ async function deleteAction(data, user) {
 					? (asset = await asset.unuse())
 					: console.log('Avoided un-using a thing!');
 				changed.push(asset);
-
 			}
 
 			action = await Action.findByIdAndDelete(id);
@@ -397,7 +453,7 @@ async function deleteAction(data, user) {
 	}
 }
 
-async function controlOverride(data, user) {
+async function controlOverride (data, user) {
 	const char = await Character.findOne({ username: user });
 	try {
 		const { id, asset } = data;
@@ -461,11 +517,10 @@ async function controlOverride(data, user) {
 	}
 }
 
-async function editAction(data, user) {
+async function editAction (data, user) {
 	const { id } = data;
 	const changed = [];
 	const oldAction = await Action.findById(id);
-
 
 	if (!id) throw Error('Actions must have an _id...');
 	if (oldAction === undefined) throw Error('Could not find oldAction');
@@ -475,11 +530,13 @@ async function editAction(data, user) {
 	}).populate('creator');
 
 	if (action.submission.effort.amount !== oldAction.submission.effort.amount) {
-		let character = await Character.findById(action.creator._id).populate('lentAssets');
-		character = await character.expendEffort(action.submission.effort.amount - oldAction.submission.effort.amount, action.submission.effort.effortType);
+		let character = await Character.findById(action.creator._id);
+		character = await character.expendEffort(
+			action.submission.effort.amount - oldAction.submission.effort.amount,
+			action.submission.effort.effortType
+		);
 		nexusEvent.emit('respondClient', 'update', [character]);
 	}
-
 
 	// let comment = new Comment({
 	// 	body: `${user} edited this action...`,
@@ -528,15 +585,19 @@ async function editAction(data, user) {
 	return { message: `${action.type} Edit Success`, type: 'success' };
 }
 
-function capitalizeFirstLetter(string) {
+function capitalizeFirstLetter (string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-async function effectAction(data) {
+async function effectAction (data) {
 	try {
 		const { type, document, owner, arcane, loggedInUser, effector } = data;
 		const action = await Action.findById(data.action);
-		const controlLog = new ControlLog({ controlAction: 'ActionEffect', control: loggedInUser.username, affectedAction: action.name });
+		const controlLog = new ControlLog({
+			controlAction: 'ActionEffect',
+			control: loggedInUser.username,
+			affectedAction: action.name
+		});
 		if (!action) throw Error('No Action for Effect!');
 		let response;
 		let old;
@@ -558,10 +619,15 @@ async function effectAction(data) {
 			controlLog.message = ' ';
 			for (const el in document) {
 				if (parseInt(document[el]) !== 0) {
-					const oldAspectValue = old[el];
-					old[el] = old[el] + parseInt(document[el]);
+					const oldAspectValue = old.globalStats.find(
+						(stat) => stat.type === el
+					).statAmount;
+					old.globalStats.find((stat) => stat.type === el).statAmount +=
+							parseInt(document[el]);
 					await action.addEffect({
-						description: `${el} changed from ${oldAspectValue} to ${old[el]} `,
+						description: `${el} changed from ${oldAspectValue} to ${
+							oldAspectValue + parseInt(document[el])
+						} `,
 						type: 'aspect',
 						status: 'Private',
 						effector
@@ -573,11 +639,47 @@ async function effectAction(data) {
 						type: 'Info'
 					});
 
-					controlLog.message = controlLog.message + ` Aspect ${el} was changed from ${oldAspectValue} to ${old[el]}.`;
+					controlLog.message =
+							controlLog.message +
+							` Aspect ${el} was changed from ${oldAspectValue} to ${old.globalStats[el]}.`;
 				}
 			}
 			await controlLog.save();
 			await old.save();
+			nexusEvent.emit('respondClient', 'update', [old]);
+			return;
+		case 'character-stat':
+			old = await Character.findById(owner);
+			controlLog.message = ' ';
+			for (const el in document) {
+				if (parseInt(document[el]) !== 0) {
+					// const oldAspectValue = old.characterStats[el].characterStats;
+					// old.characterStats[el].characterStats = old.characterStats[el].characterStats + parseInt(document[el]);
+					const oldAspectValue = await old.restoreStat(
+						parseInt(document[el]),
+						el
+					);
+					await action.addEffect({
+						description: `${el} changed from ${document[el]} to ${oldAspectValue} `,
+						type: 'aspect',
+						status: 'Private',
+						effector
+					});
+
+					await action.comment({
+						body: `${el} has changed`,
+						commentor: effector,
+						type: 'Info'
+					});
+
+					controlLog.message =
+							controlLog.message +
+							` character-stat ${el} was changed from ${document[el]} to ${oldAspectValue}.`;
+				}
+			}
+			await controlLog.save();
+			await old.save();
+			old = await old.populateMe();
 			nexusEvent.emit('respondClient', 'update', [old]);
 			return;
 		case 'new':
@@ -601,8 +703,12 @@ async function effectAction(data) {
 				old = await Location.findById(el);
 				if (!old.unlockedBy.includes(owner)) {
 					old.unlockedBy.push(owner);
-					await action.addEffect({ description: `New location unlocked: ${old.name} `, type: 'location',	status: 'Temp-Hidden', effector
-				});
+					await action.addEffect({
+						description: `New location unlocked: ${old.name} `,
+						type: 'location',
+						status: 'Temp-Hidden',
+						effector
+					});
 					controlLog.message = `New location unlocked: ${old.name} for ${owner} `;
 					locsForMessage = locsForMessage + old.name + ', ';
 					await old.save();
@@ -616,7 +722,7 @@ async function effectAction(data) {
 		case 'character': {
 			old = await Character.findById(owner);
 			for (const id of document) {
-			  if (old.knownContacts.findIndex((el) => el == id) === -1) {
+				if (old.knownContacts.findIndex((el) => el == id) === -1) {
 					old.knownContacts.push(id);
 				}
 			}
@@ -631,12 +737,21 @@ async function effectAction(data) {
 			const char = await old.populateMe();
 			nexusEvent.emit('respondClient', 'update', [char]);
 			await controlLog.save();
-			return { message: 'Character(s) successfully unlocked', type: 'success' };
+			return {
+				message: 'Character(s) successfully unlocked',
+				type: 'success'
+			};
 		}
 		case 'addInjury': {
 			const { received, duration, actionTitle, name, permanent } = document;
 			old = await Character.findById(owner);
-			const inj = { actionTitle, received, permanent, duration: parseInt(duration), name };
+			const inj = {
+				actionTitle,
+				received,
+				permanent,
+				duration: parseInt(duration),
+				name
+			};
 			old.injuries.push(inj);
 			await action.addEffect({
 				description: `${name} added to ${old.characterName} `,
@@ -718,7 +833,6 @@ async function effectAction(data) {
 		await old.save();
 		nexusEvent.emit('respondClient', 'update', [old]);
 
-
 		for (const effect of effects) {
 			await action.addEffect(effect);
 		}
@@ -727,6 +841,40 @@ async function effectAction(data) {
 	catch (err) {
 		logger.error(`message : Server Error: ${err.message}`);
 		return { message: `Server Error: ${err.message}`, type: 'error' };
+	}
+}
+
+async function collabAction (data, user) {
+	try {
+		const { effort, creator } = data;
+		const action = await Action.findById(data.action);
+		const character = await Character.findById(creator);
+
+		if (!action) throw Error('No Action for Collab!');
+		const response = await action.submitCollaboration(data);
+
+		if (effort.amount > 0) {
+			await character.expendEffort(
+				effort.amount,
+				effort.effortType
+			);
+		}
+
+		const log = new History({
+			docType: 'action',
+			action: 'create',
+			function: 'createAction',
+			document: action,
+			user,
+			character: creator
+		});
+
+		await log.save();
+		return response;
+	}
+	catch (err) {
+		logger.error(`message : Server collabAction Error: ${err.message}`);
+		return { message: `Server collabAction Error: ${err.message}`, type: 'error' };
 	}
 }
 
@@ -743,5 +891,6 @@ module.exports = {
 	supportAgenda,
 	assignController,
 	diceResult,
-	setNewsWorthy
+	setNewsWorthy,
+	collabAction
 };

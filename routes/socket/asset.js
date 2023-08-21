@@ -1,4 +1,4 @@
-const { modifyAsset, lendAsset, deleteAsset, addAsset, unhideAll } = require('../../game/assets');
+const { modifyAsset, lendAsset, deleteAsset, addAsset, unhideAllAssets } = require('../../game/assets');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
 
 module.exports = {
@@ -26,14 +26,14 @@ module.exports = {
 				response = await deleteAsset(data, client.username);
 				break;
 			}
-			case 'create': {
+			case 'new': {
 				// console.log(data);
 				response = await addAsset(data, client.username);
 				response.type === 'success' ? client.emit('clearLocalStorage', 'addAssetState') : null ;
 				break;
 			}
 			case 'unhide': {
-				response = await unhideAll(data, client.username);
+				response = await unhideAllAssets(data, client.username);
 				break;
 			}
 			default:

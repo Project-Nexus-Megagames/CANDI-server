@@ -16,7 +16,7 @@ const { removeEffort, addEffort } = require('../../game/actions');
 // @route   GET api/actions
 // @Desc    Get all actions
 // @access  Public
-router.get('/', async function(req, res, next) {
+router.get('/', async function (req, res, next) {
 	logger.info('GET Route: api/action requested: get all');
 	if (req.timedout) {
 		next();
@@ -26,11 +26,16 @@ router.get('/', async function(req, res, next) {
 			const actions = await Action.find()
 				.populate({
 					path: 'comments',
-					populate: { path: 'commentor', select: 'characterName profilePicture' }
+					populate: { path: 'commentor', select: 'characterName profilePicture playerName' }
 				}).populate('creator', 'characterName username playerName profilePicture')
-				.populate({ path: 'results', populate: { path: 'resolver', select: 'characterName profilePicture' } })
-				.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture' } })
-				.populate('controller', 'characterName');
+				.populate({ path: 'results', populate: { path: 'resolver', select: 'characterName profilePicture playerName' } })
+				.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture playerName' } })
+				.populate('controller', 'characterName')
+				.populate('collaborators', 'characterName creator')
+				.populate({
+					path: 'submissions',
+					populate: { path: 'creator', select: 'characterName profilePicture playerName' }
+				});
 			res.status(200).json(actions);
 		}
 
@@ -60,16 +65,35 @@ router.get('/:id', async (req, res, next) => {
 			}
 			else if (myCharacter.tags.some(el => el === 'Control')) { // if the user is control
 				const actions = await Action.find()
-					.populate('comments')
-					.populate('creator');
+					.populate({
+						path: 'comments',
+						populate: { path: 'commentor', select: 'characterName profilePicture playerName' }
+					}).populate('creator', 'characterName username playerName profilePicture')
+					.populate({ path: 'results', populate: { path: 'resolver', select: 'characterName profilePicture playerName' } })
+					.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture playerName' } })
+					.populate('controller', 'characterName')
+					.populate('collaborators', 'characterName creator')
+					.populate({
+						path: 'submissions',
+						populate: { path: 'creator', select: 'characterName profilePicture playerName' }
+					});
 				// console.log(projects);
 				res.status(200).json(actions);
 			}
 			else {
 				const actions = await Action.find({ creator: myCharacter._id })
-					.populate('comments')
-					.populate('creator')
-					.populate('controller', 'characterName');
+					.populate({
+						path: 'comments',
+						populate: { path: 'commentor', select: 'characterName profilePicture playerName' }
+					}).populate('creator', 'characterName username playerName profilePicture')
+					.populate({ path: 'results', populate: { path: 'resolver', select: 'characterName profilePicture playerName' } })
+					.populate({ path: 'effects', populate: { path: 'effector', select: 'characterName profilePicture playerName' } })
+					.populate('controller', 'characterName')
+					.populate('collaborators', 'characterName creator')
+					.populate({
+						path: 'submissions',
+						populate: { path: 'creator', select: 'characterName profilePicture playerName' }
+					});
 				// console.log(projects);
 				res.status(200).json(actions);
 			}
@@ -85,7 +109,7 @@ router.get('/:id', async (req, res, next) => {
 // @route   POST api/actions
 // @Desc    Post a new action
 // @access  Public
-router.post('/', async function(req, res, next) {
+router.post('/', async function (req, res, next) {
 	logger.info('POST Route: api/action call made...');
 	if (req.timedout) {
 		next();
@@ -117,7 +141,7 @@ router.post('/', async function(req, res, next) {
 // @Desc    Delete an action
 // @access  Public
 // DEPRECIATED
-router.delete('/:id', async function(req, res, next) {
+router.delete('/:id', async function (req, res, next) {
 	logger.info('DEL Route: api/action:id call made...');
 	if (req.timedout) {
 		next();
@@ -149,7 +173,7 @@ router.delete('/:id', async function(req, res, next) {
 // @desc    Delete All actions
 // @access  Public
 
-router.patch('/deleteAll', async function(req, res) {
+router.patch('/deleteAll', async function (req, res) {
 	const data = await Action.deleteMany();
 	return res.status(200).send(`We wiped out ${data.delCount} Actions`);
 });
@@ -157,7 +181,7 @@ router.patch('/deleteAll', async function(req, res) {
 
 // ~~~Game Routes~~~
 
-router.post('/project', async function(req, res, next) {
+router.post('/project', async function (req, res, next) {
 	logger.info('POST Route: api/action/project call made...');
 	if (req.timedout) {
 		next();
@@ -179,7 +203,7 @@ router.post('/project', async function(req, res, next) {
 	}
 });
 
-router.patch('/project', async function(req, res, next) {
+router.patch('/project', async function (req, res, next) {
 	logger.info('patch Route: api/action/project call made...');
 	if (req.timedout) {
 		next();

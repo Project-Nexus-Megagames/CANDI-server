@@ -8,6 +8,8 @@ const { GameConfig } = require('../models/gameConfig');
 const { History } = require('../models/history');
 const { NextRoundLog, ControlLog } = require('../models/log');
 const { d10, d8, d6, d4 } = require('../scripts/util/dice');
+const { unhideAllAssets, unLendAllAssets } = require('./assets');
+const { resetCharacters } = require('./characters');
 
 async function modifyGameState(data, user) {
 	const controlLog = new ControlLog();
@@ -115,71 +117,15 @@ async function nextRound(control) {
 	let nextRoundLog = new NextRoundLog();
 	let controlLog = new ControlLog();
 	const gamestate = await GameState.findOne();
-	const config = await GameConfig.findOne();
 	try {
 		// Find aall hidden assets and unhide them
 		// Find all used assets and -1 to their uses, then un-use them
 		// Find all hidden resolutions and unhide them
-		const assets = [];
 		const actions = [];
 
-		for (const asset of await Asset.find({ 'status.lent': true }).populate(
-			'with'
-		)) {
-			asset.status.lent = false;
-			asset.currentHolder = null;
-			await asset.save();
-			console.log(`Unlending ${asset.name}`);
-			nextRoundLog.logMessages.push(`Unlending ${asset.name}`);
-			assets.push(asset);
-		}
-
-		let hidden = await Asset.find().populate('with');
-		hidden = hidden.filter((el) => el.status.hidden === true);
-		for (const ass of hidden) {
-			console.log(`Unhiding ${ass.name}`);
-			nextRoundLog.logMessages.push(`Unhiding ${ass.name}`);
-			ass.status.hidden = false;
-			await ass.save();
-			assets.push(ass);
-		}
-
-		for (const character of await Character.find()) {
-			character.lentAssets = [];
-			character.effort = [];
-			nextRoundLog.logMessages.push(`Restoring effort and auto-healing injuries of ${character.characterName}`);
-			for (const effort of config.effortTypes) {
-				const type = effort.type;
-				const amount = effort.effortAmount;
-				const tag = effort.tag;
-				let restoredEffort = { };
-				if (character.tags.some(el => el.toLowerCase() === tag.toLowerCase())) {
-					restoredEffort = { type, amount };
-					character.effort.push(restoredEffort);
-					nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to ${amount}`);
-				}
-				else {
-					restoredEffort = { type, amount:0 };
-					character.effort.push(restoredEffort);
-					nextRoundLog.logMessages.push(`Restoring effort ${type} of ${character.characterName} to 0`);
-				}
-			}
-			character.injuries = character.injuries.filter((el) => (el.received + el.duration) > gamestate.round || el.permanent);
-			character.save();
-			console.log(`Restoring effort and auto-healing injuries of ${character.characterName}`);
-
-		}
-
-		let used = await Asset.find().populate('with');
-		used = used.filter((el) => el.status.used === true);
-		for (const ass of used) {
-			console.log(`Un-using ${ass.name}`);
-			nextRoundLog.logMessages.push(`Un-using ${ass.name}`);
-			if (ass.uses !== 999) ass.uses = ass.uses - 1;
-			ass.status.used = false;
-			await ass.save();
-			assets.push(ass);
-		}
+    await unhideAllAssets(nextRoundLog);
+    await unLendAllAssets(nextRoundLog);
+    await resetCharacters(nextRoundLog);
 
 		for (const action of await Action.find({ round: gamestate.round })) {
 			action.status = 'Published';
@@ -203,16 +149,6 @@ async function nextRound(control) {
 			actions.push(action);
 		}
 
-		for (const asset of await Asset.find({ 'status.used': true }).populate(
-			'with'
-		)) {
-			asset.status.used = false;
-			console.log(`Un-Using ${asset.name}`);
-			nextRoundLog.logMessages.push(`Un-Using ${asset.name}`);
-			await asset.save();
-			assets.push(asset);
-		}
-
 		gamestate.status = 'Active';
 		gamestate.round = gamestate.round + 1;
 		await gamestate.save();
@@ -227,7 +163,6 @@ async function nextRound(control) {
 
 		nexusEvent.emit('respondClient', 'update', [
 			gamestate,
-			...assets,
 			...actions,
 			nextRoundLog,
 			controlLog
