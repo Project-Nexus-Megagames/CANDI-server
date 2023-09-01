@@ -131,6 +131,22 @@ module.exports = {
 				await action.save();
 				break;
 			}
+			case 'addCollaborator': {
+				// Expects data to be a Action object with edits
+				const action = await Action.findById(data.id);
+				if (action) {
+					await action.addCollaborator(data.collaborator);
+				}
+				break;
+			}
+      case 'removeCollaborator': {
+				// Expects data to be a Action object with edits
+				const action = await Action.findById(data.id);
+				if (action) {
+					await action.removeCollaborator(data.collaborator);
+				}
+				break;
+			}
 			case 'controlReject': {
 				// console.log(data);
 				response = await controlOverride(data, client.username);

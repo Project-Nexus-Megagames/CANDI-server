@@ -523,7 +523,7 @@ async function editAction (data, user) {
 	const oldAction = await Action.findById(id);
 
 	if (!id) throw Error('Actions must have an _id...');
-	if (oldAction === undefined) throw Error('Could not find oldAction');
+	if (!oldAction || oldAction === undefined) throw Error('Could not find oldAction');
 
 	let action = await Action.findByIdAndUpdate(id, data, {
 		new: true
