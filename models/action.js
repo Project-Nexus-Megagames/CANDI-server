@@ -224,6 +224,41 @@ ActionSchema.methods.addEffect = async function (effect) {
 	};
 };
 
+ActionSchema.methods.addCollaborator = async function (character) {
+	// Expects character: <<Character ref>>
+	if (!character) throw Error('HEY! GIVE ME A VALID CHARACTER YA DUNCE!');
+
+	this.collaborators.push(character);
+	this.markModified('collaborators');
+	let action = await this.save();
+	action = await action.populateMe();
+
+	nexusEvent.emit('respondClient', 'update', [action]);
+	console.log(`Collaborator Successfully added to ${action.name}`);
+	return {
+		message: `Collaborator Successfully added to ${action.name}`,
+		type: 'success'
+	};
+};
+
+ActionSchema.methods.removeCollaborator = async function (character) {
+	// Expects character: <<Character ref>>
+	if (!character) throw Error('HEY! GIVE ME A VALID CHARACTER YA DUNCE!');
+
+	this.collaborators = this.collaborators.filter(ch => ch.toHexString() !== character);
+
+	this.markModified('collaborators');
+	let action = await this.save();
+	action = await action.populateMe();
+
+	nexusEvent.emit('respondClient', 'update', [action]);
+	console.log(`Collaborator Successfully added to ${action.name}`);
+	return {
+		message: `Collaborator Successfully added to ${action.name}`,
+		type: 'success'
+	};
+};
+
 ActionSchema.methods.addAttachment = async function (attachment) {
 	if (!attachment.title) throw Error('Attachments must have a title');
 
