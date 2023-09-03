@@ -190,7 +190,9 @@ async function setNewsWorthy (data) {
 async function deleteSubObject (data, user) {
 	const id = data.id;
 	let action = await Action.findById(id);
-	if (action != null && data.result) {
+
+	switch (data.model) {
+	case 'Result': {
 		const log = new History({
 			docType: 'action',
 			action: 'delete',
@@ -208,8 +210,12 @@ async function deleteSubObject (data, user) {
 		await log.save();
 		logger.info(`Result with the id ${id} was deleted via Socket!`);
 		nexusEvent.emit('respondClient', 'update', [action]);
+		return {
+			message: `Result with the id ${id} was deleted via Socket!`,
+			type: 'success'
+		};
 	}
-	else if (action != null && data.effect) {
+	case 'Effect': {
 		const log = new History({
 			docType: 'action',
 			action: 'delete',
@@ -227,8 +233,12 @@ async function deleteSubObject (data, user) {
 		await log.save();
 		logger.info(`effect with the id ${id} was deleted via Socket!`);
 		nexusEvent.emit('respondClient', 'update', [action]);
+		return {
+			message: `Effect with the id ${id} was deleted via Socket!`,
+			type: 'success'
+		};
 	}
-	else if (action != null && data.comment) {
+	case 'Comment': {
 		const log = new History({
 			docType: 'action',
 			action: 'delete',
@@ -250,7 +260,10 @@ async function deleteSubObject (data, user) {
 			message: `Comment with the id ${id} was deleted via Socket!`,
 			type: 'success'
 		};
-	} // if
+	}
+	default:
+		throw Error('Something went wronmg with delete socket thingy');
+	}
 }
 
 // Used to edit comments, results, or effects of an action. probably should be seperate functions, but...
