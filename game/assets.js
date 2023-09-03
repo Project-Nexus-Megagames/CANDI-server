@@ -61,37 +61,13 @@ async function modifyAsset(receivedData, user) {
 	}
 }
 
-async function addAsset(data, user) {
+async function addAsset (data, user) {
 	try {
 		const { asset } = data;
 		const gamestate = await GameState.findOne();
 
-		let newAsset;
-		newAsset = new Asset(asset);
-		newAsset = await newAsset.save();
-
-		if (gamestate.status === 'Resolution') newAsset.toggleStatus('hidden', true);
-		// switch (data.asset.type) {
-		// case 'Asset':
-		// 	newAsset.status.lendable = true;
-		// 	break;
-		// case 'Trait':
-		// 	newAsset.status.lendable = false;
-		// 	break;
-		// case 'Power':
-		// 	newAsset.status.lendable = false;
-		// 	break;
-		// case 'Territory':
-		// 	newAsset.status.lendable = true;
-		// 	newAsset.uses = 999;
-		// 	break;
-		// case 'Title':
-		// 	newAsset.status.lendable = false;
-		// 	break;
-		// default:
-		// 	throw Error(`Type '${data.asset.type}' is Invalid!`);
-		// }
-
+		let newAsset = new Asset(asset);
+		if (gamestate.status === 'Resolution') newAsset = await newAsset.toggleStatus('hidden', true);
 
 		const controlLog = new ControlLog({
 			control: data.loggedInUser.username,
@@ -102,11 +78,12 @@ async function addAsset(data, user) {
 		});
 
 		await controlLog.save();
+    newAsset = await newAsset.save();
 
 		nexusEvent.emit('respondClient', 'create', [newAsset]);
 		// nexusEvent.emit('respondClient', 'update', [ character ]);
 
-		await newAsset.save();
+
 
 		const log = new History({
 			docType: 'asset',
