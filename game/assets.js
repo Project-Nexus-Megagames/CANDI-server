@@ -5,10 +5,11 @@ const { GameState } = require('../models/gamestate');
 const { History } = require('../models/history');
 const { ControlLog } = require('../models/log');
 
-async function modifyAsset(receivedData, user) {
+async function modifyAsset (receivedData, user) {
 	try {
 		console.log(receivedData);
-		const {	data, loggedInUser } = receivedData;
+		const {	loggedInUser } = receivedData;
+		const data = receivedData.asset;
 	  const _id = data._id;
 		const asset = await Asset.findById(_id);
 
@@ -23,7 +24,7 @@ async function modifyAsset(receivedData, user) {
 		}
 		else {
 			for (const el in data) {
-				if (data[el] !== undefined && data[el] !== '' && el !== '_id' && el !== 'model') {
+				if (data[el] !== undefined && data[el] !== '' && el !== '_id' && el !== 'model' && el !== '__v') {
 					asset[el] = data[el];
 				}
 				else {
@@ -78,11 +79,10 @@ async function addAsset (data, user) {
 		});
 
 		await controlLog.save();
-    newAsset = await newAsset.save();
+		newAsset = await newAsset.save();
 
 		nexusEvent.emit('respondClient', 'create', [newAsset]);
 		// nexusEvent.emit('respondClient', 'update', [ character ]);
-
 
 
 		const log = new History({
@@ -106,7 +106,7 @@ async function addAsset (data, user) {
 	}
 }
 
-async function lendAsset(data, user) {
+async function lendAsset (data, user) {
 	const { id, target, lendingBoolean } = data;
 	try {
 		let asset = await Asset.findById(id);
@@ -158,7 +158,7 @@ async function lendAsset(data, user) {
 	}
 }
 
-async function deleteAsset(data, user) {
+async function deleteAsset (data, user) {
 	try {
 		const id = data.id;
 		let element = await Asset.findById(id);
@@ -188,7 +188,7 @@ async function deleteAsset(data, user) {
 	}
 }
 
-async function unhideAllAssets() {
+async function unhideAllAssets () {
 	try {
 		const assets = await Asset.find({ status: 'hidden' }).populate('with');
 		const res = [];
@@ -207,7 +207,7 @@ async function unhideAllAssets() {
 	}
 }
 
-async function unLendAllAssets() {
+async function unLendAllAssets () {
 	try {
 		const res = [];
 		for (const asset of await Asset.find({ status: 'lent' }).populate(
