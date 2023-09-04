@@ -661,7 +661,7 @@ async function effectAction (data) {
 			await old.save();
 			nexusEvent.emit('respondClient', 'update', [old]);
 			return;
-		case 'character-stat':
+    case 'characterStats':
 			old = await Character.findById(owner);
 			controlLog.message = ' ';
 			for (const el in document) {
@@ -673,17 +673,17 @@ async function effectAction (data) {
 						el
 					);
 					await action.addEffect({
-						description: `${el} changed from ${document[el]} to ${oldAspectValue} `,
+						description: `${el} changed from ${oldAspectValue - parseInt(document[el])} to ${oldAspectValue} `,
 						type: 'aspect',
-						status: 'Private',
+						status: 'Temp-Hidden',
 						effector
 					});
 
-					await action.comment({
-						body: `${el} has changed`,
-						commentor: effector,
-						type: 'Info'
-					});
+					// await action.comment({
+					// 	body: `${el} has changed`,
+					// 	commentor: effector,
+					// 	type: 'Info'
+					// });
 
 					controlLog.message =
 							controlLog.message +
