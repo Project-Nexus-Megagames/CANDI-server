@@ -696,17 +696,19 @@ async function effectAction (data) {
 			nexusEvent.emit('respondClient', 'update', [old]);
 			return;
 		case 'new':
+
 			response = await addAsset({ asset: document, arcane, loggedInUser });
-			response.type === 'success'
-				? await action.addEffect({
-					description: `New ${document.type} created: ${document.name} ${
+			if (response.type === 'success') {
+        let temp = await Character.findById(document.ownerCharacter)
+        await action.addEffect({
+					description: `New ${document.type} created for ${temp?.characterName}: ${document.name} ${
 						document.level ? `(${document.level})` : `(${document.dice})`
 					}`,
 					type: document.type,
 					status: 'Temp-Hidden',
 					effector
-					  })
-				: null;
+					  });
+      }
 			controlLog.message = `New ${document.type} created: ${document.name} for ${owner}`;
 			await controlLog.save();
 			return response;
