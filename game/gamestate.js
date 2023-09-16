@@ -8,7 +8,7 @@ const { GameConfig } = require('../models/gameConfig');
 const { History } = require('../models/history');
 const { NextRoundLog, ControlLog } = require('../models/log');
 const { d10, d8, d6, d4 } = require('../scripts/util/dice');
-const { unhideAllAssets, unLendAllAssets } = require('./assets');
+const { unhideAllAssets, unLendAllAssets, unUseAllAssets } = require('./assets');
 const { resetCharacters } = require('./characters');
 
 async function modifyGameState(data, user) {
@@ -18,7 +18,10 @@ async function modifyGameState(data, user) {
 	try {
 		gamestate.round = round;
 		gamestate.status = status;
-		gamestate.endTime = endTime;
+
+    const utcDate2 = new Date(endTime);
+		gamestate.endTime = utcDate2.toUTCString();
+
 		gamestate = await gamestate.save();
 
 		const log = new History({
@@ -126,6 +129,7 @@ async function nextRound(control) {
     await unhideAllAssets(nextRoundLog);
     await unLendAllAssets(nextRoundLog);
     await resetCharacters(nextRoundLog);
+    await unUseAllAssets(nextRoundLog);
 
 		for (const action of await Action.find({ round: gamestate.round })) {
 			action.status = 'Published';
