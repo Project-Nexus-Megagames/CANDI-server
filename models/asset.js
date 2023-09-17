@@ -32,7 +32,8 @@ AssetSchema.methods.toggleStatus = async function (tag, remove) {
 		await clearArrayValue(this.status, tag); //
 	}
 	else {await addArrayValue(this.status, tag);} //
-	return;
+  const asset = await this.save();
+	return asset;
 };
 
 
