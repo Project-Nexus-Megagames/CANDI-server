@@ -11,6 +11,7 @@ const { addAsset } = require('./assets');
 const { Location } = require('../models/location');
 const { GameConfig } = require('../models/gameConfig');
 const { ControlLog } = require('../models/log');
+const { rand } = require('../scripts/util/dice')
 
 async function removeEffort (data) {
 	let character = await Character.findOne({ characterName: data.creator });
@@ -893,6 +894,84 @@ async function collabAction (data, user) {
 	}
 }
 
+async function editSubmissionDifficulty (data, user) {
+	try {
+		const { 
+      submission,
+      difficulty } = data;
+
+		let action = await Action.findById(data.action);
+    action = await action.populateMe();
+		if (!action) throw Error('No Action for editSubmissionDifficulty!');
+
+    if (action.submission._id == submission) {
+      action.submission.difficulty = difficulty;
+    }
+    else {
+      const index = action.submissions.findIndex(el => el._id === submission);
+      if (index < 0) throw Error('No index thingy');
+    }
+
+    action = await action.save();
+    nexusEvent.emit('respondClient', 'update', [ action ]);
+
+		return  { message: ' editSubmissionDifficulty Success', type: 'success' };;
+	}
+	catch (err) {
+		logger.error(`message : Server collabAction Error: ${err.message}`);
+		return { message: `Server collabAction Error: ${err.message}`, type: 'error' };
+	}
+}
+
+async function rollSubmission(data, user) {
+	try {
+		const { 
+      submission,
+      difficulty } = data;
+
+		let action = await Action.findById(data.action);
+    action = await action.populateMe();
+    const cost = action.submission.difficulty;
+    const results = []
+		if (!action) throw Error('No Action for editSubmissionDifficulty!');
+    
+    if (action.submission._id == submission) {
+      for (let asset of action.submission.assets) {
+        const populated = await Asset.findById(asset)
+    
+        for (const die of populated.dice.filter(el => el.amount >= cost)) {
+          results.push({
+            assetName: populated.name + "'s d" + die.amount,
+            type: die.type,
+            amount: rand(die.amount),
+            sides: die.amount
+          })
+        }  
+      }
+
+      console.log(results)
+      const result = {
+        description: (results.some(el => el.amount >= cost)) ? "Success" : "Fail",
+				status: 'Public',
+        diceResult: results
+      }
+      action.postResult(result)
+    }
+
+
+
+    // action = await action.save();
+    // nexusEvent.emit('respondClient', 'update', [ action ]);
+
+		return  { message: ' rollSubmission Success', type: 'success' };;
+	}
+	catch (err) {
+		logger.error(`message : Server rollSubmission Error: ${err.message}`);
+		return { message: `Server rollSubmission Error: ${err.message}`, type: 'error' };
+	}
+}
+
+
 module.exports = {
 	removeEffort,
 	addEffort,
@@ -907,5 +986,7 @@ module.exports = {
 	assignController,
 	diceResult,
 	setNewsWorthy,
-	collabAction
+	collabAction, 
+  editSubmissionDifficulty,
+  rollSubmission
 };

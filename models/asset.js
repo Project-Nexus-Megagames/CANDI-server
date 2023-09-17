@@ -1,26 +1,27 @@
 const mongoose = require('mongoose'); // Mongo DB object modeling module
 const { clearArrayValue, addArrayValue } = require('../middleware/util/arrayCalls');
 // const Joi = require('joi'); // Schema description & validation module
-// const nexusError = require('../middleware/util/throwError'); // Costom error handler util
+const nexusEvent = require('../middleware/events/events');
 
 // Global Constants
 const Schema = mongoose.Schema; // Destructure of Schema
 const ObjectId = mongoose.ObjectId; // Destructure of Object ID
+
+const DiceSchema = new Schema({
+	model: { type: String, default: 'Dice' },
+	type: { type: String, default: 'black', required: true, }, // enum: ['hack', 'brawn', 'stealth', 'black']
+	amount: { type: Number, default: 0 }
+});
+
 
 const AssetSchema = new Schema({
 	model: { type: String, default: 'Asset' },
 	type: { type: String, default: 'Asset' },
 	tags: [{ type: String }],
 	name: { type: String, required: true },
-	dice: { type: String, required: true, default: 'd6' },
+	dice: [ DiceSchema ],
 	description: { type: String, required: true },
 	status: [{ type: String }],
-	// status: {
-	// 	hidden: { type: Boolean, default: false },
-	// 	lent: { type: Boolean, default: false },
-	// 	lendable: { type: Boolean, default: false },
-	// 	used: { type: Boolean, default: false }
-	// },
 	owner: { type: String, default: 'None' },
 	ownerCharacter: { type: ObjectId, ref: 'Character' },
 	currentHolder: { type: String },
@@ -35,6 +36,23 @@ AssetSchema.methods.toggleStatus = async function (tag, remove) {
 	return;
 };
 
+AssetSchema.methods.addStatus = async function (tag) {
+	await addArrayValue(this.status, tag); // Clears the MOBILIZED status if it exists
+	let asset = await this.save();
+	asset = await asset.populateMe();
+	nexusEvent.emit('request', 'update', [ asset ]);
+	return asset;
+};
+
+
+AssetSchema.methods.removeStatus = async function (tag) {
+	await clearArrayValue(this.status, tag); // Clears the MOBILIZED status if it exists
+	
+	let asset = await this.save();
+	asset = await asset.populateMe();
+	nexusEvent.emit('request', 'update', [ asset ]);
+	return asset;
+};
 
 AssetSchema.methods.use = async function () {
 	const asset = await this.toggleStatus('used');

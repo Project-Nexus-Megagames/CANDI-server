@@ -11,6 +11,7 @@ const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
 const { assets } = require('../../config/startingData');
 const auth = require('../../middleware/config/auth');
+const { d10 } = require('../../scripts/util/dice');
 
 // @route   GET api/assets
 // @Desc    Get all assets
@@ -134,6 +135,19 @@ router.post('/initAssets', async function(req, res) {
 				newAsset.uses = 999;
 				break;
 			}
+			newAsset.dice = [
+				{
+					type: 'green',
+					amount: d10()
+				},
+        {
+					type: 'red',
+					amount: d10()
+				}
+      ];
+
+      console.log(newAsset)
+
 			newAsset.save();
 			assCount++;
 			logger.info(`${newAsset.name} created.`);

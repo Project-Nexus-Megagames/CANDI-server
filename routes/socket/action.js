@@ -10,7 +10,9 @@ const {
 	assignController,
 	diceResult,
 	setNewsWorthy,
-	collabAction
+	collabAction,
+  editSubmissionDifficulty,
+  rollSubmission
 } = require('../../game/actions');
 const { addArrayValue } = require('../../middleware/util/arrayCalls');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
@@ -77,7 +79,7 @@ module.exports = {
 				// console.log(data);
 				const action = await Action.findById(data.id);
 				action
-					? (response = await action.postResult(data.result, data.dice))
+					? (response = await action.postResult(data.result))
 					: (response = {
 						message: `Could not find Action for ${data.id} in 'result'`,
 						type: 'error'
@@ -108,9 +110,16 @@ module.exports = {
 				response = await setNewsWorthy(data, client.username);
 				break;
 			}
-
 			case 'delete': {
 				response = await deleteAction(data, client.username);
+				break;
+			}
+      case 'difficulty': {
+				response = await editSubmissionDifficulty(data, client.username);
+				break;
+			}
+      case 'roll': {
+				response = await rollSubmission(data, client.username);
 				break;
 			}
 			case 'update': {

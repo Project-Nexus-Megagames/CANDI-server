@@ -9,9 +9,17 @@ const nexusEvent = require('../middleware/events/events'); // Local event trigge
 // const { actionAndEffortTypes } = require('../config/enums');
 
 // MODEL Imports
-const { Asset } = require('./asset');
 const { Comment } = require('./comment');
 // const { History } = require('./history');
+
+const DiceResultSchema = new Schema({
+	model: { type: String, default: 'DiceResult' },
+  assetName: { type: String },
+	type: { type: String, default: 'black', required: true }, // enum: ['hack', 'brawn', 'stealth', 'black']
+	amount: { type: Number, default: 0 },
+  sides: { type: Number, default: 0 },
+});
+
 
 const effortSchema = new Schema({
 	model: { type: String, default: 'Effort' },
@@ -26,7 +34,8 @@ const submissionSchema = new Schema(
 		description: { type: String, required: true }, // Description of the ACTION
 		intent: { type: String, required: true }, // Intended result of the ACTION
 		effort: effortSchema, // Initial effort allocated
-		assets: [{ type: ObjectId, ref: 'Asset' }] // ASSETS used to facilitate this ACTION
+    difficulty: { type: Number, default: 0 }, // Round Number for the ACTION
+		assets: [{ type: ObjectId, ref: 'Asset' }], // ASSETS used to facilitate this ACTION
 	},
 	{ timestamps: true }
 );
@@ -42,7 +51,7 @@ const resultSchema = new Schema(
 		resolver: { type: ObjectId, ref: 'Character' },
 		ready: { type: Boolean, default: true },
 		description: { type: String, default: 'None yet...', required: true }, // Description of the result
-		dice: { type: String, default: 'None' }
+    diceResult: [DiceResultSchema]
 	},
 	{ timestamps: true }
 );
@@ -171,18 +180,15 @@ ActionSchema.methods.edit = async function () {
 	return;
 };
 
-ActionSchema.methods.postResult = async function (result, dice) {
+ActionSchema.methods.postResult = async function (result) {
 	// Expects { result, dice: { type, amount, roll } }
 	try {
 		if (!result.description) throw Error('Results must have a description..');
-		if (!dice) throw Error('Results must have dice information attched..');
-		// else if (!result.dice.roll) throw Error('Result must have final dice roll...');
 		let post = new Result(result);
 
 		post = await post.save();
 
 		await post.populate('resolver', 'characterName profilePicture');
-		this.diceresult = dice;
 		this.results.push(post);
 		this.markModified('results');
 

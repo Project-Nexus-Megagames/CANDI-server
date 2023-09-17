@@ -12,6 +12,7 @@ const nexusError = require('../../middleware/util/throwError');
 const { characters, npcs } = require('../../config/startingCharacters');
 const { Asset } = require('../../models/asset');
 const auth = require('../../middleware/config/auth');
+const { d10 } = require('../../scripts/util/dice');
 
 // @route   GET api/characters
 // @Desc    Get all characters
@@ -148,7 +149,17 @@ router.post('/initCharacters', async function(req, res) { // initializes charact
 						name: `${newCharacter.characterName}'s' ${el}`,
 						description: `${newCharacter.characterName}'s' ${el}`,
 						type: el,
-						ownerCharacter: newCharacter._id
+						ownerCharacter: newCharacter._id,
+            dice: [
+              {
+                type: el,
+                amount: 6
+              },
+              {
+                type: el,
+                amount: 8
+              }
+            ]
 					});
 					ass = await ass.save();
 				}
