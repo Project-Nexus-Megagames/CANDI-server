@@ -125,7 +125,7 @@ async function lendAsset (data, user) {
 			};
 		}
 		else {
-			if (asset.status.some(el => el === 'lent')) {
+			if (asset.status.some(el => el === 'lent') && lendingBoolean) {
 				// this is a check to see if someone is trying to relend a previously lent asset
 				return {
 					message: `You cannot lend an already loaned asset "${asset.name}"`,
@@ -136,11 +136,12 @@ async function lendAsset (data, user) {
 			if (lendingBoolean) {
 				// if the asset is being lent
 				asset.currentHolder = target;
+        await asset.toggleStatus('lent', false);
 			}
 			else {
 				asset.currentHolder = asset.owner;
+        await asset.toggleStatus('lent', true);
 			}
-			asset.toggleStatus('lent', lendingBoolean);
 			asset = await asset.save();
 
 			log.document = asset;
@@ -194,7 +195,7 @@ async function unhideAllAssets () {
 		const res = [];
 		for (const ass of assets) {
 			console.log('unhiding: ', ass.name);
-			if (ass.uses !== 999) ass.uses = ass.uses - 1;
+			// if (ass.uses !== 999) ass.uses = ass.uses - 1;
 
 			await ass.save();
 			res.push(ass);
@@ -214,7 +215,7 @@ async function unLendAllAssets () {
 			'with'
 		)) {
 
-			asset.toggleStatus('lent', true);
+			await asset.toggleStatus('lent', true);
 
 			asset.currentHolder = null;
 			await asset.save();
@@ -229,4 +230,28 @@ async function unLendAllAssets () {
 	}
 }
 
-module.exports = { addAsset, modifyAsset, lendAsset, deleteAsset, unhideAllAssets, unLendAllAssets };
+async function unUseAllAssets () {
+	try {
+		const res = [];
+		for (const asset of await Asset.find({ status: 'used' }).populate(
+			'with'
+		)) {
+
+			await asset.toggleStatus('used', true);
+
+			asset.currentHolder = null;
+      if (asset.uses !== 999) asset.uses = asset.uses - 1;
+			await asset.save();
+			console.log(`Un-usuing ${asset.name}`);
+			res.push(asset);
+		}
+		nexusEvent.emit('respondClient', 'update', res);
+	}
+	catch (err) {
+		logger.error(err);
+		return { message: `ERROR: ${err}`, type: 'error' };
+	}
+}
+
+
+module.exports = { addAsset, modifyAsset, lendAsset, deleteAsset, unhideAllAssets, unLendAllAssets, unUseAllAssets };
