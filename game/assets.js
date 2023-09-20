@@ -7,11 +7,11 @@ const { ControlLog } = require('../models/log');
 
 async function modifyAsset (receivedData, user) {
 	try {
-		console.log(receivedData);
 		const {	loggedInUser } = receivedData;
 		const data = receivedData.asset;
 	  const _id = data._id;
 		const asset = await Asset.findById(_id);
+		console.log(data);
 
 		if (asset === null) {
 			return {
@@ -31,6 +31,8 @@ async function modifyAsset (receivedData, user) {
 					console.log(`Detected invalid edit: ${el} is ${data[el]}`);
 				}
 			}
+
+      asset.dice = data.dice;
 
 			await asset.save();
 			const log = new History({

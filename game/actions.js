@@ -620,11 +620,13 @@ async function effectAction (data) {
 		switch (type) {
 		case 'asset':
 			old = await Asset.findById(document._id);
+      old.dice = document.dice;
 			controlLog.message = `Asset ${old.name} was edited`;
 			await controlLog.save();
 			break;
 		case 'bond':
 			old = await Asset.findById(document._id);
+      old.dice = document.dice;
 			controlLog.message = `Bond ${old.name} was edited`;
 			await controlLog.save();
 			break;
@@ -811,6 +813,7 @@ async function effectAction (data) {
 			};
 		}
 
+		console.log(document);
 		if (!old) throw Error('No Old thing for the thing... you know the thing?');
 		for (const el in document) {
 			if (
@@ -845,6 +848,7 @@ async function effectAction (data) {
 				// console.log(`Detected invalid edit: ${el} is ${document[el]}`);
 			}
 		}
+		console.log(old);
 
 		await old.save();
 		nexusEvent.emit('respondClient', 'update', [old]);
