@@ -65,4 +65,24 @@ function lockLocation(data) {
 	return { message: 'Location(s) successfully locked', type: 'success' };
 }
 
-module.exports = { editLocation, lockLocation };
+function scavengeLocation(data) {
+	const { character, location, asset } = data;
+  console.log("Hello!")
+  // find the character, location, and asset based on the id
+
+
+  // roll some dice
+  
+
+  // compare roll with loot table
+  // Loot table requirements:
+  // 1) can accomodate any number of loot items
+  // 2) each loot item has a probablility value
+  // 3) each loot item has a quantity
+
+  
+
+	return { message: 'Location(s) successfully Scavenge', type: 'success' };
+}
+
+module.exports = { editLocation, lockLocation, scavengeLocation };

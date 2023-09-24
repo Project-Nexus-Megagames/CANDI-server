@@ -1,4 +1,4 @@
-const { editLocation, lockLocation } = require('../../game/locations');
+const { editLocation, lockLocation, scavengeLocation } = require('../../game/locations');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
 
 module.exports = {
@@ -20,6 +20,11 @@ module.exports = {
 			}
 			case 'lockLocation': {
 				response = await lockLocation(data);
+				response.type === 'success' ? client.emit('clearLocalStorage') : null;
+				break;
+			}
+      case 'scavenge': {
+				response = await scavengeLocation(data);
 				response.type === 'success' ? client.emit('clearLocalStorage') : null;
 				break;
 			}
