@@ -1,6 +1,7 @@
 const { Location } = require('../models/location');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const { logger } = require('../middleware/log/winston');
+const { d4, d6, d20 } = require('../scripts/util/dice');
 
 
 async function editLocation(data) {
@@ -66,21 +67,45 @@ function lockLocation(data) {
 }
 
 function scavengeLocation(data) {
-	const { character, location, asset } = data;
+	const { character, location, cd } = data;
   console.log("Hello!")
   // find the character, location, and asset based on the id
 
-
-  // roll some dice
+  //roll some dice
   
 
-  // compare roll with loot table
-  // Loot table requirements:
+  const lootTable = [{
+	id: 'snail'
+	,chance: 500 // 1000 so 50%
+}, {
+	id: 'a cool looking rock'
+	,chance: 250 // 1000 so 25%
+}, {
+	id: 'a smith and wesson'
+	,chance: 100 // 1000 so 10%
+},{
+	id: 'A fucking thermal nucular bomb'
+	,chance: 1 // 1000 so 1%
+}
+]
+let filledLootBox = []
+lootTable.forEach(item => {
+  item.chance = chance 
+  const lootItem = new Array(item.chance).fill(item.id)
+
+  filledLootBox.push(...lootItem)
+})
+
+const pickedItem = filledLootBox[Math.floor(Math.random() * filledLootBox.length)]
+
+console.log('picked item:', pickedItem)
+console.log(filledLootBox)
+const Location = mongoose.model('Location', LocationSchema);
+
+// Loot table requirements:
   // 1) can accomodate any number of loot items
   // 2) each loot item has a probablility value
   // 3) each loot item has a quantity
-
-  
 
 	return { message: 'Location(s) successfully Scavenge', type: 'success' };
 }
