@@ -9,7 +9,7 @@ const ObjectId = mongoose.ObjectId; // Destructure of Object ID
 
 const DiceSchema = new Schema({
 	model: { type: String, default: 'Dice' },
-	type: { type: String, default: 'black', required: true, }, // enum: ['hack', 'brawn', 'stealth', 'black']
+	type: { type: String, default: 'black', required: true }, // enum: ['hack', 'brawn', 'stealth', 'black']
 	amount: { type: Number, default: 0 }
 });
 
@@ -24,7 +24,7 @@ const AssetSchema = new Schema({
 	status: [{ type: String }],
 	owner: { type: String, default: 'None' },
 	ownerCharacter: { type: ObjectId, ref: 'Character' },
-	currentHolder: { type: String },
+	sharedWith: [{ type: ObjectId, ref: 'Character' }],
 	uses: { type: Number, default: 2 }
 });
 
@@ -40,17 +40,37 @@ AssetSchema.methods.addStatus = async function (tag) {
 	await addArrayValue(this.status, tag); // Clears the MOBILIZED status if it exists
 	let asset = await this.save();
 	asset = await asset.populateMe();
-	nexusEvent.emit('request', 'update', [ asset ]);
+	nexusEvent.emit('respondClient', 'update', [ asset ]);
 	return asset;
 };
 
 
 AssetSchema.methods.removeStatus = async function (tag) {
 	await clearArrayValue(this.status, tag); // Clears the MOBILIZED status if it exists
-	
+
 	let asset = await this.save();
 	asset = await asset.populateMe();
-	nexusEvent.emit('request', 'update', [ asset ]);
+	nexusEvent.emit('respondClient', 'update', [ asset ]);
+	return asset;
+};
+
+AssetSchema.methods.addShared = async function (id) {
+	await addArrayValue(this.sharedWith, id); // Clears the MOBILIZED status if it exists
+	let asset = await this.save();
+	asset = await asset.populateMe();
+	nexusEvent.emit('respondClient', 'update', [ asset ]);
+	return asset;
+};
+
+
+AssetSchema.methods.removeShared = async function (id) {
+	this.sharedWith = this.sharedWith.filter(ch => ch.toHexString() !== id);
+
+	this.markModified('sharedWith');
+	let asset = await this.save();
+	asset = await asset.populateMe();
+
+	nexusEvent.emit('respondClient', 'update', [ asset ]);
 	return asset;
 };
 
@@ -64,6 +84,17 @@ AssetSchema.methods.unuse = async function () {
 	const asset = await this.toggleStatus('used', true);
 	console.log(`${asset.name} owned by ${asset.owner} has been unused.`);
 	return asset;
+};
+
+AssetSchema.methods.populateMe = async function () {
+	// TODO: THIS IS A CORRECT POPULATE!!!!
+	await this.populate('commentor', ['characterName', 'profilePicture']);
+	return await this.populate([
+		{
+			path: 'sharedWith',
+			select: 'characterName username playerName profilePicture'
+		}
+	]);
 };
 
 const Asset = mongoose.model('Asset', AssetSchema);

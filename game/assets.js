@@ -32,7 +32,7 @@ async function modifyAsset (receivedData, user) {
 				}
 			}
 
-      asset.dice = data.dice;
+			asset.dice = data.dice;
 
 			await asset.save();
 			const log = new History({
@@ -108,58 +108,68 @@ async function addAsset (data, user) {
 	}
 }
 
-async function lendAsset (data, user) {
-	const { id, target, lendingBoolean } = data;
+async function shareAsset (data, user) {
+  const { charId, id } = data;
 	try {
 		let asset = await Asset.findById(id);
-
-		const log = new History({
-			docType: 'asset',
-			action: 'lend',
-			function: 'lendAsset',
-			user
-		});
-
 		if (asset === null) {
 			return {
 				message: `Could not find a asset for id "${id}"`,
 				type: 'error'
 			};
 		}
-		else {
-			if (asset.status.some(el => el === 'lent') && lendingBoolean) {
-				// this is a check to see if someone is trying to relend a previously lent asset
-				return {
-					message: `You cannot lend an already loaned asset "${asset.name}"`,
-					type: 'error'
-				};
-			}
 
-			if (lendingBoolean) {
-				// if the asset is being lent
-				asset.currentHolder = target;
-        await asset.toggleStatus('lent', false);
-			}
-			else {
-				asset.currentHolder = asset.owner;
-        await asset.toggleStatus('lent', true);
-			}
-			asset = await asset.save();
+    asset = await asset.addShared(charId);
 
-			log.document = asset;
+		const log = new History({
+			docType: 'asset',
+			action: 'share',
+			function: 'shareAsset',
+			user
+		});
+    log.document = asset;
+    
+		await log.save();
 
-			await log.save();
-
-			logger.info(`${asset.name} Lent to ${target}.`);
-			nexusEvent.emit('respondClient', 'update', [asset]);
-			return { message: `${asset.name} lent to ${target}`, type: 'success' };
-		}
+		logger.info(`${asset.name} shared with ${charId}.`);
 	}
-	catch (err) {
+	catch(err) {
 		logger.error(`message : Server Error: ${err.message}`);
 		return { message: `Server Error: ${err.message}`, type: 'error' };
 	}
 }
+
+async function unShareAsset (data, user) {
+  const { charId, id } = data;
+	try {
+		let asset = await Asset.findById(id);
+		if (asset === null) {
+			return {
+				message: `Could not find a asset for id "${id}"`,
+				type: 'error'
+			};
+		}
+
+    asset = await asset.removeShared(charId);
+
+		const log = new History({
+			docType: 'asset',
+			action: 'sharee',
+			function: 'shareAsset',
+			user
+		});
+    log.document = asset;
+    
+		await log.save();
+
+		logger.info(`${asset.name} unshared with ${charId}.`);
+	}
+	catch(err) {
+		logger.error(`message : Server Error: ${err.message}`);
+		return { message: `Server Error: ${err.message}`, type: 'error' };
+	}
+}
+
 
 async function deleteAsset (data, user) {
 	try {
@@ -242,7 +252,7 @@ async function unUseAllAssets () {
 			await asset.toggleStatus('used', true);
 
 			asset.currentHolder = null;
-      if (asset.uses !== 999) asset.uses = asset.uses - 1;
+			if (asset.uses !== 999) asset.uses = asset.uses - 1;
 			await asset.save();
 			console.log(`Un-usuing ${asset.name}`);
 			res.push(asset);
@@ -256,4 +266,4 @@ async function unUseAllAssets () {
 }
 
 
-module.exports = { addAsset, modifyAsset, lendAsset, deleteAsset, unhideAllAssets, unLendAllAssets, unUseAllAssets };
+module.exports = { addAsset, modifyAsset, deleteAsset, unhideAllAssets, unLendAllAssets, unUseAllAssets, shareAsset, unShareAsset };

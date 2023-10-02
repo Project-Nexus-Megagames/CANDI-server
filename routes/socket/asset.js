@@ -1,4 +1,4 @@
-const { modifyAsset, lendAsset, deleteAsset, addAsset, unhideAllAssets, unUseAllAssets } = require('../../game/assets');
+const { modifyAsset, deleteAsset, addAsset, unhideAllAssets, unUseAllAssets, shareAsset, unShareAsset } = require('../../game/assets');
 const { logger } = require('../../middleware/log/winston'); // middleware/error.js which is running [npm] winston for error handling
 
 module.exports = {
@@ -16,9 +16,14 @@ module.exports = {
 				response = await modifyAsset(data, client.username);
 				break;
 			}
-			case 'lend': {
+      case 'addShared': {
 				// console.log(data);
-				response = await lendAsset(data, client.username);
+				response = await shareAsset(data, client.username);
+				break;
+			}
+      case 'removeShared': {
+				// console.log(data);
+				response = await unShareAsset(data, client.username);
 				break;
 			}
 			case 'delete': {

@@ -23,7 +23,10 @@ router.get('/', async function(req, res, next) {
 	}
 	else {
 		try {
-			const asses = await Asset.find().populate('with');
+			const asses = await Asset.find().populate({
+        path: 'sharedWith',
+        select: 'characterName username playerName profilePicture'
+      });
 			res.status(200).json(asses);
 		}
 		catch (err) {
