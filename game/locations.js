@@ -70,37 +70,33 @@ function scavengeLocation(data) {
 	const { character, location, cd } = data;
   console.log("Hello!")
   // find the character, location, and asset based on the id
+ var loot = ""
+  const result = d20()
+  console.log(result)
+  	switch(result){
+		case 1:  case 2 :  case 3 :  case 4 :  case 5 :   case 6 :  case 7 : case 8 : case 9 : case 10 :
+		loot = "snails"
+			break;
+		case 11 : case 12 : case 13: case 14: case 15 :
+		loot = "a rock"
+			break;
+		case 16: case 17: case 18: case 19:
+		loot = "a fully loaded smith and wesson"
+			break;
+		case 20: 
+		loot = "A FUCKING THERMAL NUCULAR BOMB"
+			break;
+		default:
+			loot = "dont look at me while im naked!"
+	}
+	console.log(loot)
+        
+	
 
-  //roll some dice
-  
+	
 
-  const lootTable = [{
-	id: 'snail'
-	,chance: 500 // 1000 so 50%
-}, {
-	id: 'a cool looking rock'
-	,chance: 250 // 1000 so 25%
-}, {
-	id: 'a smith and wesson'
-	,chance: 100 // 1000 so 10%
-},{
-	id: 'A fucking thermal nucular bomb'
-	,chance: 1 // 1000 so 1%
-}
-]
-let filledLootBox = []
-lootTable.forEach(item => {
-  item.chance = chance 
-  const lootItem = new Array(item.chance).fill(item.id)
+	
 
-  filledLootBox.push(...lootItem)
-})
-
-const pickedItem = filledLootBox[Math.floor(Math.random() * filledLootBox.length)]
-
-console.log('picked item:', pickedItem)
-console.log(filledLootBox)
-const Location = mongoose.model('Location', LocationSchema);
 
 // Loot table requirements:
   // 1) can accomodate any number of loot items
