@@ -89,7 +89,7 @@ function scavengeLocation(data) {
 		default:
 			loot = "dont look at me while im naked!"
 	}
-	console.log(loot)
+	return(loot)
         
 	
 
