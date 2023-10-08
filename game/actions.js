@@ -261,6 +261,31 @@ async function deleteSubObject (data, user) {
 			type: 'success'
 		};
 	}
+  case 'Submission': {
+		const log = new History({
+			docType: 'action',
+			action: 'delete',
+			function: 'deleteSubmission',
+			document: action,
+			user
+		});
+		const comment = action.submissions.findIndex(
+			(el) => el._id.toHexString() === data.result
+		);
+		action.submissions.splice(comment, 1);
+		action = await action.save();
+		action = await action.populateMe();
+
+    // TODO restore effort for submissions
+    
+		await log.save();
+		logger.info(`Submission with the id ${id} was deleted via Socket!`);
+		nexusEvent.emit('respondClient', 'update', [action]);
+		return {
+			message: `Submission with the id ${id} was deleted via Socket!`,
+			type: 'success'
+		};
+	}
 	default:
 		throw Error('Something went wronmg with delete socket thingy');
 	}
