@@ -90,7 +90,7 @@ function scavengeLocation(data) {
 			loot = "dont look at me while im naked!"
 	}
 	
-        
+        console.log(loot)
 	
 
 	
@@ -103,7 +103,7 @@ function scavengeLocation(data) {
   // 2) each loot item has a probablility value
   // 3) each loot item has a quantity
 
-	return { message: 'Location(s) successfully Scavenge', type: 'success' , loot };
+	return { message: 'Location(s) successfully Scavenge', type: 'success' };
 }
 
 module.exports = { editLocation, lockLocation, scavengeLocation };
