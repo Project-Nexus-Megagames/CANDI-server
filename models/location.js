@@ -13,6 +13,14 @@ const StatSchema = new Schema({
 	statAmount: { type: Number, default: 0, required: true }
 });
 
+const LootItemSchema = new Schema({
+	submodel: { type: String, default: 'LootItem' },
+	name: { type: String, default: 'A rock', required: true },
+	assetType: { type: String, default: 'Asset' },
+	weight: { type: Number, default: 0, required: true },
+	uses: { type: Number, default: 1 }
+});
+
 const SubLocationSchema = new Schema({
 	name: { type: String },
 	permissions: [{ type: String }]
@@ -23,10 +31,13 @@ const LocationSchema = new Schema({
 	name: { type: String, required: true },
 	description: { type: String, required: true },
   subLocations: [ SubLocationSchema ],
+  lootTable: [ LootItemSchema ],
 	locationStats: [StatSchema],
 	coords: {
 		x: { type: Number, required: true }, //
-		y: { type: Number, required: true } //
+		y: { type: Number, required: true }, //
+		z: { type: Number, required: true } //
+
 	},
 	unlockedBy: [{ type: ObjectId, ref: 'Character' }]
 });

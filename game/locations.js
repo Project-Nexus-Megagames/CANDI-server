@@ -1,10 +1,12 @@
 const { Location } = require('../models/location');
+const { Asset } = require('../models/asset');
 const nexusEvent = require('../middleware/events/events'); // Local event triggers
 const { logger } = require('../middleware/log/winston');
-const { d4, d6, d20 } = require('../scripts/util/dice');
+const { d4, d6, d20, rand } = require('../scripts/util/dice');
+const nexusError = require('../middleware/util/throwError');
 
 
-async function editLocation(data) {
+async function editLocation (data) {
 	console.log(data);
 	try {
 		const {
@@ -46,7 +48,7 @@ async function editLocation(data) {
 	}
 }
 
-function lockLocation(data) {
+function lockLocation (data) {
 	const { locsToRemove, selectedChar } = data;
 	locsToRemove.forEach(async (locToRemove) => {
 		let loc = await Location.findById(locToRemove);
@@ -66,44 +68,50 @@ function lockLocation(data) {
 	return { message: 'Location(s) successfully locked', type: 'success' };
 }
 
-function scavengeLocation(data) {
-	const { character, location, cd } = data;
-  console.log("Hello!")
-  // find the character, location, and asset based on the id
- var loot = ""
-  const result = d20()
-  console.log(result)
-  	switch(result){
-		case 1:  case 2 :  case 3 :  case 4 :  case 5 :   case 6 :  case 7 : case 8 : case 9 : case 10 :
-		loot = "snails"
-			break;
-		case 11 : case 12 : case 13: case 14: case 15 :
-		loot = "a rock"
-			break;
-		case 16: case 17: case 18: case 19:
-		loot = "a fully loaded smith and wesson"
-			break;
-		case 20: 
-		loot = "A FUCKING THERMAL NUCULAR BOMB"
-			break;
-		default:
-			loot = "dont look at me while im naked!"
-	}
-	
-        console.log(loot)
-	
+async function scavengeLocation (data) {
+	const { character } = data;
+	console.log('Hello!');
+	// find the character, location, and asset based on the id
+	const location = await Location.findById(data.location);
+	const asset = await Asset.findById(data.asset);
 
-	
-
-	
+	if (!asset)	nexusError('An asset is required for a scavenge action', 400);
+  if (asset.isInUse()) nexusError(`Asset ${asset.name} is already in use`, 400);
 
 
-// Loot table requirements:
-  // 1) can accomodate any number of loot items
-  // 2) each loot item has a probablility value
-  // 3) each loot item has a quantity
+	const filledLootBox = [];
+	location.lootTable.forEach(item => {
+		const lootItem = new Array(item.chance).fill(item.id);
+		filledLootBox.push(...lootItem);
+	});
+
+	let rand0 = rand(filledLootBox.length) - 1;
+	if (rand0 > filledLootBox.length) rand0 = filledLootBox.length;
+
+	const pickedItem = filledLootBox[rand0];
+
+	// get the loot item from our table
+	const lootItem = location.lootTable.find(el => el._id == pickedItem);
+	console.log(lootItem);
+
+	// create new Asset
+	const newAsset = new Asset();
+	newAsset.name = lootItem.name;
+	newAsset.type = lootItem.assetType;
+	newAsset.ownerCharacter = character;
+	newAsset.uses = lootItem.uses;
+
+	await newAsset.save();
+	nexusEvent.emit('respondClient', 'update', [ newAsset ]);
+
+
+	// Loot table requirements:
+	// 1) can accomodate any number of loot items
+	// 2) each loot item has a probablility value
+	// 3) each loot item has a quantity
 
 	return { message: 'Location(s) successfully Scavenge', type: 'success' };
 }
+
 
 module.exports = { editLocation, lockLocation, scavengeLocation };

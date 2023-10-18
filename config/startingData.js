@@ -17,19 +17,79 @@ const aspects = {
 
 const locations = [
 	{
-		name: 'A1',
-		coords: {	x: 0, y: 0 },
-		description: 'Placeholder Description'
+		name: 'Swamps',
+		coords: {	x: 0, y: 0, z: 0 },
+		description: 'Placeholder Description',
+		lootTable: [
+			{
+				name: 'slug',
+				assetType: 'Food',
+				weight: 25,
+				uses: 3
+			},
+			{
+				name: 'snail',
+				assetType: 'Food',
+				weight: 25,
+				uses: 3
+			}
+		]
 	},
+
+  
 	{
-		name: 'A2',
+		name: 'Magiuranium Mine',
 		coords: {	x: 0, y: 1 },
-		description: 'Placeholder Description'
+		description: 'Placeholder Description',
+		lootTable: [
+			{
+				name: 'rock building materials',
+				assetType: 'Material',
+				weight: 25,
+				uses: 3
+			},
+			{
+				name: 'iron ore',
+				assetType: 'Material',
+				weight: 10,
+				uses: 2
+			},
+			{
+				name: 'Magiuranium',
+				assetType: 'Material',
+				weight: 10
+			}
+		]
 	},
 	{
-		name: 'A3',
+		name: 'Whitewall',
 		coords: {	x: 0, y: 2 },
-		description: 'Placeholder Description'
+		description: 'Placeholder Description',
+		lootTable: [
+			{
+				name: 'plank of wood',
+				assetType: 'Material',
+				weight: 25,
+				uses: 2
+			},
+			{
+				name: 'jewlery',
+				assetType: 'Asset',
+				weight: 10
+			},
+			{
+				name: 'Good Veggies',
+				assetType: 'Material',
+				weight: 10,
+
+				uses: 2
+			},
+			{
+				name: 'Blunderbuss',
+				assetType: 'Asset',
+				weight: 1
+			}
+		]
 	},
 	{
 		name: 'A4',

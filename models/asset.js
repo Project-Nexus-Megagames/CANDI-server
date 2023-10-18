@@ -20,7 +20,7 @@ const AssetSchema = new Schema({
 	tags: [{ type: String }],
 	name: { type: String, required: true },
 	dice: [ DiceSchema ],
-	description: { type: String, required: true },
+	description: { type: String },
 	status: [{ type: String }],
 	owner: { type: String, default: 'None' },
 	ownerCharacter: { type: ObjectId, ref: 'Character' },
@@ -76,14 +76,18 @@ AssetSchema.methods.removeShared = async function (id) {
 
 AssetSchema.methods.use = async function () {
 	const asset = await this.toggleStatus('used');
-	console.log(`${asset.name} owned by ${asset.owner} has been used.`);
+	console.log(`${asset.name} owned by ${asset.ownerCharacter} has been used.`);
 	return;
 };
 
 AssetSchema.methods.unuse = async function () {
 	const asset = await this.toggleStatus('used', true);
-	console.log(`${asset.name} owned by ${asset.owner} has been unused.`);
+	console.log(`${asset.name} owned by ${asset.ownerCharacter} has been unused.`);
 	return asset;
+};
+
+AssetSchema.methods.isInUse = async function () {
+	return this.status.some(el => el === 'used');
 };
 
 AssetSchema.methods.populateMe = async function () {
