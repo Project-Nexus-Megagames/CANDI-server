@@ -1,0 +1,166 @@
+{
+  "_id": "6533676d33e316b1a5d82a35",
+  "model": "GameConfig",
+  "name": "Quack",
+  "effortTypes": [
+      {
+          "model": "EffortType",
+          "tag": "PC",
+          "type": "Main",
+          "effortAmount": 10,
+          "_id": "6533676d33e316b1a5d82a36"
+      },
+      {
+          "model": "EffortType",
+          "tag": "Control",
+          "type": "Article",
+          "effortAmount": 10,
+          "_id": "6533676d33e316b1a5d82a37"
+      },
+      {
+          "model": "EffortType",
+          "tag": "PC",
+          "type": "Agenda",
+          "effortAmount": 2,
+          "_id": "6533676d33e316b1a5d82a38"
+      }
+  ],
+  "resourceTypes": [
+      {
+          "model": "ResourceType",
+          "type": "Production",
+          "_id": "6533676d33e316b1a5d82a39"
+      },
+      {
+          "model": "ResourceType",
+          "type": "Workshop",
+          "_id": "6533676d33e316b1a5d82a3a"
+      },
+      {
+          "model": "ResourceType",
+          "type": "Labor",
+          "_id": "6533676d33e316b1a5d82a3b"
+      },
+      {
+          "model": "ResourceType",
+          "type": "Refined Item",
+          "_id": "6533676d33e316b1a5d82a3c"
+      },
+      {
+          "model": "ResourceType",
+          "type": "Asset",
+          "_id": "6533676d33e316b1a5d82a3d"
+      }
+  ],
+  "actionTypes": [
+      {
+          "model": "ActionType",
+          "type": "Misc",
+          "minEffort": 1,
+          "maxEffort": 3,
+          "effortTypes": [
+              "Main"
+          ],
+          "resourceTypes": [
+              "Production",
+              "Workshop",
+              "Labor",
+              "Refined Item",
+              "Asset"
+          ],
+          "maxAssets": 3,
+          "status": [],
+          "public": false,
+          "_id": "6533676d33e316b1a5d82a3e"
+      },
+      {
+          "model": "ActionType",
+          "type": "Craft",
+          "minEffort": 1,
+          "maxEffort": 3,
+          "effortTypes": [
+              "Main"
+          ],
+          "resourceTypes": [
+              "Workshop",
+              "Production"
+          ],
+          "maxAssets": 2,
+          "status": [],
+          "public": false,
+          "_id": "6533676d33e316b1a5d82a3f"
+      },
+      {
+          "model": "ActionType",
+          "type": "Form Bond",
+          "minEffort": 1,
+          "maxEffort": 1,
+          "effortTypes": [
+              "Main"
+          ],
+          "resourceTypes": [
+              "Asset",
+              "Refined Item",
+              "Labor"
+          ],
+          "maxAssets": 1,
+          "status": [],
+          "public": true,
+          "_id": "6533676d33e316b1a5d82a40"
+      },
+      {
+          "model": "ActionType",
+          "type": "Agenda",
+          "minEffort": 2,
+          "maxEffort": 2,
+          "effortTypes": [
+              "Main",
+              "Agenda"
+          ],
+          "resourceTypes": [
+              "Asset",
+              "Refined Item",
+              "Labor"
+          ],
+          "maxAssets": 2,
+          "status": [],
+          "public": true,
+          "_id": "6533676d33e316b1a5d82a41"
+      }
+  ],
+  "globalStats": [
+      {
+          "submodel": "Stat",
+          "type": "Affuence",
+          "statAmount": 0,
+          "_id": "6533676d33e316b1a5d82a42"
+      },
+      {
+          "submodel": "Stat",
+          "type": "Happiness",
+          "statAmount": 0,
+          "_id": "6533676d33e316b1a5d82a43"
+      },
+      {
+          "submodel": "Stat",
+          "type": "Security",
+          "statAmount": 0,
+          "_id": "6533676d33e316b1a5d82a44"
+      },
+      {
+          "submodel": "Stat",
+          "type": "Shenanigans",
+          "statAmount": 0,
+          "_id": "6533676d33e316b1a5d82a45"
+      }
+  ],
+  "characterStats": [
+      {
+          "submodel": "Stat",
+          "type": "Fame",
+          "statAmount": 0,
+          "_id": "6533676d33e316b1a5d82a46"
+      }
+  ],
+  "__v": 0
+}

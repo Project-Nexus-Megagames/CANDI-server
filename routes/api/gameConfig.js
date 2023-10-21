@@ -2,7 +2,7 @@ const express = require('express'); // Import of Express web framework
 const router = express.Router(); // Destructure of HTTP router for server
 const { logger } = require('../../middleware/log/winston'); // Import of winston for error/info logging
 const _ = require('lodash');
-// Agent Model - Using Mongoose Model
+const gameconfig = require('../../config/gameconfig.json');
 
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
@@ -86,75 +86,7 @@ router.patch('/deleteAll', async function (req, res) {
 
 router.post('/initGameConfig', async function (req, res) {
 	logger.info('POST Route: api/gamestate call made...');
-	let newGameState = new GameConfig({
-		'model': 'GameConfig',
-		'name': 'Candi Dev Config',
-		'effortTypes': [
-			{
-				'model': 'EffortType',
-				'tag': 'PC',
-				'type': 'Main',
-				'effortAmount': 1
-			},
-			{
-				'model': 'EffortType',
-				'tag': 'PC',
-				'type': 'Defence',
-				'effortAmount': 1
-			},
-			{
-				'model': 'EffortType',
-				'tag': 'Control',
-				'type': 'Article',
-				'effortAmount': 20
-			}
-		],
-		'resourceTypes': [
-			{
-				'model': 'ResourceType',
-				'type': 'Asset'
-			},
-			{
-				'model': 'ResourceType',
-				'type': 'Bond'
-			}
-		],
-		'actionTypes': [
-			{
-				'model': 'ActionType',
-				'type': 'Main',
-				'minEffort': 1,
-				'maxEffort': 1,
-				'effortTypes': [
-					'Main'
-				],
-				'resourceTypes': [
-					'Asset'
-				],
-				'maxAssets': 1,
-				'status': [],
-				'public': false
-			},
-			{
-				'model': 'ActionType',
-				'type': 'Defence',
-				'minEffort': 1,
-				'maxEffort': 1,
-				'effortTypes': [
-					'Defense',
-					'Defence'
-				],
-				'resourceTypes': [
-					'Asset'
-				],
-				'maxAssets': 1,
-				'status': [],
-				'public': false
-			}
-		],
-		'globalStats': [],
-		'characterStats': [],
-	});
+	let newGameState = new GameConfig(gameconfig);
 	try {
 		// for (const el in aspects) {
 		// 	newGameState[el] = aspects[el];

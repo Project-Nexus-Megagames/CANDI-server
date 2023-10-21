@@ -25,7 +25,8 @@ const AssetSchema = new Schema({
 	owner: { type: String, default: 'None' },
 	ownerCharacter: { type: ObjectId, ref: 'Character' },
 	sharedWith: [{ type: ObjectId, ref: 'Character' }],
-	uses: { type: Number, default: 2 }
+	uses: { type: Number, default: 2 },
+	addUses: { type: Number, default: 1 } // how many uses get added back to this asset at the end of the round
 });
 
 AssetSchema.methods.toggleStatus = async function (tag, remove) {

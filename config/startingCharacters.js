@@ -93,4 +93,5 @@ const npcs = [
 	}
 ];
 
-module.exports = { control, pcs, npcs };
+const characters = [ ...control, ...pcs, ...npcs ];
+module.exports = { characters };

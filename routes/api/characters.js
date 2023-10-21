@@ -9,10 +9,11 @@ const { logger } = require('../../middleware/log/winston'); // Import of winston
 const { Character } = require('../../models/character'); // Agent Model
 const httpErrorHandler = require('../../middleware/util/httpError');
 const nexusError = require('../../middleware/util/throwError');
-const { characters, npcs } = require('../../config/startingCharacters');
+const { characters } = require('../../config/startingCharacters');
 const { Asset } = require('../../models/asset');
 const auth = require('../../middleware/config/auth');
 const { d10 } = require('../../scripts/util/dice');
+const { GameConfig } = require('../../models/gameConfig');
 
 // @route   GET api/characters
 // @Desc    Get all characters
@@ -131,10 +132,10 @@ router.patch('/deleteAll', async function(req, res) {
 router.post('/initCharacters', async function(req, res) { // initializes characters based on /config/startingCharacters.js.
 	logger.info('POST Route: api/character call made...');
 
+	const gameConfig = await GameConfig.findOne();
 	const arr = ['Asset', 'Trait', 'Wealth', 'Power'];
 
 	try {
-		let npcCount = 0;
 		let charCount = 0;
 		for (const char of characters) {
 			let newCharacter = new Character(char);
@@ -144,19 +145,19 @@ router.post('/initCharacters', async function(req, res) { // initializes charact
 				charCount++;
 				newCharacter = await newCharacter.save();
 
-				for (const el of arr) {
+				for (const el of gameConfig.resourceTypes) {
 					let ass = new Asset({
-						name: `${newCharacter.characterName}'s' ${el}`,
-						description: `${newCharacter.characterName}'s' ${el}`,
-						type: el,
+						name: `${newCharacter.characterName}'s' ${el.type}`,
+						description: `This Asset is for debugging and testing`,
+						type: el.type,
 						ownerCharacter: newCharacter._id,
             dice: [
               {
-                type: el,
+                type: el.type,
                 amount: 6
               },
               {
-                type: el,
+                type: el.type,
                 amount: 8
               }
             ]
@@ -171,23 +172,8 @@ router.post('/initCharacters', async function(req, res) { // initializes charact
 			}
 		}
 
-		for (const npc of npcs) {
-			let newCharacter = new Character(npc);
-			//	await newAgent.validateAgent();
-			const docs = await Character.find({ characterName: npc.characterName });
-
-			if (docs.length < 1) {
-				newCharacter = await newCharacter.save();
-				npcCount++;
-				logger.info(`${newCharacter.characterName} created.`);
-			}
-			else {
-				console.log(`${newCharacter.characterName} already exists!\n`);
-			}
-		}
-
 		nexusEvent.emit('updateCharacters');
-		logger.info(`Created ${charCount} Characters and ${npcCount} NPCs.`);
+		logger.info(`Created ${charCount} Characters`);
 		res.status(200).send('All done');
 	}
 	catch (err) {
@@ -203,10 +189,10 @@ router.patch('/cleanSupporters', async (req, res, next) => {
 	else {
 		const { id } = req.body;
 		try {
-			const characters = await Character.find().where('knownContacts').in(null);
+			const characters0 = await Character.find().where('knownContacts').in(null);
 			const record = [];
 
-			for (const character of characters) {
+			for (const character of characters0) {
 				character.knownContacts = character.knownContacts.filter(el => el !== null);
 				console.log(character);
 				await character.save();

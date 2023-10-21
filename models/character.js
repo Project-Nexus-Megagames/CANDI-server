@@ -30,7 +30,7 @@ const CharacterSchema = new Schema({
 	model: { type: String, default: 'Character' },
 	playerName: { type: String, minlength: 1, maxlength: 50, required: true },
 	characterName: { type: String, minlength: 2, maxlength: 50, required: true },
-	username: { type: String, minlength: 2, maxlength: 50, required: true },
+	username: { type: String, minlength: 2, maxlength: 50, default: 'temp' },
 	characterTitle: { type: String, maxlength: 50, default: 'None' },
 	pronouns: { type: String },
 	bio: { type: String },
