@@ -1,7 +1,8 @@
 {
 	"jwtPrivateKey": "rawr",
+  "version": "1.0",
 	"dbName": "candiDB",
-  // "dbName": "discDB",
+  //  "dbName": "goblinCityDB",
 	"clientURL": "http://localhost:3000/",
 	"serverURL": "http://localhost:5000/",
 	"socketCORS": "http://localhost:3000"

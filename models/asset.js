@@ -34,7 +34,7 @@ AssetSchema.methods.toggleStatus = async function (tag, remove) {
 		await clearArrayValue(this.status, tag); //
 	}
 	else {await addArrayValue(this.status, tag);} //
-	return;
+	return this;
 };
 
 AssetSchema.methods.addStatus = async function (tag) {
@@ -76,8 +76,11 @@ AssetSchema.methods.removeShared = async function (id) {
 };
 
 AssetSchema.methods.use = async function () {
-	const asset = await this.toggleStatus('used');
-	console.log(`${asset.name} owned by ${asset.ownerCharacter} has been used.`);
+	let asset = await addArrayValue(this.status, 'used');
+  asset = await this.save();
+	asset = await asset.populateMe();
+	nexusEvent.emit('respondClient', 'update', [ asset ]);
+	console.log(`${asset?.name} owned by ${asset?.ownerCharacter} has been used.`);
 	return;
 };
 

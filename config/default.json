@@ -1,8 +1,0 @@
-{
-  "jwtPrivateKey": "spooky",
-  "dbName": "developmentDB",
-  "version": "1.0",
-  "clientURL": "https://godswar-app.onrender.com/",
-	"serverURL": "https://godswar-server.onrender.com/",
-  "socketCORS": "https://godswar-app.onrender.com"
-}
