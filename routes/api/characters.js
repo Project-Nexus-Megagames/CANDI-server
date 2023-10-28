@@ -133,7 +133,6 @@ router.post('/initCharacters', async function(req, res) { // initializes charact
 	const arr = ['Asset', 'Trait', 'Wealth', 'Power'];
 
 	try {
-		let npcCount = 0;
 		let charCount = 0;
 		for (const char of characters) {
 			let newCharacter = new Character(char);
@@ -160,23 +159,8 @@ router.post('/initCharacters', async function(req, res) { // initializes charact
 			}
 		}
 
-		for (const npc of npcs) {
-			let newCharacter = new Character(npc);
-			//	await newAgent.validateAgent();
-			const docs = await Character.find({ characterName: npc.characterName });
-
-			if (docs.length < 1) {
-				newCharacter = await newCharacter.save();
-				npcCount++;
-				logger.info(`${newCharacter.characterName} created.`);
-			}
-			else {
-				console.log(`${newCharacter.characterName} already exists!\n`);
-			}
-		}
-
 		nexusEvent.emit('updateCharacters');
-		logger.info(`Created ${charCount} Characters and ${npcCount} NPCs.`);
+		logger.info(`Created ${charCount} Characters.`);
 		res.status(200).send('All done');
 	}
 	catch (err) {
