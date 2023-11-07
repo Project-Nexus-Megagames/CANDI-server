@@ -314,8 +314,10 @@ async function editSubObject (data, user) {
 				data.result[el] !== undefined &&
 				data.result[el] !== '' &&
 				el !== '_id' &&
-				el !== 'model'
+				el !== 'model' && 
+        el !== 'creator'
 			) {
+        console.log(`editing ${el}`)
 				thing[el] = data.result[el];
 			}
 			else {
@@ -721,7 +723,6 @@ async function effectAction (data) {
 			nexusEvent.emit('respondClient', 'update', [old]);
 			return;
 		case 'new':
-
 			response = await addAsset({ asset: document, arcane, loggedInUser });
 			if (response.type === 'success') {
         let temp = await Character.findById(document.ownerCharacter)

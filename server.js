@@ -34,5 +34,5 @@ function haltOnTimedout(req, res, next) {
 
 const port = process.env.PORT || 5000; // Server entry point - Node Server
 server.listen(port, () =>
-	logger.info(`Project Nexus server has started on port ${port}...`)
+	logger.info(`CANDI server has started on port ${port}...`)
 );

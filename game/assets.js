@@ -68,7 +68,7 @@ async function addAsset (data, user) {
 		const gamestate = await GameState.findOne();
 
 		let newAsset = new Asset(asset);
-		if (gamestate.status === 'Resolution') newAsset = await newAsset.toggleStatus('hidden', true);
+		if (gamestate.status === 'Resolution') newAsset = await newAsset.toggleStatus('hidden', false);
 
 		const controlLog = new ControlLog({
 			control: data.loggedInUser.username,
