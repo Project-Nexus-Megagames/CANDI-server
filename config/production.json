@@ -1,6 +1,9 @@
 {
   "jwtPrivateKey": "spooky",
-  "dbName": "candiDB",
+  "version": "1.0",
+  //"dbName": "candiDB",
+  "dbName": "goblinCityDB",
+  
 	"clientURL": "https://candi.onrender.com/",
 	"serverURL": "https://candi-server.onrender.com/",
 	"socketCORS": ["https://candi.onrender.com", "https://candi-app.onrender.com"]
