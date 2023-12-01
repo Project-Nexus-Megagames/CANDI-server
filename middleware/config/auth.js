@@ -6,7 +6,7 @@ const auth = async (req, res, next) => {
 	try {
 		const { data } = await axios.request({
 			// url: 'https://alpha-nexus-server.herokuapp.com/auth/tokenLogin',
-			url: "https://nexus-central-server.herokuapp.com/auth/tokenLogin",
+			url: "https://nexus-server.onrender.com/auth/tokenLogin",
 			method: 'post',
 			data: req.body
 		});

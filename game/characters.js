@@ -119,7 +119,7 @@ async function register (data) {
 				html: `<p>Dear ${regChar.playerName},</p> <p> You have been successfully registered on the CANDI App, and can now log in. Make sure you log in with either the email or username you used to register on the Nexus Portal.</p> <p>Have fun!</p> <p>Your Character: ${regChar.characterName} </p> https://candi.onrender.com`
 			};
 			await axios.post(
-				'https://nexus-central-server.herokuapp.com/nexus/email',
+				'https://nexus-server.onrender.com/nexus/email',
 				emailStuff
 			);
 		}
